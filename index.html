@@ -40,6 +40,9 @@
                 }
             });
 
+            var SVG_XMLNS = "http://www.w3.org/2000/svg";
+            var HTML_XMLNS = "http://www.w3.org/1999/xhtml";
+
             Rpd.noderenderer('p5/sketch', 'svg', {
                 size: { width: 420, height: 320 },
                 pivot: { x: 0, y: 0 },
@@ -47,7 +50,7 @@
                     var group = document.createElementNS(SVG_XMLNS, 'g');
                     group.setAttributeNS(null, 'transform', 'translate(10, 10)');
                     var foreign = document.createElementNS(SVG_XMLNS, 'foreignObject');
-                    var p5Target = document.createElement('div');
+                    var p5Target = document.createElementNS(HTML_XMLNS, 'div');
                     p5Target.id = 'p5-canvas';
                     foreign.appendChild(p5Target);
                     group.appendChild(foreign);
