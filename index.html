@@ -14,83 +14,37 @@
         <!-- RPD Library (http://shamansir.github.io/rpd) -->
         <script src="./rpd.min.js"></script>
 
+        <!-- Toolkit: jb, utils -->
+        <script src="./toolkit/jb/p5-draw.js"></script>
         <!-- Toolkit: jb -->
         <script src="./toolkit/jb/toolkit.js"></script>
         <!-- Toolkit: jb (svg) -->
         <script src="./toolkit/jb/svg.js"></script>
 
+        <!-- p5.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.19/p5.min.js"></script>
+
         <style>
-            #p5-canvas {
+            .p5-canvas {
                 position: fixed;
             }
         </style>
 
     </head>
     <body>
-        <script>
-            window.sketchUpdate = function(config) {
-                window.missedSketchConfig = config;
-            }; // we'll replace it later
-
-        </script>
 
         <script>
-            // Register p5/sketch node type and renderer
-
-            Rpd.nodetype('p5/sketch', {
-                inlets: {
-
-                },
-                process: function(inlets) {
-                    window.sketchUpdate(inlets);
-                }
-            });
-
-            var SVG_XMLNS = "http://www.w3.org/2000/svg";
-            var HTML_XMLNS = "http://www.w3.org/1999/xhtml";
-
-            Rpd.noderenderer('p5/sketch', 'svg', {
-                size: { width: 420, height: 320 },
-                pivot: { x: 0, y: 0 },
-                first: function(bodyElm) {
-                    var group = document.createElementNS(SVG_XMLNS, 'g');
-                    group.setAttributeNS(null, 'transform', 'translate(10, 10)');
-                    var foreign = document.createElementNS(SVG_XMLNS, 'foreignObject');
-                    var p5Target = document.createElementNS(HTML_XMLNS, 'div');
-                    p5Target.id = 'p5-canvas';
-                    foreign.appendChild(p5Target);
-                    group.appendChild(foreign);
-                    bodyElm.appendChild(group);
-                }
-            });
-
             // Build and render patch
 
-            var patch = Rpd.addPatch('processing');
+            var patch = Rpd.addPatch('jb-sketch');
 
             patch.render('svg', document.body, { style: 'plain',
                                                  fullPage: true });
-            var sketch = patch.addNode('p5/sketch').move(300, 50);
+            patch.addNode('jb/render').move(300, 50);
+            patch.addNode('jb/render').move(500, 50);
 
             //patch.addNode('util/nodelist').move(600, 10);
 
-        </script>
-
-        <!-- p5.js -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.19/p5.min.js"></script>
-        <!-- p5 Sketch -->
-        <script src="./sketch.js"></script>
-
-        <script>
-            window.addEventListener('load', function() {
-                window.sketchUpdate = function(inlets) {
-                    sketchConfig = inlets;
-                    // uses a global function from the sketch
-                    updateWithConfig(sketchConfig);
-                };
-
-                if (window.missedSketchConfig) window.sketchUpdate(window.missedSketchConfig);
-            });
         </script>
 
     </body>
