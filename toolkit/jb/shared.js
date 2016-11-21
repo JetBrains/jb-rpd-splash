@@ -15,10 +15,11 @@ function drawForms(p, forms) {
     forms.forEach(function(formF) { formF(p); });
 }
 
-var imgCache = {};
+//var imgCache = {};
 function maybeCachedImage(p, f) {
-    if (imgCache[f.name] && (imgCache[f.name].lastModified === f.file.lastModified)
+    /*if (imgCache[f.name] && (imgCache[f.name].lastModified === f.file.lastModified)
         && (imgCache[f.name].pInstance === p)) {
+        console.log('from cache', f.name);
         return imgCache[f.name].image;
     } else {
         var image = p.createImg(f.data).hide();
@@ -28,5 +29,6 @@ function maybeCachedImage(p, f) {
             pInstance: p
         };
         return image;
-    }
+    }*/
+    return p.createImg(f.data).hide();
 }
