@@ -13,3 +13,11 @@ cd ../jb-rpd-splash
 if [ ! -f ./kefir.min.js ]; then
     wget http://rawgit.com/rpominov/kefir/gh-pages/dist/kefir.min.js
 fi
+
+if [ ! -f ./p5.min.js ]; then
+    wget https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.19/p5.min.js
+fi
+
+if [ ! -f ./p5.dom.js ]; then
+    wget https://raw.githubusercontent.com/lmccart/p5.js/master/lib/addons/p5.dom.js
+fi
