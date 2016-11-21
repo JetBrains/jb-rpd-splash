@@ -40,8 +40,14 @@
 
             patch.render('svg', document.body, { style: 'plain',
                                                  fullPage: true });
-            patch.addNode('jb/render').move(300, 50);
-            patch.addNode('jb/render').move(500, 50);
+            var render1 = patch.addNode('jb/render').move(300, 50);
+            var render2 = patch.addNode('jb/render').move(500, 50);
+
+            var ellipse = patch.addNode('jb/ellipse').move(100, 50);
+            ellipse.outlets['forms'].connect(render1.inlets['forms']);
+            ellipse.outlets['forms'].connect(render2.inlets['forms']);
+
+            ellipse.inlets['bang'].receive({});
 
             //patch.addNode('util/nodelist').move(600, 10);
 
