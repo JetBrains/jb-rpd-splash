@@ -29,6 +29,10 @@ Rpd.noderenderer('jb/transform', 'svg', {
     size: { width: 50 }
 });
 
+Rpd.noderenderer('jb/style', 'svg', {
+    size: { width: 50 }
+});
+
 Rpd.noderenderer('jb/image', 'svg', function() {
     var myP5, lastFile;
     return {

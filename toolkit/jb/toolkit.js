@@ -54,6 +54,62 @@ Rpd.nodetype('jb/transform', {
                 }
             })
         }
+        /* var forms = inlets.forms;
+        return {
+            forms: forms.length
+                ? [
+                    function(p) {
+                        p.push();
+                        p.rotate(inlets['α']);
+                        p.scale(inlets.sx, inlets.sy);
+                        p.translate(inlets.x, inlets.y);
+                        forms.map(function(f) { return f(p); });
+                        p.pop();
+                    }
+                ] : []
+        } */
+    }
+});
+
+Rpd.nodetype('jb/style', {
+    inlets: {
+        'forms': { type: 'jb/forms', 'default': [] },
+        'fill': { type: 'util/color' },
+        'stroke': { type: 'util/color' },
+        'strokeWeight': { type: 'util/number', 'default': 1 }
+    },
+    outlets: {
+        'forms': { type: 'jb/forms' }
+    },
+    process: function(inlets) {
+        var fill = inlets['fill'];
+        var stroke = inlets['stroke'];
+        var strokeWeight = inlets.hasOwnProperty('strokeWeight') ? inlets['strokeWeight'] : 1;
+        return {
+            forms: inlets.forms.map(function(formF) {
+                return function(p) {
+                    p.push();
+                    if (fill) p.fill(fill.r, fill.g, fill.b);
+                    if (stroke) p.stroke(stroke.r, stroke.g, stroke.b);
+                    p.strokeWeight(strokeWeight);
+                    formF(p);
+                    p.pop();
+                }
+            })
+        }
+        /* var forms = inlets.forms;
+        return {
+            forms: forms.length
+                ? [
+                    function(p) {
+                        p.push();
+                        if (inlets['fill']) p.fill(inlets['fill']);
+                        if (inlets['stroke']) p.stroke(inlets['stroke']);
+                        if (inlets.hasOwnProperty('strokeWidth')) p.strokeWidth(inlets['strokeWidth']);
+                        p.pop();
+                    }
+                ] : []
+        } */
     }
 });
 
