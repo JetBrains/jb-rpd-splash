@@ -5,7 +5,7 @@ var lastCvsId = 0;
 Rpd.noderenderer('jb/render', 'svg', function() {
     var formsRef = {};
     return {
-        size: { width: 300, height: 300 },
+        size: { width: 200, height: 200 },
         pivot: { x: 0, y: 0 },
         first: function(bodyElm) {
             var canvasId = 'p5-canvas-' + lastCvsId;
@@ -25,4 +25,12 @@ Rpd.noderenderer('jb/render', 'svg', function() {
             formsRef.forms = inlets.forms;
         }
     };
+});
+
+Rpd.noderenderer('jb/layers', 'svg', {
+    size: { width: 150 }
+});
+
+Rpd.noderenderer('jb/modify', 'svg', {
+    size: { width: 100 }
 });

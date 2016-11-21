@@ -18,20 +18,43 @@ for (var i = 0; i < LAYERS_INLETS_COUNT; i++) {
 Rpd.nodetype('jb/layers', {
     inlets: layersInlets,
     outlets: {
-        'layers': { 'type': 'jb/forms' }
+        'forms': { 'type': 'jb/forms' }
     },
     process: function(inlets) {
         var layers = [];
         for (var i = 0; i < LAYERS_INLETS_COUNT; i++) {
             layers = layers.concat(inlets['L' + i]);
         }
-        return { 'layers': layers };
+        return { 'forms': layers };
+    }
+});
+
+Rpd.nodetype('jb/modify', {
+    inlets: {
+        'forms': { type: 'jb/forms', default: [] },
+        'x': { type: 'util/number', default: 0 },
+        'y': { type: 'util/number', default: 0 },
+    },
+    outlets: {
+        'forms': { type: 'jb/forms' }
+    },
+    process: function(inlets) {
+        return {
+            forms: inlets.forms.map(function(formF) {
+                return function(p) {
+                    p.push();
+                    p.translate(inlets.x, inlets.y);
+                    formF(p);
+                    p.pop();
+                }
+            })
+        }
     }
 });
 
 Rpd.nodetype('jb/ellipse', {
     inlets: {
-        'bang': { 'type': 'core/any' }
+        'bang': { 'type': 'util/bang' }
     },
     outlets: {
         'forms': { type: 'jb/forms' }

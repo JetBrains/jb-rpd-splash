@@ -40,18 +40,31 @@
 
             patch.render('svg', document.body, { style: 'plain',
                                                  fullPage: true });
-            var render1 = patch.addNode('jb/render').move(300, 50);
-            var render2 = patch.addNode('jb/render').move(500, 50);
+            var render1 = patch.addNode('jb/render').move(200, 200);
+            var render2 = patch.addNode('jb/render').move(450, 200);
 
-            var layers = patch.addNode('jb/layers').move(600, 50);
+            var layers = patch.addNode('jb/layers').move(500, 130);
 
-            var ellipse = patch.addNode('jb/ellipse').move(100, 50);
+            var ellipse = patch.addNode('jb/ellipse').move(50, 50);
             ellipse.outlets['forms'].connect(render1.inlets['forms']);
-            ellipse.outlets['forms'].connect(render2.inlets['forms']);
 
-            ellipse.inlets['bang'].receive({});
+            var knob1 = patch.addNode('util/knob').move(200, 40);
+            var knob2 = patch.addNode('util/knob').move(250, 40);
 
-            //patch.addNode('util/nodelist').move(600, 10);
+            var modify = patch.addNode('jb/modify').move(30, 150);
+            knob1.outlets['number'].connect(modify.inlets['x']);
+            knob2.outlets['number'].connect(modify.inlets['y']);
+            knob1.inlets['submit'].receive(0.2);
+
+            ellipse.outlets['forms'].connect(modify.inlets['forms']);
+            ellipse.outlets['forms'].connect(layers.inlets['L0']);
+            modify.outlets['forms'].connect(layers.inlets['L1']);
+            layers.outlets['forms'].connect(render2.inlets['forms']);
+
+            var bang = patch.addNode('util/bang').move(10,10);
+            bang.outlets['bang'].connect(ellipse.inlets['bang']);
+
+            patch.addNode('util/nodelist').move(800, 50);
 
         </script>
 
