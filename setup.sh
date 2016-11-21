@@ -7,7 +7,7 @@ if [ ! -d ./rpd ]; then
 fi
 
 cd ./rpd
-gulp -r svg -s plain -t util -o ../jb-rpd-splash
+gulp -r svg -s compact-v -t util -o ../jb-rpd-splash
 cd ../jb-rpd-splash
 
 if [ ! -f ./kefir.min.js ]; then

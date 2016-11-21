@@ -22,11 +22,11 @@ Rpd.noderenderer('jb/render', 'svg', function() {
 });
 
 Rpd.noderenderer('jb/layers', 'svg', {
-    size: { width: 150 }
+    size: { width: 50 }
 });
 
 Rpd.noderenderer('jb/modify', 'svg', {
-    size: { width: 100 }
+    size: { width: 50 }
 });
 
 Rpd.noderenderer('jb/image', 'svg', function() {

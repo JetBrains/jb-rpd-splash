@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
 
-        <!-- RPD Mode: css -->
+        <!-- RPD: css -->
         <link rel="stylesheet" href="./rpd.css"></link>
         <!-- Toolkit: jb (svg) -->
         <link rel="stylesheet" href="./toolkit/jb/svg.css"></link>
@@ -43,10 +43,10 @@
 
             var patch = Rpd.addPatch('jb-sketch');
 
-            patch.render('svg', document.body, { style: 'plain',
+            patch.render('svg', document.body, { style: 'compact-v',
                                                  fullPage: true });
             var render1 = patch.addNode('jb/render').move(200, 200);
-            var render2 = patch.addNode('jb/render').move(450, 200);
+            var render2 = patch.addNode('jb/render').move(450, 260);
 
             var layers = patch.addNode('jb/layers').move(500, 130);
 
@@ -68,6 +68,9 @@
 
             var bang = patch.addNode('util/bang').move(10,10);
             bang.outlets['bang'].connect(ellipse.inlets['bang']);
+            setTimeout(function() {
+                bang.inlets['trigger'].receive({})
+            }, 100);
 
             patch.addNode('util/nodelist').move(800, 50);
 
