@@ -2,6 +2,7 @@ var SVG_XMLNS = "http://www.w3.org/2000/svg";
 var HTML_XMLNS = "http://www.w3.org/1999/xhtml";
 
 var lastCvsId = 0;
+
 Rpd.noderenderer('jb/render', 'svg', function() {
     function getForms() { return lastForms; };
     var myP5;
@@ -11,7 +12,31 @@ Rpd.noderenderer('jb/render', 'svg', function() {
         first: function(bodyElm) {
             var wrapperId = 'p5-canvas-' + lastCvsId;
             var wrapper = createCanvasWrapper(wrapperId, bodyElm);
-            myP5 = new p5(initP5(getForms), wrapper);
+            myP5 = new p5(initP5(getForms, 180, 180), wrapper);
+            lastCvsId++;
+        },
+        always: function(bodyElm, inlets) {
+            lastForms = inlets.forms;
+            if (lastForms && lastForms.length) myP5.redraw();
+        }
+    };
+});
+
+Rpd.noderenderer('jb/preview', 'svg', function() {
+    function getForms() { return lastForms; };
+    var myP5;
+    return {
+        size: { width: 700, height: 394 },
+        pivot: { x: 0, y: 0 },
+        first: function(bodyElm) {
+            var wrapperId = 'p5-canvas-' + lastCvsId;
+            var wrapper = createCanvasWrapper(wrapperId, bodyElm);
+            //var fullScreenTrigger = document.createElementNS(HTML_XMLNS, 'span');
+            //fullScreenTrigger.className = 'fullscreen-trigger';
+            //fullScreenTrigger.innerText = 'FULLSCREEN';
+            myP5 = new p5(initP5(getForms, 700, 394/*, fullScreenTrigger*/), wrapper);
+            console.log(myP5);
+            //wrapper.appendChild(fullScreenTrigger);
             lastCvsId++;
         },
         always: function(bodyElm, inlets) {
@@ -35,6 +60,7 @@ Rpd.noderenderer('jb/style', 'svg', {
 
 Rpd.noderenderer('jb/image', 'svg', function() {
     var myP5, lastFile;
+    function getLastFile() { return lastFile; }
     return {
         size: { width: 200, height: 50 },
         pivot: { x: 0, y: 0 },
@@ -42,7 +68,7 @@ Rpd.noderenderer('jb/image', 'svg', function() {
             var wrapperId = 'p5-canvas-' + lastCvsId;
             var wrapper = createCanvasWrapper(wrapperId, bodyElm);
             var node = this;
-            myP5 = new p5(createP5ForImageDrop(node, 'file', function() { return lastFile; }), wrapper);
+            myP5 = new p5(createP5ForImageDrop(node, 'file', getLastFile), wrapper);
             myP5.redraw();
             lastCvsId++;
         },
@@ -76,7 +102,6 @@ function createP5ForImageDrop(node, inletName, getFile) {
                                        node.inlets[inletName].receive(file);
                                    }
                                });
-                               c.style("visibility", "visible"); // FIXME: why needed?
                                p.background(100);
                                p.noLoop(); };
         p.draw = function() {

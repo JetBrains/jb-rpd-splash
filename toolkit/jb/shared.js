@@ -1,7 +1,8 @@
-function initP5(getForms) {
+function initP5(getForms, w, h) {
     return function(p) {
         p.setup = function() {
-            p.createCanvas(180, 180);
+            var c = p.createCanvas(w, h);
+            c.style("visibility", "visible"); // FIXME: why needed?
             p.noLoop();
         };
         p.draw = function() {

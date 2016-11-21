@@ -10,6 +10,14 @@ Rpd.nodetype('jb/render', {
     process: function() {}
 });
 
+Rpd.nodetype('jb/preview', {
+    inlets: {
+        //clear: { type: 'jb/any' },
+        forms: { type: 'jb/forms', 'default': [] }
+    },
+    process: function() {}
+});
+
 var LAYERS_INLETS_COUNT = 5;
 var layersInlets = {};
 for (var i = 0; i < LAYERS_INLETS_COUNT; i++) {
