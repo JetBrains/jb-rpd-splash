@@ -70,19 +70,18 @@ Rpd.nodetype('jb/ellipse', {
 
 Rpd.nodetype('jb/image', {
     inlets: {
-        'image': { 'type': 'core/any', hidden: true },
-        'filename': { 'type': 'core/any', hidden: true },
+        'file': { 'type': 'core/any', hidden: true }
     },
     outlets: {
         'forms': { type: 'jb/forms' }
     },
     process: function(inlets) {
-        var image = inlets.image;
+        var file = inlets.file;
         return {
-            'forms': image
+            'forms': file
                 ? [ function(p) {
-                    p.image(image, 0, 0, 300, 300);
-                  } ]
+                    p.image(maybeCachedImage(p, file), 0, 0, 300, 300);
+                } ]
                 : []
         }
     }

@@ -30,7 +30,7 @@ Rpd.noderenderer('jb/modify', 'svg', {
 });
 
 Rpd.noderenderer('jb/image', 'svg', function() {
-    var myP5, lastImage, lastFileName;
+    var myP5, lastFile;
     return {
         size: { width: 200, height: 200 },
         pivot: { x: 0, y: 0 },
@@ -38,42 +38,13 @@ Rpd.noderenderer('jb/image', 'svg', function() {
             var wrapperId = 'p5-canvas-' + lastCvsId;
             var wrapper = createCanvasWrapper(wrapperId, bodyElm);
             var node = this;
-            console.log(wrapperId, wrapper);
-            myP5 = new p5(function(p) {
-                p.setup = function() { var c = p.createCanvas(180, 180);
-                                       c.drop(function(file) {
-                                           console.log('received from drop', file);
-                                           if (file.type === 'image') {
-                                               var image = p.createImg(file.data).hide();
-                                               node.inlets['image'].receive(image);
-                                               node.inlets['filename'].receive(file.name);
-                                           }
-                                       });
-                                       c.style("visibility", "visible"); // FIXME: why needed?
-                                       p.background(100);
-                                       p.noLoop(); };
-                p.draw = function() {
-                    p.fill(255);
-                    if (lastImage) p.image(lastImage, 0, 0, p.width, p.height);
-                    p.noStroke();
-                    p.textSize(12);
-                    p.textAlign(p.CENTER);
-                    if (!lastImage) {
-                        p.text('Drag an image file\nonto the canvas.', p.width/2, p.height/2);
-                    } else if (lastFileName) {
-                        console.log('text', lastFileName);
-                        p.text(lastFileName, p.width/2, p.height/2);
-                    }
-                };
-            }, wrapper);
-            console.log(myP5);
+            myP5 = new p5(createP5ForImageDrop(node, 'file', function() { return lastFile; }), wrapper);
             myP5.redraw();
             lastCvsId++;
         },
         always: function(bodyElm, inlets) {
-            if (inlets.image) {
-                lastImage = inlets.image;
-                lastFileName = inlets.filename;
+            if (inlets.file) {
+                lastFile = inlets.file;
                 myP5.redraw();
             }
         }
@@ -91,4 +62,34 @@ function createCanvasWrapper(wrapperId, bodyElm) {
     group.appendChild(foreign);
     bodyElm.appendChild(group);
     return wrapper;
+}
+
+function createP5ForImageDrop(node, inletName, getFile) {
+    return function(p) {
+        p.setup = function() { var c = p.createCanvas(180, 180);
+                               c.drop(function(file) {
+                                   if (file.type === 'image') {
+                                       node.inlets[inletName].receive(file);
+                                   }
+                               });
+                               c.style("visibility", "visible"); // FIXME: why needed?
+                               p.background(100);
+                               p.noLoop(); };
+        p.draw = function() {
+            p.fill(255);
+            var file = getFile();
+            if (file) {
+                var image = maybeCachedImage(p, file);
+                p.image(image, 0, 0, p.width, p.height);
+            }
+            p.noStroke();
+            p.textSize(12);
+            p.textAlign(p.CENTER);
+            if (!file) {
+                p.text('Drag an image file\nonto the canvas.', p.width/2, p.height/2);
+            } else {
+                p.text(file.name, p.width/2, p.height/2);
+            }
+        };
+    }
 }
