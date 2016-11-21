@@ -5,6 +5,7 @@ function initP5(getForms) {
             p.noLoop();
         };
         p.draw = function() {
+            p.clear();
             p.background(0, 0);
             drawForms(p, getForms() || []);
         };

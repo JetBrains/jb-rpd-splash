@@ -34,6 +34,9 @@ Rpd.nodetype('jb/transform', {
         'forms': { type: 'jb/forms', default: [] },
         'x': { type: 'util/number', default: 0 },
         'y': { type: 'util/number', default: 0 },
+        'sx': { type: 'util/number', default: 1 },
+        'sy': { type: 'util/number', default: 1 },
+        'α': { type: 'util/number', default: 0 }
     },
     outlets: {
         'forms': { type: 'jb/forms' }
@@ -43,6 +46,8 @@ Rpd.nodetype('jb/transform', {
             forms: inlets.forms.map(function(formF) {
                 return function(p) {
                     p.push();
+                    p.rotate(inlets['α']);
+                    p.scale(inlets.sx, inlets.sy);
                     p.translate(inlets.x, inlets.y);
                     formF(p);
                     p.pop();
