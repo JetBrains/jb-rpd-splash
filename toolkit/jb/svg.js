@@ -4,6 +4,7 @@ var HTML_XMLNS = "http://www.w3.org/1999/xhtml";
 var lastCvsId = 0;
 Rpd.noderenderer('jb/render', 'svg', function() {
     var formsRef = {};
+    var myP5;
     return {
         size: { width: 200, height: 200 },
         pivot: { x: 0, y: 0 },
@@ -18,11 +19,12 @@ Rpd.noderenderer('jb/render', 'svg', function() {
             foreign.appendChild(p5Target);
             group.appendChild(foreign);
             bodyElm.appendChild(group);
-            new p5(initP5(formsRef), canvasId);
+            myP5 = new p5(initP5(formsRef), canvasId);
             lastCvsId++;
         },
         always: function(bodyElm, inlets) {
             formsRef.forms = inlets.forms;
+            if (inlets.forms.length) myP5.redraw();
         }
     };
 });
