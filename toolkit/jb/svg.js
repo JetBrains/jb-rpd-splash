@@ -5,7 +5,7 @@ var lastCvsId = 0;
 Rpd.noderenderer('jb/render', 'svg', function() {
     var formsRef = {};
     return {
-        size: { width: 420, height: 320 },
+        size: { width: 300, height: 300 },
         pivot: { x: 0, y: 0 },
         first: function(bodyElm) {
             var canvasId = 'p5-canvas-' + lastCvsId;
