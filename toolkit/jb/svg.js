@@ -3,7 +3,7 @@ var HTML_XMLNS = "http://www.w3.org/1999/xhtml";
 
 var lastCvsId = 0;
 Rpd.noderenderer('jb/render', 'svg', function() {
-    var formsRef = {};
+    function getForms() { return lastForms; };
     var myP5;
     return {
         size: { width: 200, height: 200 },
@@ -11,12 +11,12 @@ Rpd.noderenderer('jb/render', 'svg', function() {
         first: function(bodyElm) {
             var wrapperId = 'p5-canvas-' + lastCvsId;
             var wrapper = createCanvasWrapper(wrapperId, bodyElm);
-            myP5 = new p5(initP5(formsRef), wrapper);
+            myP5 = new p5(initP5(getForms), wrapper);
             lastCvsId++;
         },
         always: function(bodyElm, inlets) {
-            formsRef.forms = inlets.forms;
-            if (inlets.forms.length) myP5.redraw();
+            lastForms = inlets.forms;
+            if (lastForms && lastForms.length) myP5.redraw();
         }
     };
 });
@@ -25,7 +25,7 @@ Rpd.noderenderer('jb/layers', 'svg', {
     size: { width: 50 }
 });
 
-Rpd.noderenderer('jb/modify', 'svg', {
+Rpd.noderenderer('jb/transform', 'svg', {
     size: { width: 50 }
 });
 

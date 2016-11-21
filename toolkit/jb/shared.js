@@ -1,12 +1,12 @@
-function initP5(formsRef) {
+function initP5(getForms) {
     return function(p) {
         p.setup = function() {
             p.createCanvas(180, 180);
             p.noLoop();
         };
         p.draw = function() {
-            p.background(p.color(255,255,255));
-            drawForms(p, formsRef.forms);
+            p.background(0, 0);
+            drawForms(p, getForms() || []);
         };
     }
 }

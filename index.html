@@ -56,14 +56,14 @@
             var knob1 = patch.addNode('util/knob').move(200, 40);
             var knob2 = patch.addNode('util/knob').move(250, 40);
 
-            var modify = patch.addNode('jb/modify').move(30, 150);
-            knob1.outlets['number'].connect(modify.inlets['x']);
-            knob2.outlets['number'].connect(modify.inlets['y']);
+            var transform = patch.addNode('jb/transform').move(30, 150);
+            knob1.outlets['number'].connect(transform.inlets['x']);
+            knob2.outlets['number'].connect(transform.inlets['y']);
             knob1.inlets['submit'].receive(0.2);
 
-            ellipse.outlets['forms'].connect(modify.inlets['forms']);
+            ellipse.outlets['forms'].connect(transform.inlets['forms']);
             ellipse.outlets['forms'].connect(layers.inlets['L0']);
-            modify.outlets['forms'].connect(layers.inlets['L1']);
+            transform.outlets['forms'].connect(layers.inlets['L1']);
             layers.outlets['forms'].connect(render2.inlets['forms']);
 
             var bang = patch.addNode('util/bang').move(10,10);

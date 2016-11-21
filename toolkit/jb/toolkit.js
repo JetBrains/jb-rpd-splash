@@ -29,7 +29,7 @@ Rpd.nodetype('jb/layers', {
     }
 });
 
-Rpd.nodetype('jb/modify', {
+Rpd.nodetype('jb/transform', {
     inlets: {
         'forms': { type: 'jb/forms', default: [] },
         'x': { type: 'util/number', default: 0 },
