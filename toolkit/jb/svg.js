@@ -32,7 +32,7 @@ Rpd.noderenderer('jb/modify', 'svg', {
 Rpd.noderenderer('jb/image', 'svg', function() {
     var myP5, lastFile;
     return {
-        size: { width: 200, height: 200 },
+        size: { width: 200, height: 50 },
         pivot: { x: 0, y: 0 },
         first: function(bodyElm) {
             var wrapperId = 'p5-canvas-' + lastCvsId;
@@ -66,7 +66,7 @@ function createCanvasWrapper(wrapperId, bodyElm) {
 
 function createP5ForImageDrop(node, inletName, getFile) {
     return function(p) {
-        p.setup = function() { var c = p.createCanvas(180, 180);
+        p.setup = function() { var c = p.createCanvas(180, 30);
                                c.drop(function(file) {
                                    if (file.type === 'image') {
                                        node.inlets[inletName].receive(file);
@@ -76,19 +76,22 @@ function createP5ForImageDrop(node, inletName, getFile) {
                                p.background(100);
                                p.noLoop(); };
         p.draw = function() {
-            p.fill(255);
             var file = getFile();
             if (file) {
+                p.background(255);
                 var image = maybeCachedImage(p, file);
-                p.image(image, 0, 0, p.width, p.height);
+                p.image(image, 0, 0, 30, 30);
             }
             p.noStroke();
-            p.textSize(12);
-            p.textAlign(p.CENTER);
+            p.textSize(10);
             if (!file) {
-                p.text('Drag an image file\nonto the canvas.', p.width/2, p.height/2);
+                p.textAlign(p.CENTER);
+                p.fill(255);
+                p.text('Drag an image file onto this area.', p.width / 2, p.height / 2);
             } else {
-                p.text(file.name, p.width/2, p.height/2);
+                p.textAlign(p.LEFT);
+                p.fill(100);
+                p.text(file.name, 30, 18);
             }
         };
     }
