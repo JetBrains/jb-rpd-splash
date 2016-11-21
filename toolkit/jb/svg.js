@@ -35,7 +35,6 @@ Rpd.noderenderer('jb/preview', 'svg', function() {
             //fullScreenTrigger.className = 'fullscreen-trigger';
             //fullScreenTrigger.innerText = 'FULLSCREEN';
             myP5 = new p5(initP5(getForms, 700, 394/*, fullScreenTrigger*/), wrapper);
-            console.log(myP5);
             //wrapper.appendChild(fullScreenTrigger);
             lastCvsId++;
         },
@@ -87,7 +86,7 @@ function createCanvasWrapper(wrapperId, bodyElm) {
     var foreign = document.createElementNS(SVG_XMLNS, 'foreignObject');
     var wrapper = document.createElementNS(HTML_XMLNS, 'div');
     wrapper.id = wrapperId;
-    wrapper.className = 'p5-canvas';
+    wrapper.className = 'p5-canvas-wrapper';
     foreign.appendChild(wrapper);
     group.appendChild(foreign);
     bodyElm.appendChild(group);
@@ -97,6 +96,7 @@ function createCanvasWrapper(wrapperId, bodyElm) {
 function createP5ForImageDrop(node, inletName, getFile) {
     return function(p) {
         p.setup = function() { var c = p.createCanvas(180, 30);
+                               c.addClass('p5-canvas');
                                c.drop(function(file) {
                                    if (file.type === 'image') {
                                        node.inlets[inletName].receive(file);
@@ -124,4 +124,8 @@ function createP5ForImageDrop(node, inletName, getFile) {
             }
         };
     }
+}
+
+function prepareCanvas(myP5Canvas) {
+    myP5Canvas.className = 'p5-canvas';
 }

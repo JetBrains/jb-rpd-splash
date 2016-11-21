@@ -2,7 +2,7 @@ function initP5(getForms, w, h) {
     return function(p) {
         p.setup = function() {
             var c = p.createCanvas(w, h);
-            c.style("visibility", "visible"); // FIXME: why needed?
+            c.addClass('p5-canvas');
             p.noLoop();
         };
         p.draw = function() {
