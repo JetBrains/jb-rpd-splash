@@ -142,16 +142,52 @@ Rpd.nodetype('jb/image', {
         'file': { 'type': 'core/any', hidden: true }
     },
     outlets: {
-        'forms': { type: 'jb/forms' }
+        'forms': { type: 'jb/forms' },
+        'file': { type: 'core/any' },
     },
     process: function(inlets) {
         var file = inlets.file;
         return {
-            'forms': file
+            forms: file
                 ? [ function(p) {
-                    p.image(maybeCachedImage(p, file), 0, 0, 300, 300);
+                    p.image(maybeCachedImage(p, file).hide(), 0, 0, 300, 300);
                 } ]
-                : []
+                : [],
+            file: file
         }
     }
 });
+
+Rpd.nodetype('jb/extract-pixels', function() {
+    var width = 200;
+    var height = 200;
+    return {
+        inlets: {
+            'file': { 'type': 'core/any' },
+            'forms': { 'type': 'jb/forms' },
+            'step': { 'type': 'util/number', default: 12 },
+        },
+        outlets: {
+            'forms': { 'type': 'jb/forms' }
+        },
+        process: function(inlets) {
+            var file = inlets.file;
+            return {
+                forms: [
+                    function(p) {
+                        console.log(file);
+                        var image = maybeCachedImage(p, file);
+                        console.log(image);
+                        console.log(image.loadPixels());
+                    }
+                ]
+            }
+        }
+    };
+});
+
+Rpd.nodetype('jb/voronoi', {}); // -> edges
+
+Rpd.nodetype('jb/delanay', {}); // -> edges
+
+Rpd.nodetype('jb/draw-', {});

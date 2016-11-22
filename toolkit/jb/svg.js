@@ -109,7 +109,7 @@ function createP5ForImageDrop(node, inletName, getFile) {
             if (file) {
                 p.background(255);
                 var image = maybeCachedImage(p, file);
-                p.image(image, 0, 0, 30, 30);
+                p.image(image.hide(), 0, 0, 30, 30);
             }
             p.noStroke();
             p.textSize(10);
