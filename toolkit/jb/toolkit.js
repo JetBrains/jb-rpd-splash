@@ -50,7 +50,7 @@ Rpd.nodetype('jb/transform', {
         'forms': { type: 'jb/forms' }
     },
     process: function(inlets) {
-        return {
+        /* return {
             forms: inlets.forms.map(function(formF) {
                 return function(p) {
                     p.push();
@@ -61,8 +61,8 @@ Rpd.nodetype('jb/transform', {
                     p.pop();
                 }
             })
-        }
-        /* var forms = inlets.forms;
+        } */
+        var forms = inlets.forms;
         return {
             forms: forms.length
                 ? [
@@ -71,11 +71,11 @@ Rpd.nodetype('jb/transform', {
                         p.rotate(inlets['α']);
                         p.scale(inlets.sx, inlets.sy);
                         p.translate(inlets.x, inlets.y);
-                        forms.map(function(f) { return f(p); });
+                        forms.forEach(function(form) { form(p); });
                         p.pop();
                     }
                 ] : []
-        } */
+        }
     }
 });
 
@@ -93,7 +93,7 @@ Rpd.nodetype('jb/style', {
         var fill = inlets['fill'];
         var stroke = inlets['stroke'];
         var strokeWeight = inlets.hasOwnProperty('strokeWeight') ? inlets['strokeWeight'] : 1;
-        return {
+        /* return {
             forms: inlets.forms.map(function(formF) {
                 return function(p) {
                     p.push();
@@ -104,8 +104,8 @@ Rpd.nodetype('jb/style', {
                     p.pop();
                 }
             })
-        }
-        /* var forms = inlets.forms;
+        } */
+        var forms = inlets.forms;
         return {
             forms: forms.length
                 ? [
@@ -114,10 +114,11 @@ Rpd.nodetype('jb/style', {
                         if (inlets['fill']) p.fill(inlets['fill']);
                         if (inlets['stroke']) p.stroke(inlets['stroke']);
                         if (inlets.hasOwnProperty('strokeWidth')) p.strokeWidth(inlets['strokeWidth']);
+                        forms.forEach(function(form) { form(p); });
                         p.pop();
                     }
                 ] : []
-        } */
+        }
     }
 });
 
@@ -131,7 +132,7 @@ Rpd.nodetype('jb/ellipse', {
     process: function() {
         return {
             'forms': [ function(p) {
-                p.ellipse(50, 50, 80, 80);
+                p.ellipse(5, 5, 10, 10);
             } ]
         }
     }
@@ -158,7 +159,7 @@ Rpd.nodetype('jb/image', {
     }
 });
 
-Rpd.nodetype('jb/extract-pixels', function() {
+/* Rpd.nodetype('jb/extract-pixels', function() {
     var width = 200;
     var height = 200;
     return {
@@ -175,19 +176,57 @@ Rpd.nodetype('jb/extract-pixels', function() {
             return {
                 forms: [
                     function(p) {
-                        console.log(file);
-                        var image = maybeCachedImage(p, file);
-                        console.log(image);
-                        console.log(image.loadPixels());
+                        var image = p.loadImage(file.data, function(a) {
+                            console.log(a.loadPixels());
+                            console.log(a.pixels);
+                        });
+                        //image.loadPixels(function() {});
+                        //console.log('image', image);
+                        //console.log('image', image.pixels);
                     }
                 ]
             }
         }
     };
+}); */
+
+Rpd.nodetype('jb/perlin', {
+    inlets: {
+        forms: { type: 'jb/forms', 'default': [] },
+        width: { type: 'util/number', 'default': 100 },
+        height: { type: 'util/number', 'default': 100 }
+    },
+    outlets: {
+        forms: { type: 'jb/forms' }
+    },
+    process: function(inlets) {
+        var forms = inlets.forms,
+            width = inlets.width,
+            height = inlets.height;
+        return {
+            forms: forms.length
+                ? [
+                    function(p) {
+                        p.push();
+                        var lastPos = [ 0, 0 ], nextPos;
+                        forms.forEach(function(form) {
+                            for (var x = 0; x <= 1; x += 0.1) {
+                                for (var y = 0; y <= 1; y += 0.1) {
+                                    nextPos = [ p.noise(x) * width,
+                                                p.noise(y) * height ];
+                                    p.translate(nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
+                                    form(p);
+                                    lastPos = nextPos;
+                                }
+                            }
+                        });
+                        p.pop();
+                    }
+                ] : []
+        }
+    }
 });
 
 Rpd.nodetype('jb/voronoi', {}); // -> edges
 
 Rpd.nodetype('jb/delanay', {}); // -> edges
-
-Rpd.nodetype('jb/draw-', {});
