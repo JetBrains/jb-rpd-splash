@@ -193,8 +193,9 @@ Rpd.nodetype('jb/image', {
 Rpd.nodetype('jb/perlin', {
     inlets: {
         forms: { type: 'jb/forms', 'default': [] },
-        width: { type: 'util/number', 'default': 100 },
-        height: { type: 'util/number', 'default': 100 }
+        width: { type: 'util/number', 'default': 500 },
+        height: { type: 'util/number', 'default': 500 },
+        step: { type: 'util/number', 'default': 0.1 }
     },
     outlets: {
         forms: { type: 'jb/forms' }
@@ -202,7 +203,8 @@ Rpd.nodetype('jb/perlin', {
     process: function(inlets) {
         var forms = inlets.forms,
             width = inlets.width,
-            height = inlets.height;
+            height = inlets.height
+            step = inlets.step;
         return {
             forms: forms.length
                 ? [
@@ -210,10 +212,15 @@ Rpd.nodetype('jb/perlin', {
                         p.push();
                         var lastPos = [ 0, 0 ], nextPos;
                         forms.forEach(function(form) {
-                            for (var x = 0; x <= 1; x += 0.1) {
-                                for (var y = 0; y <= 1; y += 0.1) {
+                            for (var x = 0; x <= 1; x += step) {
+                                for (var y = 0; y <= 1; y += step) {
                                     nextPos = [ p.noise(x) * width,
                                                 p.noise(y) * height ];
+                                    console.log('---');
+                                    console.log('lastPos', lastPos[0], lastPos[1]);
+                                    console.log('x', x, 'y', y);
+                                    console.log('nextPos', nextPos[0], nextPos[1]);
+                                    console.log('translate to', nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
                                     p.translate(nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
                                     form(p);
                                     lastPos = nextPos;
