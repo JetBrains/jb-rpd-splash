@@ -28,16 +28,30 @@
         <!-- d3.voronoi.js -->
         <script src="./d3-voronoi.v1.min.js"></script>
 
+        <style>
+            #preview-target {
+
+            }
+
+            #patch-target {
+                background-color: rgba(0,0,0,0.5);
+            }
+        </style>
+
     </head>
     <body>
+
+        <div id="preview-target"></div>
+        <div id="patch-target"></div>
 
         <script>
             // Build and render patch
 
             var patch = Rpd.addPatch('jb-sketch');
 
-            patch.render('svg', document.body, { style: 'compact-v',
-                                                 fullPage: true });
+            patch.render('svg', document.getElementById('patch-target'),
+                         { style: 'compact-v',
+                           fullPage: true });
             var render1 = patch.addNode('jb/render').move(200, 200);
             var render2 = patch.addNode('jb/render').move(450, 260);
 

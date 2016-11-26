@@ -26,7 +26,7 @@ Rpd.noderenderer('jb/preview', 'svg', function() {
     function getForms() { return lastForms; };
     var myP5;
     return {
-        size: { width: 700, height: 394 },
+        size: { width: 30, height: 30 },
         pivot: { x: 0, y: 0 },
         first: function(bodyElm) {
             var wrapperId = 'p5-canvas-' + lastCvsId;
