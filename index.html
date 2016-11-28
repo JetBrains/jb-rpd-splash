@@ -29,6 +29,11 @@
         <script src="./d3-voronoi.v1.min.js"></script>
 
         <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
             #preview-target {
 
             }
@@ -50,8 +55,9 @@
             var patch = Rpd.addPatch('jb-sketch');
 
             patch.render('svg', document.getElementById('patch-target'),
-                         { style: 'compact-v',
-                           fullPage: true });
+                         { style: 'ableton-out',
+                           fullPage: true,
+                           linkForm: 'curve' });
             var render1 = patch.addNode('jb/render').move(200, 200);
             var render2 = patch.addNode('jb/render').move(450, 260);
 
