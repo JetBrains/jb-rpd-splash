@@ -7,7 +7,7 @@ Rpd.noderenderer('jb/render', 'svg', function() {
     function getForms() { return lastForms; };
     var myP5;
     return {
-        size: { width: 200, height: 200 },
+        size: { width: 100, height: 100 },
         pivot: { x: 0, y: 0 },
         first: function(bodyElm) {
             var wrapperId = 'p5-canvas-' + lastCvsId;
@@ -29,14 +29,11 @@ Rpd.noderenderer('jb/preview', 'svg', function() {
         size: { width: 30, height: 30 },
         pivot: { x: 0, y: 0 },
         first: function(bodyElm) {
-            var wrapperId = 'p5-canvas-' + lastCvsId;
-            var wrapper = createCanvasWrapper(wrapperId, bodyElm);
-            //var fullScreenTrigger = document.createElementNS(HTML_XMLNS, 'span');
-            //fullScreenTrigger.className = 'fullscreen-trigger';
-            //fullScreenTrigger.innerText = 'FULLSCREEN';
-            myP5 = new p5(initP5(getForms, 700, 394/*, fullScreenTrigger*/), wrapper);
-            //wrapper.appendChild(fullScreenTrigger);
-            lastCvsId++;
+            var targetDiv = document.createElement('div');
+            targetDiv.id = 'rpd-jb-preview-target';
+            targetDiv.style.pointerEvents = 'none';
+            document.body.insertBefore(targetDiv, document.body.childNodes[0]);
+            myP5 = new p5(initP5(getForms, window.innerWidth, window.innerHeight), targetDiv.id);
         },
         always: function(bodyElm, inlets) {
             lastForms = inlets.forms;

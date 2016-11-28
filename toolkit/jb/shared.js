@@ -13,21 +13,6 @@ function initP5(getForms, w, h) {
     }
 }
 
-function initP5Preview(getForms, targetElm) {
-    return function(p) {
-        p.setup = function() {
-            var c = p.createCanvas(window.screenWidth, window.screenHeight);
-            c.addClass('p5-canvas');
-            p.noLoop();
-        };
-        p.draw = function() {
-            p.clear();
-            p.background(0, 0);
-            drawForms(p, getForms() || []);
-        };
-    }
-}
-
 function drawForms(p, forms) {
     forms.forEach(function(formF) { formF(p); });
 }

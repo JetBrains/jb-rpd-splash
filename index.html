@@ -34,19 +34,23 @@
                 padding: 0;
             }
 
-            #preview-target {
+            #overlay {
+                background-color: rgba(0,0,0,0.5);
+            }
+
+            #rpd-jb-preview-target {
 
             }
 
-            #patch-target {
-                background-color: rgba(0,0,0,0.5);
+            #patch-target .rpd-background {
+                fill: transparent;
             }
         </style>
 
     </head>
     <body>
 
-        <div id="preview-target"></div>
+        <div id="overlay"></div>
         <div id="patch-target"></div>
 
         <script>
