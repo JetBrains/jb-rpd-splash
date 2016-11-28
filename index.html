@@ -36,22 +36,50 @@
 
             #overlay {
                 background-color: rgba(0,0,0,0.5);
+                opacity: 1;
+                transition: opacity 500ms ease-in;
             }
 
-            #rpd-jb-preview-target {
+            #overlay.hidden {
+                opacity: 0;
+            }
 
+            #patch-target {
+                opacity: 1;
+                transition: opacity 500ms ease-in;
+            }
+
+            #patch-target.hidden {
+                opacity: 0;
             }
 
             #patch-target .rpd-background {
-                fill: transparent;
+                /* fill: transparent; */
+                opacity: 0.3;
+            }
+
+            #rpd-jb-preview-target {
+                position: fixed;
+            }
+
+            #rpd-jb-preview-target,
+            #rpd-jb-preview-target canvas {
+                background: #12181C;
+            }
+
+            content {
+                position: relative;
             }
         </style>
 
     </head>
     <body>
 
-        <div id="overlay"></div>
-        <div id="patch-target"></div>
+        <content>
+            <div id="rpd-jb-preview-target"></div>
+            <div id="overlay"></div>
+            <div id="patch-target"></div>
+        </content>
 
         <script>
             // Build and render patch
@@ -90,6 +118,21 @@
             }, 100);
 
             patch.addNode('util/nodelist').move(800, 50);
+
+            var previewTarget = document.getElementById('rpd-jb-preview-target');
+            previewTarget.style.width = window.innerWidth + 'px';
+            previewTarget.style.height = window.innerHeight + 'px';
+
+            var overlayElm = document.getElementById('overlay');
+            var patchElm = document.getElementById('patch-target');
+            Kefir.fromEvents(document.body, 'keydown').filter(function(evt) {
+                return evt.keyCode === 32;
+            }).scan(function(prev, next) {
+                return !prev;
+            }, true).onValue(function(value) {
+                overlayElm.className = value ? 'visible' : 'hidden';
+                patchElm.className = value ? 'visible' : 'hidden';
+            });
 
         </script>
 
