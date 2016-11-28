@@ -33,9 +33,9 @@ Rpd.noderenderer('jb/preview', 'svg', function() {
             if (!targetDiv) {
                 targetDiv = document.createElement('div');
                 targetDiv.id = 'rpd-jb-preview-target';
+                document.body.insertBefore(targetDiv, document.body.childNodes[0]);
             }
             targetDiv.style.pointerEvents = 'none';
-            document.body.insertBefore(targetDiv, document.body.childNodes[0]);
             myP5 = new p5(initP5(getForms, window.innerWidth, window.innerHeight), targetDiv.id);
         },
         always: function(bodyElm, inlets) {
