@@ -90,18 +90,18 @@
                          { style: 'ableton-out',
                            fullPage: true,
                            linkForm: 'curve' });
-            var render1 = patch.addNode('jb/render').move(200, 200);
-            var render2 = patch.addNode('jb/render').move(450, 260);
+            var render1 = patch.addNode('jb/render').move(220, 310);
+            var render2 = patch.addNode('jb/render').move(620, 280);
 
-            var layers = patch.addNode('jb/layers').move(500, 130);
+            var layers = patch.addNode('jb/layers').move(475, 290);
 
-            var ellipse = patch.addNode('jb/ellipse').move(50, 50);
+            var ellipse = patch.addNode('jb/ellipse').move(60, 130);
             ellipse.outlets['forms'].connect(render1.inlets['forms']);
 
-            var knob1 = patch.addNode('util/knob').move(200, 40);
+            var knob1 = patch.addNode('util/knob').move(170, 40);
             var knob2 = patch.addNode('util/knob').move(250, 40);
 
-            var transform = patch.addNode('jb/transform').move(30, 150);
+            var transform = patch.addNode('jb/transform').move(380, 90);
             knob1.outlets['number'].connect(transform.inlets['x']);
             knob2.outlets['number'].connect(transform.inlets['y']);
             knob1.inlets['submit'].receive(0.2);
