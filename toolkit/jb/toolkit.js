@@ -159,7 +159,7 @@ Rpd.nodetype('jb/image', {
     }
 });
 
-/* Rpd.nodetype('jb/extract-pixels', function() {
+Rpd.nodetype('jb/extract-pixels', function() {
     var width = 200;
     var height = 200;
     return {
@@ -174,21 +174,23 @@ Rpd.nodetype('jb/image', {
         process: function(inlets) {
             var file = inlets.file;
             return {
-                forms: [
-                    function(p) {
-                        var image = p.loadImage(file.data, function(a) {
-                            console.log(a.loadPixels());
-                            console.log(a.pixels);
+                forms: Kefir.fromPromise(
+                    new Promise(function(resolve, reject) {
+                        p.loadImage(file.data, function(image) {
+                            image.loadPixels();
+                            var pixels = image.pixels;
+                            resolve([
+                                function(p) {
+                                    console.log(p, pixels);
+                                }
+                            ]);
                         });
-                        //image.loadPixels(function() {});
-                        //console.log('image', image);
-                        //console.log('image', image.pixels);
-                    }
-                ]
+                    })
+                )
             }
         }
     };
-}); */
+});
 
 Rpd.nodetype('jb/perlin', {
     inlets: {
