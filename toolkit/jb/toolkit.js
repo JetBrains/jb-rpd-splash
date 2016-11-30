@@ -159,7 +159,7 @@ Rpd.nodetype('jb/image', {
     }
 });
 
-Rpd.nodetype('jb/extract-pixels', function() {
+/* Rpd.nodetype('jb/extract-pixels', function() {
     var width = 200;
     var height = 200;
     return {
@@ -169,28 +169,32 @@ Rpd.nodetype('jb/extract-pixels', function() {
             'step': { 'type': 'util/number', default: 12 },
         },
         outlets: {
-            'forms': { 'type': 'jb/forms' }
+            'forms': { 'type': 'jb/forms' },
+            'pixels': { 'type': 'jb/forms '}
         },
         process: function(inlets) {
             var file = inlets.file;
+            var node = this;
             return {
-                forms: Kefir.fromPromise(
-                    new Promise(function(resolve, reject) {
+                forms: [
+
+                    function(p) {
                         p.loadImage(file.data, function(image) {
                             image.loadPixels();
                             var pixels = image.pixels;
-                            resolve([
+                            node.outlets.['forms'].send([
                                 function(p) {
-                                    console.log(p, pixels);
+
                                 }
-                            ]);
-                        });
-                    })
-                )
+                            ])
+                        }
+                    }
+
+                ]
             }
         }
     };
-});
+}); */
 
 Rpd.nodetype('jb/perlin', {
     inlets: {
