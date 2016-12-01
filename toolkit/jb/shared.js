@@ -62,3 +62,17 @@ function maybeCachedImage(p, f) {
 function collectVoronoi(vertices) {
 
 }
+
+function Form(transform, style, apply) {
+    this.transform = transform;
+    this.style = style;
+    this.apply = apply;
+}
+
+function ellipse(form, transform, style) {
+    return new Form(function(p) {
+        applyStyle(p. style);
+        applyTransform(p. style);
+        p.ellipse(transform.x, transform.y/*, */);
+    });
+}

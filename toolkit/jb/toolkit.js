@@ -222,11 +222,11 @@ Rpd.nodetype('jb/perlin', {
                                 for (var y = 0; y <= 1; y += step) {
                                     nextPos = [ p.noise(x) * width,
                                                 p.noise(y) * height ];
-                                    //console.log('---');
-                                    //console.log('lastPos', lastPos[0], lastPos[1]);
-                                    //console.log('x', x, 'y', y);
-                                    //console.log('nextPos', nextPos[0], nextPos[1]);
-                                    //console.log('translate to', nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
+                                    console.log('---');
+                                    console.log('lastPos', lastPos[0], lastPos[1]);
+                                    console.log('x', x, 'y', y);
+                                    console.log('nextPos', nextPos[0], nextPos[1]);
+                                    console.log('translate to', nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
                                     p.translate(nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
                                     form(p);
                                     lastPos = nextPos;
