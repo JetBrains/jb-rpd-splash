@@ -177,7 +177,6 @@ Rpd.nodetype('jb/image', {
             var node = this;
             return {
                 forms: [
-
                     function(p) {
                         p.loadImage(file.data, function(image) {
                             image.loadPixels();
@@ -211,25 +210,35 @@ Rpd.nodetype('jb/perlin', {
             width = inlets.width,
             height = inlets.height
             step = inlets.step;
+        if ((step <= 0) || (step > 1)) {
+            return { forms: [] };
+        }
         return {
             forms: forms.length
                 ? [
                     function(p) {
                         p.push();
-                        var lastPos = [ 0, 0 ], nextPos;
+                        var lastPos = [ 0, 0 ], nextPos, noiseVal, nx, ny;
                         forms.forEach(function(form) {
                             for (var x = 0; x <= 1; x += step) {
                                 for (var y = 0; y <= 1; y += step) {
-                                    nextPos = [ p.noise(x) * width,
-                                                p.noise(y) * height ];
-                                    console.log('---');
-                                    console.log('lastPos', lastPos[0], lastPos[1]);
-                                    console.log('x', x, 'y', y);
-                                    console.log('nextPos', nextPos[0], nextPos[1]);
-                                    console.log('translate to', nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
-                                    p.translate(nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
-                                    form(p);
-                                    lastPos = nextPos;
+                                    /* var nx = p.noise(x);
+                                    var ny = p.noise(y); */
+                                    noiseVal = p.noise(x, y);
+                                    if (noiseVal > 0.5) {
+                                        nx = x, ny = y;
+                                        nextPos = [ nx * width,
+                                                    ny * height ];
+                                        console.log('---');
+                                        console.log('x', x, 'y', y);
+                                        console.log('nx', nx, 'ny', ny);
+                                        console.log('lastPos', lastPos[0], lastPos[1]);
+                                        console.log('nextPos', nextPos[0], nextPos[1]);
+                                        console.log('translate to', nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
+                                        p.translate(nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
+                                        form(p);
+                                        lastPos = nextPos;
+                                    }
                                 }
                             }
                         });
