@@ -159,14 +159,14 @@ Rpd.nodetype('jb/image', {
     }
 });
 
-/* Rpd.nodetype('jb/extract-pixels', function() {
+Rpd.nodetype('jb/extract-pixels', function() {
     var width = 200;
     var height = 200;
     return {
         inlets: {
             'file': { 'type': 'core/any' },
             'forms': { 'type': 'jb/forms' },
-            'step': { 'type': 'util/number', default: 12 },
+            'step': { 'type': 'util/number', default: 0.1 },
         },
         outlets: {
             'forms': { 'type': 'jb/forms' },
@@ -175,17 +175,37 @@ Rpd.nodetype('jb/image', {
         process: function(inlets) {
             var file = inlets.file;
             var node = this;
+            var step = inlets.step;
+            if ((step <= 0) || (step > 1)) {
+                return { forms: [] };
+            }
             return {
                 forms: [
+
                     function(p) {
                         p.loadImage(file.data, function(image) {
                             image.loadPixels();
                             var pixels = image.pixels;
-                            node.outlets.['forms'].send([
-                                function(p) {
 
+                            node.outlets['pixels'].send([
+                                function(p) {
+                                    var lastPos = [ 0, 0 ], nextPos;
+                                    p.push();
+                                    forms.forEach(function(form) {
+                                        for (var x = 0; x <= 1; x += step) {
+                                            for (var y = 0; y <= 1; y += step) {
+                                                nextPos = [ x * width,
+                                                            y * height ];
+                                                p.translate(nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
+                                                form(p);
+                                                lastPos = nextPos;
+                                            }
+                                        }
+                                    });
+                                    p.pop();
                                 }
-                            ])
+                            ]);
+
                         }
                     }
 
@@ -193,7 +213,7 @@ Rpd.nodetype('jb/image', {
             }
         }
     };
-}); */
+});
 
 Rpd.nodetype('jb/perlin', {
     inlets: {
@@ -222,23 +242,23 @@ Rpd.nodetype('jb/perlin', {
                         forms.forEach(function(form) {
                             for (var x = 0; x <= 1; x += step) {
                                 for (var y = 0; y <= 1; y += step) {
-                                    /* var nx = p.noise(x);
-                                    var ny = p.noise(y); */
-                                    noiseVal = p.noise(x, y);
-                                    if (noiseVal > 0.5) {
+                                    var nx = p.noise(x);
+                                    var ny = p.noise(y);
+                                    //noiseVal = p.noise(x, y);
+                                    //if (noiseVal > 0.5) {
                                         nx = x, ny = y;
                                         nextPos = [ nx * width,
                                                     ny * height ];
-                                        console.log('---');
-                                        console.log('x', x, 'y', y);
-                                        console.log('nx', nx, 'ny', ny);
-                                        console.log('lastPos', lastPos[0], lastPos[1]);
-                                        console.log('nextPos', nextPos[0], nextPos[1]);
-                                        console.log('translate to', nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
+                                        // console.log('---');
+                                        // console.log('x', x, 'y', y);
+                                        // console.log('nx', nx, 'ny', ny);
+                                        // console.log('lastPos', lastPos[0], lastPos[1]);
+                                        // console.log('nextPos', nextPos[0], nextPos[1]);
+                                        // console.log('translate to', nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
                                         p.translate(nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
                                         form(p);
                                         lastPos = nextPos;
-                                    }
+                                    //}
                                 }
                             }
                         });
