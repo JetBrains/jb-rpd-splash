@@ -2,6 +2,10 @@ Rpd.channeltype('jb/forms', {
     show: function(forms) { return forms.length ? (forms.length + ' Forms') : 'No Forms'; }
 });
 
+Rpd.channeltype('jb/pixels', {
+    show: function(pixels) { return pixels.width + 'x' + pixels.height + ' : ' + pixels.values.length; }
+});
+
 Rpd.nodetype('jb/render', {
     inlets: {
         //clear: { type: 'jb/any' },
@@ -165,12 +169,11 @@ Rpd.nodetype('jb/extract-pixels', function() {
     return {
         inlets: {
             'file': { 'type': 'core/any' },
-            'forms': { 'type': 'jb/forms' },
             'step': { 'type': 'util/number', default: 0.1 },
         },
         outlets: {
             'forms': { 'type': 'jb/forms' },
-            'pixels': { 'type': 'jb/forms '}
+            'pixels': { 'type': 'jb/pixels '}
         },
         process: function(inlets) {
             var file = inlets.file;
@@ -181,31 +184,18 @@ Rpd.nodetype('jb/extract-pixels', function() {
             }
             return {
                 forms: [
-
                     function(p) {
                         p.loadImage(file.data, function(image) {
                             image.loadPixels();
                             var pixels = image.pixels;
+                            var width = image.width;
+                            var height = image.height;
 
-                            node.outlets['pixels'].send([
-                                function(p) {
-                                    var lastPos = [ 0, 0 ], nextPos;
-                                    p.push();
-                                    forms.forEach(function(form) {
-                                        for (var x = 0; x <= 1; x += step) {
-                                            for (var y = 0; y <= 1; y += step) {
-                                                nextPos = [ x * width,
-                                                            y * height ];
-                                                p.translate(nextPos[0] - lastPos[0], nextPos[1] - lastPos[1]);
-                                                form(p);
-                                                lastPos = nextPos;
-                                            }
-                                        }
-                                    });
-                                    p.pop();
-                                }
-                            ]);
-
+                            node.outlets['pixels'].send({
+                                width: width,
+                                height: height,
+                                values: pixels
+                            });
                         }
                     }
 
