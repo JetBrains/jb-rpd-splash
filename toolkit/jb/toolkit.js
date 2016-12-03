@@ -144,47 +144,23 @@ Rpd.nodetype('jb/ellipse', {
 
 Rpd.nodetype('jb/image', {
     inlets: {
-        'file': { 'type': 'core/any', hidden: true }
+        'file': { 'type': 'core/any', hidden: true },
+        'load-pixels': { 'type': 'core/boolean', 'default': false }
     },
     outlets: {
         'forms': { type: 'jb/forms' },
         'file': { type: 'core/any' },
+        'pixels': { 'type': 'jb/pixels' }
     },
     process: function(inlets) {
         var file = inlets.file;
+        var loadPixels = inlets['load-pixels'] || false;
+        var node = this;
         return {
             forms: file
                 ? [ function(p) {
                     p.image(maybeCachedImage(p, file).hide(), 0, 0, 300, 300);
-                } ]
-                : [],
-            file: file
-        }
-    }
-});
-
-Rpd.nodetype('jb/extract-pixels', function() {
-    var width = 200;
-    var height = 200;
-    return {
-        inlets: {
-            'file': { 'type': 'core/any' },
-            'step': { 'type': 'util/number', default: 0.1 },
-        },
-        outlets: {
-            'forms': { 'type': 'jb/forms' },
-            'pixels': { 'type': 'jb/pixels '}
-        },
-        process: function(inlets) {
-            var file = inlets.file;
-            var node = this;
-            var step = inlets.step;
-            if ((step <= 0) || (step > 1)) {
-                return { forms: [] };
-            }
-            return {
-                forms: [
-                    function(p) {
+                    if (loadPixels) {
                         p.loadImage(file.data, function(image) {
                             image.loadPixels();
                             var pixels = image.pixels;
@@ -198,11 +174,11 @@ Rpd.nodetype('jb/extract-pixels', function() {
                             });
                         }
                     }
-
-                ]
-            }
+                } ]
+                : [],
+            file: file
         }
-    };
+    }
 });
 
 Rpd.nodetype('jb/perlin', {
