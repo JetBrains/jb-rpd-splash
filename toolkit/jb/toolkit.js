@@ -172,7 +172,7 @@ Rpd.nodetype('jb/image', {
                                 height: height,
                                 values: pixels
                             });
-                        }
+                        });
                     }
                 } ]
                 : [],
