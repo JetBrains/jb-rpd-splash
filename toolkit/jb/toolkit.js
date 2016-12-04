@@ -3,7 +3,7 @@ Rpd.channeltype('jb/forms', {
 });
 
 Rpd.channeltype('jb/pixels', {
-    show: function(pixels) { return pixels.width + 'x' + pixels.height + ' : ' + pixels.values.length; }
+    //show: function(pixels) { return pixels.width + 'x' + pixels.height + ' : ' + pixels.values.length; }
 });
 
 Rpd.nodetype('jb/render', {
@@ -142,19 +142,20 @@ Rpd.nodetype('jb/ellipse', {
     }
 });
 
+// FIXME: setting type to 'core/bool' causes "cannot set '.hidden' to undefined"
 Rpd.nodetype('jb/image', {
     inlets: {
-        'file': { 'type': 'core/any', hidden: true },
-        'load-pixels': { 'type': 'core/boolean', 'default': false }
+        file: { type: 'core/any', hidden: true },
+        loadPixels: { type: 'core/any', 'default': false }
     },
     outlets: {
-        'forms': { type: 'jb/forms' },
-        'file': { type: 'core/any' },
-        'pixels': { 'type': 'jb/pixels' }
+        forms: { type: 'jb/forms' },
+        file: { type: 'core/any' },
+        pixels: { type: 'jb/pixels' }
     },
     process: function(inlets) {
         var file = inlets.file;
-        var loadPixels = inlets['load-pixels'] || false;
+        var loadPixels = inlets['loadPixels'] || false;
         var node = this;
         return {
             forms: file
