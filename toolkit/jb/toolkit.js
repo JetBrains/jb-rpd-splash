@@ -6,6 +6,11 @@ Rpd.channeltype('jb/pixels', {
     //show: function(pixels) { return pixels.width + 'x' + pixels.height + ' : ' + pixels.values.length; }
 });
 
+Rpd.channeltype('jb/boolean', {
+    accepts: [ 'util/bang' ],
+    show: function(value) { return value ? 'true' : 'false'; }
+});
+
 Rpd.nodetype('jb/render', {
     inlets: {
         //clear: { type: 'jb/any' },
@@ -143,15 +148,16 @@ Rpd.nodetype('jb/ellipse', {
 });
 
 // FIXME: setting type to 'core/bool' causes "cannot set '.hidden' to undefined"
+// FIXME: Error: outlet/error — Outlet of type 'util/bang' is not allowed to connect to inlet of type 'jb/boolean'
 Rpd.nodetype('jb/image', {
     inlets: {
         file: { type: 'core/any', hidden: true },
-        loadPixels: { type: 'core/any', 'default': false }
+        loadPixels: { type: 'jb/boolean', 'default': false }
     },
     outlets: {
         forms: { type: 'jb/forms' },
-        file: { type: 'core/any' },
-        pixels: { type: 'jb/pixels' }
+        pixels: { type: 'jb/pixels' },
+        file: { type: 'core/any' }
     },
     process: function(inlets) {
         var file = inlets.file;
@@ -182,7 +188,7 @@ Rpd.nodetype('jb/image', {
     }
 });
 
-Rpd.nodetype('jb/perlin', {
+/* Rpd.nodetype('jb/perlin', {
     inlets: {
         forms: { type: 'jb/forms', 'default': [] },
         width: { type: 'util/number', 'default': 500 },
@@ -234,7 +240,7 @@ Rpd.nodetype('jb/perlin', {
                 ] : []
         }
     }
-});
+}); */
 
 Rpd.nodetype('jb/voronoi', {}); // -> edges
 
