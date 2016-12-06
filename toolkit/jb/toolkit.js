@@ -188,6 +188,47 @@ Rpd.nodetype('jb/image', {
     }
 });
 
+Rpd.nodetype('jb/randomize-pixels', {
+    inlets: {
+        pixels: { type: 'jb/pixels' },
+        step: { type: 'core/number' }
+    },
+    outlet: {
+        forms:: { type: 'jb/forms' }
+    },
+    process: function(inlets) {
+        var result = [];
+        for (int x = 0; x < imgWidth; x += step) {
+
+            for (int y = 0; y < imgHeight; y += step) {
+
+
+                int brightness = (int) brightness(img.get(x, y));
+
+
+                if (lastPoint < num && brightness > 3 && random(0, brightness) < 70) {
+
+                    float xpos = ((x / (float) imgWidth) * width) + (random(-step / 2, step / 2) * inregularity);
+                    float ypos = ((y / (float) imgHeight) * height) + (random(-step / 2, step / 2) * inregularity);
+
+                    points.add(new float[] {xpos, ypos, brightness});
+
+                    lastPoint += 1;
+
+
+                }
+            }
+        }
+        return {
+            forms: [
+                function(p) {
+
+                }
+            ]
+        }
+    }
+})
+
 /* Rpd.nodetype('jb/perlin', {
     inlets: {
         forms: { type: 'jb/forms', 'default': [] },
