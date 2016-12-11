@@ -188,10 +188,11 @@ Rpd.nodetype('jb/image', {
     }
 });
 
-Rpd.nodetype('jb/randomize-pixels', {
+Rpd.nodetype('jb/collect-pixels', {
     inlets: {
         pixels: { type: 'jb/pixels' },
-        step: { type: 'core/number' }
+        step: { type: 'core/number', 'default': 12 },
+        inregularity: { type: 'core/number', 'default': 0.7 }
     },
     outlet: {
         forms:: { type: 'jb/forms' }
