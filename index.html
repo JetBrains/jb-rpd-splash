@@ -26,7 +26,7 @@
         <script src="./p5.dom.js"></script>
 
         <!-- d3.voronoi.js -->
-        <script src="./d3-voronoi.v1.min.js"></script>
+        <!-- <script src="./d3-voronoi.v1.min.js"></script> -->
 
         <style>
             body {
@@ -94,32 +94,6 @@
                          { style: 'ableton-out',
                            fullPage: true,
                            linkForm: 'curve' });
-            var render1 = patch.addNode('jb/render').move(220, 310);
-            var render2 = patch.addNode('jb/render').move(620, 280);
-
-            var layers = patch.addNode('jb/layers').move(475, 290);
-
-            var ellipse = patch.addNode('jb/ellipse').move(60, 130);
-            ellipse.outlets['forms'].connect(render1.inlets['forms']);
-
-            var knob1 = patch.addNode('util/knob').move(170, 40);
-            var knob2 = patch.addNode('util/knob').move(250, 40);
-
-            var transform = patch.addNode('jb/transform').move(380, 90);
-            knob1.outlets['number'].connect(transform.inlets['x']);
-            knob2.outlets['number'].connect(transform.inlets['y']);
-            knob1.inlets['submit'].receive(0.2);
-
-            ellipse.outlets['forms'].connect(transform.inlets['forms']);
-            ellipse.outlets['forms'].connect(layers.inlets['L0']);
-            transform.outlets['forms'].connect(layers.inlets['L1']);
-            layers.outlets['forms'].connect(render2.inlets['forms']);
-
-            var bang = patch.addNode('util/bang').move(10,10);
-            bang.outlets['bang'].connect(ellipse.inlets['bang']);
-            setTimeout(function() {
-                bang.inlets['trigger'].receive({})
-            }, 100);
 
             patch.addNode('util/nodelist').move(800, 50);
 

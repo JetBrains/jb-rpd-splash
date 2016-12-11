@@ -1,29 +1,4 @@
-var SVG_XMLNS = "http://www.w3.org/2000/svg";
-var HTML_XMLNS = "http://www.w3.org/1999/xhtml";
-
-var lastCvsId = 0;
-
-Rpd.noderenderer('jb/render', 'svg', function() {
-    function getForms() { return lastForms; };
-    var myP5;
-    return {
-        size: { width: 100, height: 100 },
-        pivot: { x: 0, y: 0 },
-        first: function(bodyElm) {
-            var wrapperId = 'p5-canvas-' + lastCvsId;
-            var wrapper = createCanvasWrapper(wrapperId, bodyElm);
-            myP5 = new p5(initP5(getForms, 180, 180), wrapper);
-            lastCvsId++;
-        },
-        always: function(bodyElm, inlets) {
-            lastForms = inlets.forms;
-            if (lastForms && lastForms.length) myP5.redraw();
-        }
-    };
-});
-
 Rpd.noderenderer('jb/preview', 'svg', function() {
-    function getForms() { return lastForms; };
     var myP5;
     return {
         size: { width: 30, height: 30 },
@@ -36,25 +11,14 @@ Rpd.noderenderer('jb/preview', 'svg', function() {
                 document.body.insertBefore(targetDiv, document.body.childNodes[0]);
             }
             targetDiv.style.pointerEvents = 'none';
-            myP5 = new p5(initP5(getForms, window.innerWidth, window.innerHeight), targetDiv.id);
+            myP5 = new p5(initP5(window.innerWidth, window.innerHeight), targetDiv.id);
         },
         always: function(bodyElm, inlets) {
-            lastForms = inlets.forms;
-            if (lastForms && lastForms.length) myP5.redraw();
+            //lastForms = inlets.forms;
+            //if (lastForms && lastForms.length)
+            myP5.redraw();
         }
     };
-});
-
-Rpd.noderenderer('jb/layers', 'svg', {
-    size: { width: 50 }
-});
-
-Rpd.noderenderer('jb/transform', 'svg', {
-    size: { width: 50 }
-});
-
-Rpd.noderenderer('jb/style', 'svg', {
-    size: { width: 50 }
 });
 
 Rpd.noderenderer('jb/image', 'svg', function() {

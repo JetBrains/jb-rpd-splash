@@ -3,10 +3,10 @@
     visibility: visible !important;
 }
 
-.rpd-node.rpd-jb-preview .fullscreen-trigger {
+/* .rpd-node.rpd-jb-preview .fullscreen-trigger {
     position: absolute;
     right: 17px;
     pointer-events: all;
     cursor: pointer;
     z-index: 10;
-}
+} */
