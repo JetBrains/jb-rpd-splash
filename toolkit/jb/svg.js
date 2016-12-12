@@ -1,3 +1,5 @@
+var SVG_XMLNS = "http://www.w3.org/2000/svg";
+
 Rpd.noderenderer('jb/preview', 'svg', function() {
     var myP5;
     return {
@@ -21,7 +23,7 @@ Rpd.noderenderer('jb/preview', 'svg', function() {
     };
 });
 
-Rpd.noderenderer('jb/image', 'svg', function() {
+/* Rpd.noderenderer('jb/image', 'svg', function() {
     var myP5, lastFile;
     function getLastFile() { return lastFile; }
     return {
@@ -42,9 +44,9 @@ Rpd.noderenderer('jb/image', 'svg', function() {
             }
         }
     };
-});
+}); */
 
-function createCanvasWrapper(wrapperId, bodyElm) {
+/* function createCanvasWrapper(wrapperId, bodyElm) {
     var group = document.createElementNS(SVG_XMLNS, 'g');
     group.setAttributeNS(null, 'transform', 'translate(10, 10)');
     var foreign = document.createElementNS(SVG_XMLNS, 'foreignObject');
@@ -55,9 +57,9 @@ function createCanvasWrapper(wrapperId, bodyElm) {
     group.appendChild(foreign);
     bodyElm.appendChild(group);
     return wrapper;
-}
+} */
 
-function createP5ForImageDrop(node, inletName, getFile) {
+/* function createP5ForImageDrop(node, inletName, getFile) {
     return function(p) {
         p.setup = function() { var c = p.createCanvas(180, 30);
                                c.addClass('p5-canvas');
@@ -88,7 +90,7 @@ function createP5ForImageDrop(node, inletName, getFile) {
             }
         };
     }
-}
+} */
 
 function prepareCanvas(myP5Canvas) {
     myP5Canvas.className = 'p5-canvas';

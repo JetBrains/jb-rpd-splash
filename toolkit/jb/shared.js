@@ -13,6 +13,6 @@ function initP5(w, h) {
     }
 }
 
-function maybeCachedImage(p, f) {
+/* function maybeCachedImage(p, f) {
     return p.createImg(f.data);
-}
+} */

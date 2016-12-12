@@ -1,19 +1,4 @@
-/**
- * Created by jetbrains on 29/06/16.
- *
- */
-
-
-/* import megamu.mesh.*;
-import processing.core.PApplet;
-import processing.core.PGraphics;
-import processing.core.PImage;
-import processing.core.PShape;
-
-import java.util.ArrayList;
-import java.util.List; */
-
-var options = {
+var sketchConfig = {
     width: 1000,
     height: 500,
     maxPoints: 5000,
@@ -22,7 +7,7 @@ var options = {
     density: 6,
     inregularity: 0.7,
     backImgSrc: './experiment_bg.png'
-}
+};
 
 var backImg, grad, my;
 
@@ -31,20 +16,21 @@ var lastPoint;
 var pointData = [];
 
 function preload() {
-    loadImage(options.backImgSrc, function(img) {
+    loadImage(sketchConfig.backImgSrc, function(img) {
         img.loadPixels();
-        pointData = collectPointData(options, img.pixels, img.width, img.height);
+        pointData = collectPointData(sketchConfig, img.pixels, img.width, img.height);
     });
+    //myCanvas.parent('p5-canvas');
+
 }
 
 function setup() {
-    createCanvas(options.width, options.height);
+    createCanvas(sketchConfig.width, sketchConfig.height);
     noLoop();
+    updateWithConfig(sketchConfig);
 }
 
 function draw() {
-    var step = 12 * options.scale;
-
     background(0x161616);
 
     fill(0xFFFFFF)
@@ -58,13 +44,27 @@ function draw() {
     }
 }
 
-function collectPointData(options, pixels, imgWidth, imgHeight) {
-    var step = options.step;
-    var maxPoints = options.maxPoints;
-    var inregularity = options.inregularity;
+function updateWithConfig(newConfig) {
+  sketchConfig = newConfig;
+  // w = width+16;
+  // var xspacing = (conf.xspacing > 0) ? conf.xspacing : 10,
+  //     period = (conf.period > 0) ? conf.period : 500;
+  // dx = (TWO_PI / conf.period) * xspacing;
+  // yvalues = new Array(floor(w/xspacing));
+  // start = conf.startcolor ? color(conf.startcolor.r, conf.startcolor.g, conf.startcolor.b)
+  //                         : color(255, 255, 255);
+  // end = conf.endcolor ? color(conf.endcolor.r, conf.endcolor.g, conf.endcolor.b)
+  //                     : color(255, 255, 255);
+  // shapefunc = SHAPE_FUNC[conf.shape || 'circle'];
+}
 
-    var width = options.width;
-    var height = options.height;
+function collectPointData(config, pixels, imgWidth, imgHeight) {
+    var step = config.step;
+    var maxPoints = config.maxPoints;
+    var inregularity = config.inregularity;
+
+    var width = config.width;
+    var height = config.height;
 
     var idx, brightness, r, g, b, a;
 
