@@ -6,7 +6,7 @@ var sketchConfig = {
     maxSquareSize: 3,
     density: 6,
     inregularity: 0.7,
-    backImgSrc: './experiment_bg.png'
+    backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
 
 var backImg, grad, my;
@@ -20,20 +20,17 @@ function preload() {
         img.loadPixels();
         pointData = collectPointData(sketchConfig, img.pixels, img.width, img.height);
     });
-    //myCanvas.parent('p5-canvas');
 
 }
 
 function setup() {
-    createCanvas(sketchConfig.width, sketchConfig.height);
+    createCanvas(sketchConfig.width, sketchConfig.height).parent('rpd-jb-preview-target');
     noLoop();
     updateWithConfig(sketchConfig);
 }
 
 function draw() {
     background(0x161616);
-
-    fill(0xFFFFFF)
 
     if (pointData && pointData.length) {
         for (var i = 0; i < pointData.length; i++) {
