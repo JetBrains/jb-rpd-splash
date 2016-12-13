@@ -21,9 +21,12 @@ var lastPoint;
 
 var pointData = [];
 
+var lastBgImage;
+
 function preload() {
     loadImage(sketchConfig.backImgSrc, function(img) {
         img.loadPixels();
+        lastBgImage = img;
         pointData = collectPointData(sketchConfig, img.pixels, img.width, img.height);
         redraw();
     });
@@ -59,8 +62,12 @@ function draw() {
 
 function updateSketchConfig(newConfig) {
     //console.log(sketchConfig.maxPoints, newConfig.maxPoints);
-   loadChangedValuesFrom(newConfig);
-   redraw();
+    var recalcPoints = (newConfig.inregularity || newConfig.maxPoints || newConfig.width || newConfig.height) ? true : false;
+    loadChangedValuesFrom(newConfig);
+    if (recalcPoints && lastBgImage) {
+        pointData = collectPointData(sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
+    }
+    redraw();
   // w = width+16;
   // var xspacing = (conf.xspacing > 0) ? conf.xspacing : 10,
   //     period = (conf.period > 0) ? conf.period : 500;

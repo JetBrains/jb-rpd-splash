@@ -1,22 +1,30 @@
+Rpd.channeltype('jb/config', {
+    show: function(cfg) { return cfg ? '[Config]' : '[No Config]'; }
+});
+
 Rpd.nodetype('jb/config', {
     inlets: {
-        //'shape': { type: 'p5/shape', default: 'circle', name: 'shape' },
-        'wavescount': { type: 'util/number', default: 5, name: 'waves' },
-        //'startcolor': { type: 'p5/color', name: 'from' },
-        //'endcolor': { type: 'p5/color', name: 'to' },
-        //'xspacing': { type: 'util/number', default: 16, name: 'xspan' },
-        //'amplitude': { type: 'util/number', default: 75, name: 'ampl.' },
-        //'period': { type: 'util/number', default: 500, name: 'period' }
+        'width': { type: 'util/number', 'default': 1000 },
+        'height': { type: 'util/number', 'default': 500 },
+        'maxPoints': { type: 'util/number', 'default': 5000, name: 'max' },
+        'scale': { type: 'util/number', 'default': 1 },
+        'maxSquareSize': { type: 'util/number', 'default': 3, name: 'squareSize' },
+        'density': { type: 'util/number', 'default': 6 },
+        'inregularity': { type: 'util/number', 'default': 0.7 }
     },
     outlets: {
-        'config': { type: 'core/any' }
+        'config': { type: 'jb/config' }
     },
-    process: function(inlets) { }
+    process: function(inlets) {
+        return {
+            config: inlets
+        };
+    }
 });
 
 Rpd.nodetype('jb/preview', {
     inlets: {
-        config: { type: 'core/any', 'default': {} }
+        config: { type: 'jb/config', 'default': {} }
     },
     process: function(inlets) {
         window.updateSketchConfig(inlets.config);
