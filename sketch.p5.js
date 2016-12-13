@@ -37,7 +37,13 @@ function setup() {
 }
 
 function draw() {
-    background(0x161616);
+    clear();
+
+    background(color('#161616'));
+
+    fill(color('white'));
+    stroke(color('red'));
+    //noStroke();
 
     //console.log('draw');
 
@@ -52,7 +58,7 @@ function draw() {
 }
 
 function updateSketchConfig(newConfig) {
-    console.log(sketchConfig.maxPoints, newConfig.maxPoints);
+    //console.log(sketchConfig.maxPoints, newConfig.maxPoints);
    loadChangedValuesFrom(newConfig);
    redraw();
   // w = width+16;
@@ -68,7 +74,7 @@ function updateSketchConfig(newConfig) {
 }
 
 function collectPointData(config, pixels, imgWidth, imgHeight) {
-    console.log(config);
+    //console.log(config);
     var step = (config.scale || 1) * 12;
     var maxPoints = config.maxPoints;
     var inregularity = config.inregularity;
