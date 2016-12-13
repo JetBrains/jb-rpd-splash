@@ -81,6 +81,11 @@
                 pointer-events: all;
                 cursor: pointer;
             }
+
+            .rpd-node.rpd-util-comment .rpd-process text {
+                fill: white;
+                font-size: 13px;
+            }
         </style>
 
     </head>
@@ -114,6 +119,11 @@
 
             var configNode = patch.addNode('jb/config').move(200, 200);
 
+            var commentRemoved = false;
+
+            var commentNode = patch.addNode('util/comment').move(500, -60);
+            commentNode.inlets['text'].receive('Press SPACE to hide nodes and show background');
+
             var previewTarget = document.getElementById('rpd-jb-preview-target');
             previewTarget.style.width = window.innerWidth + 'px';
             previewTarget.style.height = window.innerHeight + 'px';
@@ -133,6 +143,10 @@
             }, true).onValue(function(value) {
                 overlayElm.className = value ? 'visible' : 'hidden';
                 patchElm.className = value ? 'visible' : 'hidden';
+                if (!value && !commentRemoved) {
+                    patch.removeNode(commentNode);
+                    commentRemoved = true;
+                }
             });
 
             var previewNode = patch.addNode('jb/preview').move(800, 400);
