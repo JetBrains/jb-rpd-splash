@@ -30,6 +30,10 @@ function preload() {
         lastBgImage = img;
         pointData = collectPointData(sketchConfig, img.pixels, img.width, img.height);
         redraw();
+        var loader = document.getElementById('loader');
+        if (loader) {
+            loader.style.opacity = 0;
+        }
     });
 
 }

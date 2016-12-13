@@ -88,11 +88,22 @@
             }
         </style>
 
+        <link rel="stylesheet" href="./loaders.min.css"></link>
+
+        <style>
+            .ball-rotate {
+                left: 30px;
+                top: 30px;
+                transition: opacity 500ms ease-out;
+            }
+        </style>
+
     </head>
     <body>
 
         <div id="rpd-jb-preview-target"></div>
         <div id="front-layer">
+            <div id="loader" class="loader-inner ball-rotate"><div></div></div>
             <div id="overlay"></div>
             <div id="patch-target"></div>
         </div>
