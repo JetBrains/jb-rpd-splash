@@ -4,8 +4,8 @@ Rpd.channeltype('jb/config', {
 
 Rpd.nodetype('jb/config', {
     inlets: {
-        'width': { type: 'util/number', 'default': 1000 },
-        'height': { type: 'util/number', 'default': 500 },
+        'width': { type: 'util/number', 'default': window.innerWidth },
+        'height': { type: 'util/number', 'default': window.innerHeight },
         'maxPoints': { type: 'util/number', 'default': 5000, name: 'max' },
         'scale': { type: 'util/number', 'default': 1 },
         'maxSquareSize': { type: 'util/number', 'default': 3, name: 'squareSize' },

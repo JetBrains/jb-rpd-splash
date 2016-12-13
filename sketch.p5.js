@@ -1,6 +1,6 @@
 var sketchConfig = {
-    width: 1000,
-    height: 500,
+    width: window.innerWidth,
+    height: window.innerHeight,
     maxPoints: 5000,
     scale: 1,
     maxSquareSize: 3,
