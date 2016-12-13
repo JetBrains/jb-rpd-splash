@@ -19,7 +19,7 @@ Rpd.nodetype('jb/preview', {
         config: { type: 'core/any', 'default': {} }
     },
     process: function(inlets) {
-        window.sketchUpdate(inlets.config);
+        window.updateSketchConfig(inlets.config);
     }
 });
 

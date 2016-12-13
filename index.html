@@ -86,9 +86,10 @@
         </div>
 
         <script>
-            window.sketchUpdate = function(config) {
+            // window.___sketchUpdateProxy = function(config) {
+            window.updateSketchConfig = function(config) {
                 window.missedSketchConfig = config;
-            }; // we'll replace it later
+            }; // sketch will replace it later
         </script>
 
         <script>
@@ -152,13 +153,13 @@
 
         <script>
             window.addEventListener('load', function() {
-                window.sketchUpdate = function(inlets) {
-                    sketchConfig = inlets;
+                /* window.___sketchUpdateProxy = function(config) {
                     // uses a global function from the sketch
-                    updateWithConfig(sketchConfig);
-                };
+                    updateSketchConfig(config);
+                }; */
 
-                if (window.missedSketchConfig) window.sketchUpdate(window.missedSketchConfig);
+                //if (window.missedSketchConfig) window.___sketchUpdateProxy(window.missedSketchConfig);
+                if (window.missedSketchConfig) window.updateSketchConfig(window.missedSketchConfig);
             });
         </script>
 

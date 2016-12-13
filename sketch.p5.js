@@ -9,6 +9,12 @@ var sketchConfig = {
     backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
 
+function loadChangedValuesFrom(newConfig) {
+    Object.keys(newConfig).forEach(function(key) {
+        if (newConfig[key]) sketchConfig[key] = newConfig[key];
+    });
+}
+
 var backImg, grad, my;
 
 var lastPoint;
@@ -19,6 +25,7 @@ function preload() {
     loadImage(sketchConfig.backImgSrc, function(img) {
         img.loadPixels();
         pointData = collectPointData(sketchConfig, img.pixels, img.width, img.height);
+        redraw();
     });
 
 }
@@ -26,13 +33,16 @@ function preload() {
 function setup() {
     createCanvas(sketchConfig.width, sketchConfig.height).parent('rpd-jb-preview-target');
     noLoop();
-    updateWithConfig(sketchConfig);
+    updateSketchConfig(sketchConfig);
 }
 
 function draw() {
     background(0x161616);
 
+    //console.log('draw');
+
     if (pointData && pointData.length) {
+        //console.log('pointData', pointData);
         for (var i = 0; i < pointData.length; i++) {
             rect(pointData[i][0], pointData[i][1],
                  10 * (pointData[i][2] / 255),
@@ -41,8 +51,10 @@ function draw() {
     }
 }
 
-function updateWithConfig(newConfig) {
-  sketchConfig = newConfig;
+function updateSketchConfig(newConfig) {
+    console.log(sketchConfig.maxPoints, newConfig.maxPoints);
+   loadChangedValuesFrom(newConfig);
+   redraw();
   // w = width+16;
   // var xspacing = (conf.xspacing > 0) ? conf.xspacing : 10,
   //     period = (conf.period > 0) ? conf.period : 500;
@@ -56,14 +68,15 @@ function updateWithConfig(newConfig) {
 }
 
 function collectPointData(config, pixels, imgWidth, imgHeight) {
-    var step = config.step;
+    console.log(config);
+    var step = (config.scale || 1) * 12;
     var maxPoints = config.maxPoints;
     var inregularity = config.inregularity;
 
     var width = config.width;
     var height = config.height;
 
-    var idx, brightness, r, g, b, a;
+    var idx, pxBrightness, r, g, b, a;
 
     var lastPoint;
 
@@ -73,11 +86,19 @@ function collectPointData(config, pixels, imgWidth, imgHeight) {
 
     //var d = pixelDensity();
 
+    //console.log('maxPoints', maxPoints);
+
+    //console.log('imgWidth', imgWidth, 'imgHeight', imgHeight, 'step', step);
+
     for (var x = 0; x < imgWidth; x += step) {
+
+        //console.log('x', x, pointData.length >= maxPoints);
 
         if (pointData.length >= maxPoints) break;
 
         for (var y = 0; y < imgHeight; y += step) {
+
+            //console.log('y', y, pointData.length >= maxPoints);
 
             if (pointData.length >= maxPoints) break;
 
@@ -88,19 +109,23 @@ function collectPointData(config, pixels, imgWidth, imgHeight) {
             b = pixels[idx+2];
             a = pixels[idx+3];
 
-            brightness = brightness(color(r, g, b, a));
+            pxBrightness = brightness(color(r, g, b, a));
 
-            if ((brightness > 3) && (random(0, brightness) < 70)) {
+            //console.log('x', x, 'y', y, 'r', r, 'g', g, 'b', b, 'a', a, 'brightness', pxBrightness);
+
+            if ((pxBrightness > 3) && (random(0, pxBrightness) < 70)) {
 
                 xpos = ((x / imgWidth) * width) + (random(-step / 2, step / 2) * inregularity);
                 ypos = ((y / imgHeight) * height) + (random(-step / 2, step / 2) * inregularity);
 
-                collectPointData.push([ xpos, ypos, brightness ]);
+                pointData.push([ xpos, ypos, pxBrightness ]);
             }
 
         }
 
     }
+
+    //console.log(pointData.length, pointData);
 
     return pointData;
 }
