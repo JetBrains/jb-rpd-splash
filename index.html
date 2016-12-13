@@ -130,6 +130,12 @@
             previewTarget.style.width = window.innerWidth + 'px';
             previewTarget.style.height = window.innerHeight + 'px';
 
+            Kefir.fromEvents(document.body, 'keydown').filter(function(evt) {
+                return evt.keyCode === 32;
+            }).onValue(function(evt) {
+                evt.preventDefault();
+            });
+
             var overlayElm = document.getElementById('overlay');
             var patchElm = document.getElementById('patch-target');
             Kefir.fromEvents(document.body, 'keydown').filter(function(evt) {
