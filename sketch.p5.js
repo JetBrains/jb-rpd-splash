@@ -52,17 +52,18 @@ function draw() {
 
     if (pointData && pointData.length) {
         //console.log('pointData', pointData);
-        for (var i = 0; i < pointData.length; i++) {
+        /*for (var i = 0; i < pointData.length; i++) {
             rect(pointData[i][0], pointData[i][1],
                  10 * (pointData[i][2] / 255),
                  10 * (pointData[i][2] / 255));
-        }
+        }*/
 
         var voronoi = d3.voronoi()
                         .size([sketchConfig.width, sketchConfig.height])
                         (pointData);
 
-        drawPolygons(voronoi);
+        //drawPolygons(voronoi, sketchConfig);
+        drawEdges(voronoi, sketchConfig);
     }
 }
 
@@ -149,7 +150,7 @@ function collectPointData(config, pixels, imgWidth, imgHeight) {
     return pointData;
 }
 
-function drawPolygons(voronoi) {
+function drawPolygons(voronoi, config) {
     var polygons = voronoi.polygons();
 
     var vcolors = [
@@ -196,4 +197,32 @@ function drawPolygons(voronoi) {
         pop();
     }
 
+}
+
+function drawEdges(voronoi, config) {
+    var scale = config.scale;
+
+    rectMode(CENTER);
+
+    strokeWeight(0.4);
+    //console.log(voronoi.triangles());
+    var myEdges = voronoi.edges; //myDelaunay.getEdges();
+
+    for (var n=0; n<myEdges.length; n++) {
+        if (!myEdges[n]) continue;
+        var startX = myEdges[n][0][0];
+        var startY = myEdges[n][0][1];
+        var endX = myEdges[n][1][0];
+        var endY = myEdges[n][1][1];
+        stroke(random(70,180));
+        if(dist(startX, startY, endX, endY) < 50) {
+
+            line(startX, startY, endX, endY);
+        }
+        var squareSize = Math.floor(random(1,3)*scale);
+        fill(random(90,180));
+        rect(startX, startY, squareSize, squareSize);
+    }
+
+    noStroke();
 }
