@@ -62,6 +62,10 @@ function draw() {
                         .size([sketchConfig.width, sketchConfig.height])
                         (pointData);
 
+        if (lastBgImage) {
+            image(lastBgImage, 0, 0, sketchConfig.width, sketchConfig.height);
+        }
+
         //drawPolygons(voronoi, sketchConfig);
         drawEdges(voronoi, sketchConfig);
         drawShapes(voronoi, sketchConfig);
@@ -76,16 +80,6 @@ function updateSketchConfig(newConfig) {
         pointData = collectPointData(sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
     }
     redraw();
-  // w = width+16;
-  // var xspacing = (conf.xspacing > 0) ? conf.xspacing : 10,
-  //     period = (conf.period > 0) ? conf.period : 500;
-  // dx = (TWO_PI / conf.period) * xspacing;
-  // yvalues = new Array(floor(w/xspacing));
-  // start = conf.startcolor ? color(conf.startcolor.r, conf.startcolor.g, conf.startcolor.b)
-  //                         : color(255, 255, 255);
-  // end = conf.endcolor ? color(conf.endcolor.r, conf.endcolor.g, conf.endcolor.b)
-  //                     : color(255, 255, 255);
-  // shapefunc = SHAPE_FUNC[conf.shape || 'circle'];
 }
 
 function collectPointData(config, pixels, imgWidth, imgHeight) {
