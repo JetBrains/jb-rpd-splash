@@ -6,6 +6,7 @@ var sketchConfig = {
     maxSquareSize: 3,
     density: 6,
     inregularity: 0.7,
+    step: 12,
     backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
 
@@ -69,6 +70,10 @@ function draw() {
         //drawPolygons(voronoi, sketchConfig);
         drawEdges(voronoi, sketchConfig);
         drawShapes(voronoi, sketchConfig);
+
+        if (lastBgImage) {
+            drawLines(voronoi, sketchConfig, lastBgImage.pixels);
+        }
     }
 }
 
@@ -84,7 +89,7 @@ function updateSketchConfig(newConfig) {
 
 function collectPointData(config, pixels, imgWidth, imgHeight) {
     //console.log(config);
-    var step = (config.scale || 1) * 12;
+    var step = (config.scale || 1) * Math.floor(config.step);
     var maxPoints = config.maxPoints;
     var inregularity = config.inregularity;
 
@@ -117,7 +122,7 @@ function collectPointData(config, pixels, imgWidth, imgHeight) {
 
             if (pointData.length >= maxPoints) break;
 
-            idx = (x + y * width) * 4;
+            idx = pixelIndexByCoords(x, y, imgWidth, imgHeight/*, density*/);
 
             r = pixels[idx];
             g = pixels[idx+1];
@@ -285,4 +290,63 @@ function drawShapes(voronoi, config) {
         }
         endShape(CLOSE);
     }
+}
+
+function drawLines(voronoi, config, pixels) {
+
+    var edges = voronoi.edges;
+    var cells = voronoi.cells;
+
+    var width = config.width;
+    var height = config.height;
+
+    //blendMode(SCREEN);
+    var shapes = [];
+   // int[] colors = {0xccd5df, 0x8da3b2, 0x6f899f, 0x3b5778, 0xd6dfe6};
+
+    var s = 0;
+
+    var cellEdges;
+
+    var l;
+
+    var pxBrightness, startX, startY, endX, endY;
+
+    var idx, r, g, b, a;
+
+    for (var j = 0; j < cells.length; j++) {
+        if (!cells[j]) continue;
+        cellEdges = cells[j].halfedges;
+
+        for (l = 0; l < cellEdges.length; l += 2) {
+            if (!cellEdges[l] || !cellEdges[l + 1]) continue;
+
+            startX = edges[cellEdges[l]][0];
+            startY = edges[cellEdges[l]][1];
+            endX = edges[cellEdges[l + 1]][0];
+            endY = edges[cellEdges[l + 1]][1];
+
+            idx = pixelIndexByCoords(Math.floor(startX), Math.floor(startY), width, height/*, density*/);
+
+            r = pixels[idx];
+            g = pixels[idx+1];
+            b = pixels[idx+2];
+            a = pixels[idx+3];
+
+            pxBrightness = brightness(color(r, g, b, a));
+
+            strokeWeight(map(pxBrightness, 0, 255, 0.4, 0.6));
+            stroke(map(pxBrightness, 0, 255, 100, 255));
+            line(startX, startY,
+                 endX, endY);
+        }
+
+
+
+    }
+
+}
+
+function pixelIndexByCoords(x, y, width, height, density) {
+    return (x + y * width) * 4;
 }

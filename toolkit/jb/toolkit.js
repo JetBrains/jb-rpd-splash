@@ -14,7 +14,8 @@ Rpd.nodetype('jb/config', {
         'scale': { type: 'util/number', 'default': 1 },
         'maxSquareSize': { type: 'util/number', 'default': 3, name: 'squareSize' },
         'density': { type: 'util/number', 'default': 6 },
-        'inregularity': { type: 'util/number', 'default': 0.7 }
+        'inregularity': { type: 'util/number', 'default': 0.7 },
+        'step': { type: 'util/number', 'default': 12 }
     },
     outlets: {
         'config': { type: 'jb/config' }
