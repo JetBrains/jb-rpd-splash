@@ -25,6 +25,8 @@
         <script src="./p5.min.js"></script>
         <script src="./p5.dom.js"></script>
 
+        <!-- d3.v4.min.js -->
+        <script src="./d3.v4.min.js"></script>
         <!-- d3.voronoi.js -->
         <script src="./d3-voronoi.v1.min.js"></script>
 
@@ -73,6 +75,11 @@
 
             .rpd-node .rpd-content {
                 opacity: 0.85;
+            }
+
+            .rpd-node.rpd-jb-save .rpd-process * {
+                pointer-events: all;
+                cursor: pointer;
             }
         </style>
 
@@ -124,7 +131,7 @@
 
             patch.addNode('util/nodelist').move(800, 50);
 
-            patch.addNode('jb/config').move(200, 200);
+            var configNode = patch.addNode('jb/config').move(200, 200);
 
             var previewTarget = document.getElementById('rpd-jb-preview-target');
             previewTarget.style.width = window.innerWidth + 'px';
@@ -147,7 +154,13 @@
                 patchElm.className = value ? 'visible' : 'hidden';
             });
 
-            patch.addNode('jb/preview').move(800, 400);
+            var previewNode = patch.addNode('jb/preview').move(800, 400);
+
+            var saveNode = patch.addNode('jb/save').move(1000, 400);
+
+            configNode.outlets['config'].connect(previewNode.inlets['config']);
+
+            previewNode.outlets['image'].connect(saveNode.inlets['image']);
 
         </script>
 

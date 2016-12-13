@@ -23,6 +23,41 @@ Rpd.noderenderer('jb/preview', 'svg', function() {
     };
 });
 
+Rpd.noderenderer('jb/save', 'svg', {
+    size: { width: 40, height: 40 },
+    first: function(bodyElm) {
+        var hiddenLink = d3.select(document.createElement('a'))
+                           .attr('download', 'jb-sketch.png');
+
+        var saveButton =
+            d3.select(bodyElm).append('text')
+                              .attr('x', 20)
+                              .style('font-size', '24px')
+                              .style('text-anchor', 'middle')
+                              .text('💾');
+        Kefir.fromEvents(saveButton.node(), 'mousemove').onValue(function() {
+            saveButton.style('font-size', '27px');
+        });
+        Kefir.fromEvents(saveButton.node(), 'mouseout').onValue(function() {
+            saveButton.style('font-size', '24px');
+        });
+        Kefir.fromEvents(saveButton.node(), 'click').onValue(function() {
+            var canvasContainer = document.getElementById('rpd-jb-preview-target');
+            if (!canvasContainer) return;
+            var canvas = canvasContainer.children[0];
+            if (!canvas) return;
+            //hiddenLink.attr('href', canvas.toDataURL('image/png'));
+            var blob = canvas.toBlob(function(blob) {
+                var url = URL.createObjectURL(blob);
+
+                hiddenLink.attr('href', url);
+                hiddenLink.node().click();
+                //URL.revokeObjectURL(url);
+            });
+        });
+    }
+});
+
 /* Rpd.noderenderer('jb/image', 'svg', function() {
     var myP5, lastFile;
     function getLastFile() { return lastFile; }

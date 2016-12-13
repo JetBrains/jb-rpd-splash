@@ -2,6 +2,10 @@ Rpd.channeltype('jb/config', {
     show: function(cfg) { return cfg ? '[Config]' : '[No Config]'; }
 });
 
+Rpd.channeltype('jb/image', {
+    show: function(img) { return img ? '[Image]' : '[No Image]'; }
+});
+
 Rpd.nodetype('jb/config', {
     inlets: {
         'width': { type: 'util/number', 'default': window.innerWidth },
@@ -26,8 +30,12 @@ Rpd.nodetype('jb/preview', {
     inlets: {
         config: { type: 'jb/config', 'default': {} }
     },
+    outlets: {
+        image: { type: 'jb/image', 'default': null }
+    },
     process: function(inlets) {
         window.updateSketchConfig(inlets.config);
+        return { image: {} };
     }
 });
 
@@ -52,3 +60,8 @@ Rpd.nodetype('jb/preview', {
     }
 });
  */
+
+ Rpd.nodetype('jb/save', {
+    inlets: { 'image': { type: 'jb/image' } },
+    process: function() {}
+});

@@ -22,6 +22,10 @@ if [ ! -f ./p5.dom.js ]; then
     wget https://raw.githubusercontent.com/lmccart/p5.js/master/lib/addons/p5.dom.js
 fi
 
+if [ ! -f ./d3.v4.min.js ]; then
+    wget https://d3js.org/d3.v4.min.js
+fi
+
 if [ ! -f ./d3-voronoi.v1.min.js ]; then
     wget https://d3js.org/d3-voronoi.v1.min.js
 fi
