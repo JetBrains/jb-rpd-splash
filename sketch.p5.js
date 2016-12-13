@@ -72,7 +72,7 @@ function draw() {
         drawShapes(voronoi, sketchConfig);
 
         if (lastBgImage) {
-            drawLines(voronoi, sketchConfig, lastBgImage.pixels);
+            drawLines(voronoi, sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
         }
     }
 }
@@ -292,7 +292,7 @@ function drawShapes(voronoi, config) {
     }
 }
 
-function drawLines(voronoi, config, pixels) {
+function drawLines(voronoi, config, pixels, imgWidth, imgHeight) {
 
     var edges = voronoi.edges;
     var cells = voronoi.cells;
@@ -326,7 +326,7 @@ function drawLines(voronoi, config, pixels) {
             endX = edges[cellEdges[l + 1]][0];
             endY = edges[cellEdges[l + 1]][1];
 
-            idx = pixelIndexByCoords(Math.floor(startX), Math.floor(startY), width, height/*, density*/);
+            idx = pixelIndexByCoords(Math.floor(startX), Math.floor(startY), imgWidth, imgHeight/*, density*/);
 
             r = pixels[idx];
             g = pixels[idx+1];
