@@ -64,6 +64,7 @@ function draw() {
 
         //drawPolygons(voronoi, sketchConfig);
         drawEdges(voronoi, sketchConfig);
+        drawShapes(voronoi, sketchConfig);
     }
 }
 
@@ -225,4 +226,69 @@ function drawEdges(voronoi, config) {
     }
 
     noStroke();
+}
+
+function drawShapes(voronoi, config) {
+    var edges = voronoi.edges;
+    var cells = voronoi.cells;
+
+    smooth();
+
+    noStroke();
+
+    //blendMode(SCREEN);
+    var shapes = [];
+   // int[] colors = {0xccd5df, 0x8da3b2, 0x6f899f, 0x3b5778, 0xd6dfe6};
+
+    var s = 0;
+
+    var minX, minY, maxX, maxY;
+
+    var area;
+
+    var cellEdges;
+    var coords;
+
+    var l;
+
+    for (var j = 0; j < cells.length; j++) {
+        if (!cells[j]) continue;
+        cellEdges = cells[j].halfedges;
+
+        minX = Infinity, minY = Infinity;
+        maxX = 0, maxY = 0;
+
+        coords = [];
+
+        for (l = 0; l < cellEdges.length; ++l) {
+            coords.push(edges[cellEdges[l]][0]);
+            coords.push(edges[cellEdges[l]][1]);
+        }
+
+        for (l = 0; l < coords.length; ++l) {
+            minX = Math.min(maxX, coords[l][0]);
+            minY = Math.min(minY, coords[l][1]);
+            maxX = Math.max(maxX, coords[l][0]);
+            maxY = Math.max(maxY, coords[l][1]);
+        }
+
+        area = (maxX - minX) * (maxY - minY);
+
+        if (area < 2000) {
+            shapes.push(coords);
+            s++;
+        }
+
+    }
+
+    for (j = 0; j < shapes.length; j++) {
+        if (!shapes[j]) continue;
+        fill(color(random(255)), random(40, 80));
+        beginShape();
+        coords = shapes[j];
+        for (var l = 0; l < coords.length; ++l) {
+            vertex(coords[l][0], coords[l][1]);
+        }
+        endShape(CLOSE);
+    }
 }
