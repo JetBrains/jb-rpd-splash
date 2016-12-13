@@ -62,49 +62,7 @@ function draw() {
                         .size([sketchConfig.width, sketchConfig.height])
                         (pointData);
 
-        var polygons = voronoi.polygons();
-
-        var vcolors = [
-                       color(197,27,125), color(222,119,174), color(241,182,218),
-                       color(253,224,239), color(247,247,247), color(230,245,208),
-                       color(184,225,134), color(127,188,65), color(77,146,33)
-                      ];
-
-        stroke(255);
-
-          // draw polygons
-          for(var j=0; j<polygons.length; j++) {
-            var apolygon = polygons[j];
-
-            if (!apolygon) continue;
-
-            // pick a random color
-            var polyColor = vcolors[j % vcolors.length];
-            fill(polyColor);
-
-            beginShape();
-            for(var k=0; k<apolygon.length; k++) {
-
-              var v = apolygon[k];
-              vertex(v[0], v[1]);
-
-            }
-            endShape(CLOSE);
-          }
-
-          // draw circles.
-
-          var circles = pointData.slice(1);
-
-          stroke(0);
-          for(var i=0; i< circles.length; i++) {
-            var center = circles[i];
-            push();
-            translate(center[0], center[1]);
-            fill(0);
-            ellipse(0, 0, 1.5, 1.5);
-            pop();
-          }
+        drawPolygons(voronoi);
     }
 }
 
@@ -189,4 +147,53 @@ function collectPointData(config, pixels, imgWidth, imgHeight) {
     //console.log(pointData.length, pointData);
 
     return pointData;
+}
+
+function drawPolygons(voronoi) {
+    var polygons = voronoi.polygons();
+
+    var vcolors = [
+                   color(197,27,125), color(222,119,174), color(241,182,218),
+                   color(253,224,239), color(247,247,247), color(230,245,208),
+                   color(184,225,134), color(127,188,65), color(77,146,33)
+                  ];
+
+    stroke(255);
+
+    // draw polygons
+    for (var j = 0; j < polygons.length; j++) {
+        var polygon = polygons[j];
+
+        if (!polygon) continue;
+
+        // pick a random color
+        var polyColor = vcolors[j % vcolors.length];
+        fill(polyColor);
+
+        beginShape();
+
+        for (var k = 0; k < polygon.length; k++) {
+
+          var v = polygon[k];
+          vertex(v[0], v[1]);
+
+        }
+
+        endShape(CLOSE);
+    }
+
+    // draw circles.
+
+    var circles = pointData.slice(1);
+
+    stroke(0);
+    for (var i = 0 ; i < circles.length; i++) {
+        var center = circles[i];
+        push();
+        translate(center[0], center[1]);
+        fill(0);
+        ellipse(0, 0, 1.5, 1.5);
+        pop();
+    }
+
 }
