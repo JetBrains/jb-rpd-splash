@@ -12,6 +12,7 @@ Rpd.nodetype('jb/config', {
         'height': { type: 'util/number', 'default': window.innerHeight },
         'maxPoints': { type: 'util/number', 'default': 5000, name: 'max' },
         'scale': { type: 'util/number', 'default': 1 },
+        'bgcolor': { type: 'util/color', 'default': { r: 24, g: 24, b: 24 } },
         'maxSquareSize': { type: 'util/number', 'default': 3, name: 'squareSize' },
         'density': { type: 'util/number', 'default': 6 },
         'inregularity': { type: 'util/number', 'default': 0.7 },

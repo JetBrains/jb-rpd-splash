@@ -3,6 +3,7 @@ var sketchConfig = {
     height: window.innerHeight,
     maxPoints: 5000,
     scale: 1,
+    bgcolor: { r: 24, g: 24, b: 24 },
     maxSquareSize: 3,
     density: 6,
     inregularity: 0.7,
@@ -47,7 +48,8 @@ function setup() {
 function draw() {
     clear();
 
-    background(color('#161616'));
+    var bgcolor = sketchConfig.bgcolor;
+    background(color(bgcolor.r, bgcolor.g, bgcolor.b));
 
     fill(color('white'));
     stroke(color('red'));
@@ -68,17 +70,23 @@ function draw() {
                         (pointData);
 
         if (lastBgImage) {
-            image(lastBgImage, 0, 0, sketchConfig.width, sketchConfig.height);
+           // image(lastBgImage, 0, 0, sketchConfig.width, sketchConfig.height);
         }
 
-        //drawPolygons(voronoi, sketchConfig);
+       // drawPolygons(voronoi, sketchConfig);
         drawEdges(voronoi, sketchConfig);
-        drawShapes(voronoi, sketchConfig);
+       //drawShapes(voronoi, sketchConfig);
 
         if (lastBgImage) {
             drawLines(voronoi, sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
         }
+
     }
+    blendMode(OVERLAY);
+    fill(color('red'));
+    rect(sketchConfig.width / 2, sketchConfig.height / 2,
+         sketchConfig.width, sketchConfig.height);
+    blendMode(BLEND);
 }
 
 function updateSketchConfig(newConfig) {
@@ -223,7 +231,7 @@ function drawEdges(voronoi, config) {
 
             line(startX, startY, endX, endY);
         }
-        var squareSize = Math.floor(random(1,3)*scale);
+        var squareSize = Math.floor(random(1,config.maxSquareSize)*scale);
         fill(random(90,180));
         rect(startX, startY, squareSize, squareSize);
     }
