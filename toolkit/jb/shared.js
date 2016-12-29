@@ -72,3 +72,18 @@ function toHexColor(color) {
 function _rgb(r, g, b, a) {
     return { r: r, g: g, b: b, a: a };
 }
+
+function howMuch(single, plural) {
+    return function(list) {
+        if (!list) return 'Nothing';
+        if (list.length == 0) return 'No ' + plural;
+        if (list.length == 1) return 'One ' + single;
+        if (list.length == 2) return 'Two ' + plural;
+        return list.length + ' ' + plural;
+    };
+}
+
+function stopPropagation(event) {
+    event.stopPropagation();
+    return event;
+}

@@ -4,6 +4,11 @@ var sketchConfig = {
     maxPoints: 5000,
     scale: 1,
     bgcolor: _rgb(24, 24, 24),
+    palette: [
+        '#ff0000',
+        '#00ff00',
+        '#0000ff'
+    ],
     maxSquareSize: 3,
     density: 6,
     inregularity: 0.7,
