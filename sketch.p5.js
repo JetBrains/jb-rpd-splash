@@ -29,12 +29,15 @@ var lastPoint;
 var pointData = [];
 
 var lastBgImage;
+var canvas, ctx;
 
 function preload() {
+    console.log('preload');
     loadImage(sketchConfig.backImgSrc, function(img) {
         img.loadPixels();
         lastBgImage = img;
         pointData = collectPointData(sketchConfig, img.pixels, img.width, img.height);
+        console.log('image loaded');
         redraw();
         var loader = document.getElementById('loader');
         if (loader) {
@@ -45,12 +48,24 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(sketchConfig.width, sketchConfig.height).parent('rpd-jb-preview-target');
+    console.log('setup');
+    canvas = createCanvas(sketchConfig.width, sketchConfig.height).parent('rpd-jb-preview-target');
+    ctx = canvas.drawingContext;
+    console.log('ctx', ctx, ctx.createLinearGradient);
     noLoop();
     updateSketchConfig(sketchConfig);
 }
 
 function draw() {
+    // noStroke();
+    // for (var x = 0; x < width; x+=10) {
+    //     for (var y = 0; y < height; y+=10) {
+    //         var c = 255 * noise(0.01 * x, 0.01 * y);
+    //         fill(c);
+    //         rect(x, y, 10, 10);
+    //     }
+    // }
+
     clear();
 
     var bgcolor = sketchConfig.bgcolor;
@@ -89,10 +104,32 @@ function draw() {
 
     }
 
-    rotate(QUARTER_PI)
-    gradient(0, 0, sqrt(pow(width,2) + pow(height,2)), sqrt(pow(width,2) + pow(height,2)), color('red'), color('blue'), 'Y_AXIS');
-   // blendMode(BLEND);
-    rotate(-QUARTER_PI)
+    var sizeRect = 200;
+    var xRect = width/2;
+    var yRect = height/2;
+
+
+    var rotation1 = map(1, 0, 100, 0, sizeRect);
+    var rotation2 = map(1, 0, 100, 0, sizeRect);
+    var location = map(50, 0, 100, 0, sizeRect);
+
+
+    var startGrad1 = createVector(xRect + rotation1 + location, yRect + sizeRect - rotation2 - location);
+    var endGrad1 = createVector(xRect + sizeRect - rotation1 - location, yRect + rotation2 + location);
+
+    //rectangle
+    if (ctx) {
+        var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
+        gradient.addColorStop(0, "#0073CF");
+        gradient.addColorStop(1, "#FFCC00");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(xRect, yRect, 200, 200);
+    }
+
+   //  rotate(QUARTER_PI)
+   //  gradient(0, 0, sqrt(pow(width,2) + pow(height,2)), sqrt(pow(width,2) + pow(height,2)), color(sketchConfig.palette[0]), color(sketchConfig.palette[1]), 'Y_AXIS');
+   // // blendMode(BLEND);
+   //  rotate(-QUARTER_PI)
 }
 
 function updateSketchConfig(newConfig) {
@@ -359,6 +396,7 @@ function drawLines(voronoi, config, pixels, imgWidth, imgHeight) {
             line(startX, startY,
                  endX, endY);
         }
+
 
 
 
