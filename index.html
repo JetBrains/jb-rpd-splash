@@ -86,6 +86,15 @@
                 fill: white;
                 font-size: 13px;
             }
+
+            .rpd-node.rpd-jb-palette .rpd-process .rpd-jb-palette-variant * {
+                pointer-events: all;
+                cursor: pointer;
+            }
+
+            .rpd-jb-palette-variant.rpd-jb-active-variant {
+                stroke: white;
+            }
         </style>
 
         <link rel="stylesheet" href="./loaders.min.css"></link>
@@ -129,7 +138,7 @@
 
             patch.addNode('util/nodelist').move(800, 50);
 
-            var configNode = patch.addNode('jb/config').move(200, 200);
+            var configNode = patch.addNode('jb/config', 'Sketch Config').move(200, 200);
 
             var commentRemoved = false;
 
@@ -161,13 +170,17 @@
                 }
             });
 
-            var previewNode = patch.addNode('jb/preview').move(800, 400);
+            var previewNode = patch.addNode('jb/preview', 'Preview').move(800, 400);
 
-            var saveNode = patch.addNode('jb/save').move(1000, 400);
+            var saveNode = patch.addNode('jb/save', 'Save Image').move(1000, 400);
 
             var randomNode = patch.addNode('util/random').move(300, 500);
 
             var metroNode = patch.addNode('util/metro').move(90, 500);
+
+            var paletteNode = patch.addNode('jb/palette').move(30, 55);
+
+            paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
 
             configNode.outlets['config'].connect(previewNode.inlets['config']);
 
