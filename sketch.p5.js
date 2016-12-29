@@ -3,7 +3,7 @@ var sketchConfig = {
     height: window.innerHeight,
     maxPoints: 5000,
     scale: 1,
-    bgcolor: { r: 24, g: 24, b: 24 },
+    bgcolor: _rgb(24, 24, 24),
     maxSquareSize: 3,
     density: 6,
     inregularity: 0.7,

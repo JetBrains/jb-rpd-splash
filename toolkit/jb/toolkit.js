@@ -6,17 +6,29 @@ Rpd.channeltype('jb/image', {
     show: function(img) { return img ? '[Image]' : '[No Image]'; }
 });
 
+Rpd.channeltype('jb/integer', {
+    allows: [ 'util/number' ],
+    default: 0,
+    readonly: true,
+    accept: function(val) {
+        if (val === Infinity) return true;
+        var parsed = parseFloat(val);
+        return !isNaN(parsed) && isFinite(parsed);
+    },
+    adapt: function(val) { return Math.floor(parseFloat(val)); }
+});
+
 Rpd.nodetype('jb/config', {
     inlets: {
-        'width': { type: 'util/number', 'default': window.innerWidth },
-        'height': { type: 'util/number', 'default': window.innerHeight },
-        'maxPoints': { type: 'util/number', 'default': 5000, name: 'max' },
+        'width': { type: 'jb/integer', 'default': window.innerWidth },
+        'height': { type: 'jb/integer', 'default': window.innerHeight },
+        'maxPoints': { type: 'util/integer', 'default': 5000, name: 'max' },
         'scale': { type: 'util/number', 'default': 1 },
-        'bgcolor': { type: 'util/color', 'default': { r: 24, g: 24, b: 24 } },
-        'maxSquareSize': { type: 'util/number', 'default': 3, name: 'squareSize' },
+        'bgcolor': { type: 'util/color', 'default': _rgb(24, 24, 24) },
+        'maxSquareSize': { type: 'jb/integer', 'default': 3, name: 'squareSize' },
         'density': { type: 'util/number', 'default': 6 },
         'inregularity': { type: 'util/number', 'default': 0.7 },
-        'step': { type: 'util/number', 'default': 12 }
+        'step': { type: 'jb/integer', 'default': 12 }
     },
     outlets: {
         'config': { type: 'jb/config' }
