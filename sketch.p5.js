@@ -55,7 +55,8 @@ function draw() {
 
     var bgcolor = sketchConfig.bgcolor;
     background(color(bgcolor.r, bgcolor.g, bgcolor.b));
-
+    var width = sketchConfig.width;
+    var height = sketchConfig.height;
     fill(color('white'));
     stroke(color('red'));
     //noStroke();
@@ -87,11 +88,11 @@ function draw() {
         }
 
     }
-    blendMode(OVERLAY);
-    fill(color('red'));
-    rect(sketchConfig.width / 2, sketchConfig.height / 2,
-         sketchConfig.width, sketchConfig.height);
-    blendMode(BLEND);
+
+    rotate(QUARTER_PI)
+    gradient(0, 0, sqrt(pow(width,2) + pow(height,2)), sqrt(pow(width,2) + pow(height,2)), color('red'), color('blue'), 'Y_AXIS');
+   // blendMode(BLEND);
+    rotate(-QUARTER_PI)
 }
 
 function updateSketchConfig(newConfig) {
@@ -106,7 +107,7 @@ function updateSketchConfig(newConfig) {
 
 function collectPointData(config, pixels, imgWidth, imgHeight) {
     //console.log(config);
-    var step = (config.scale || 1) * Math.floor(config.step);
+    var step = Math.floor(config.step);
     var maxPoints = config.maxPoints;
     var inregularity = config.inregularity;
 
@@ -220,6 +221,7 @@ function drawEdges(voronoi, config) {
     var scale = config.scale;
 
     rectMode(CENTER);
+    smooth(8);
 
     strokeWeight(0.4);
     //console.log(voronoi.triangles());
@@ -231,12 +233,12 @@ function drawEdges(voronoi, config) {
         var startY = myEdges[n][0][1];
         var endX = myEdges[n][1][0];
         var endY = myEdges[n][1][1];
-        stroke(random(70,180));
+        stroke(random(70,255));
         if(dist(startX, startY, endX, endY) < 50) {
 
             line(startX, startY, endX, endY);
         }
-        var squareSize = Math.floor(random(1,config.maxSquareSize)*scale);
+        var squareSize = Math.floor(random(1,config.maxSquareSize));
         fill(random(90,180));
         rect(startX, startY, squareSize, squareSize);
     }
@@ -362,6 +364,31 @@ function drawLines(voronoi, config, pixels, imgWidth, imgHeight) {
 
     }
 
+}
+
+
+function gradient(x, y, w, h, c1, c2, axis) {
+
+    noFill();
+    strokeWeight(2);
+
+
+    if (axis == 'Y_AXIS') {  // Top to bottom gradient
+        for (var i = y; i <= y + h; i++) {
+            var inter = map(i, y, y + h, 0, 1);
+            var c = lerpColor(c1, c2, inter);
+            stroke(c);
+            line(x, i, x + w, i);
+        }
+    }
+    else if (axis == 'X_AXIS') {  // Left to right gradient
+        for (var i = x; i <= x + w; i++) {
+            var inter = map(i, x, x + w, 0, 1);
+            var c = lerpColor(c1, c2, inter);
+            stroke(c);
+            line(i, y, i, y + h);
+        }
+    }
 }
 
 function pixelIndexByCoords(x, y, width, height, density) {
