@@ -127,10 +127,11 @@ Rpd.noderenderer('jb/save', 'svg', {
 } */
 
 var PALETTE_NODE_WIDTH = 365;
-var PALETTE_NODE_HEIGHT = 60;
+var PALETTE_NODE_HEIGHT = 70;
 
 var PALETTE_NODE_BODY_X = -(PALETTE_NODE_WIDTH / 2) + 10;
-var PALETTE_NODE_BODY_Y = 0;
+var PALETTE_NODE_BODY_Y = 5;
+var LABEL_Y_SHIFT = 10;
 Rpd.noderenderer('jb/palette', 'svg', function() {
     var cellSide = 12;
     return {
@@ -138,33 +139,50 @@ Rpd.noderenderer('jb/palette', 'svg', function() {
         first: function(bodyElm) {
             var paletteChange = Kefir.emitter();
             var productChange = Kefir.emitter();
-            var lastSelected, paletteGroups = [];
+            var lastSelected, paletteGroups = [], labelText = {};
             d3.select(bodyElm)
-                .append('g').attr('transform', 'translate(' + PALETTE_NODE_BODY_X + ', ' + PALETTE_NODE_BODY_Y + ')')
-                .call(function(target) {
-                PRODUCTS.forEach(function(product, i) {
-                    var palette = product.palette;
-                    target.append('g')
-                            .attr('class', 'rpd-jb-palette-variant')
-                            .attr('transform', 'translate(' + (i * 14) + ', ' +
-                                                            (-1 * (palette.length / 2 * cellSide)) + ')')
-                            .call((function(palette) { return function(paletteGroup) {
-                                palette.forEach(function(color, i) {
-                                    paletteGroup.append('rect').attr('rx', 4)
-                                                .attr('x', 0).attr('y', i * cellSide)
-                                                .attr('width', cellSide).attr('height', cellSide)
-                                                .attr('fill', color);
-                                });
-                                Kefir.fromEvents(paletteGroup.node(), 'click').onValue(function() {
-                                    if (lastSelected) lastSelected.attr('class', 'rpd-jb-palette-variant')
-                                    paletteGroup.attr('class', 'rpd-jb-palette-variant rpd-jb-active-variant');
-                                    lastSelected = paletteGroup;
-                                    paletteChange.emit(palette);
-                                });
-                                paletteGroups.push(paletteGroup);
-                            } })(palette));
+                .append('g')
+                .call(function(rootGroup) {
+                    var labels = rootGroup.append('g')
+                                          .attr('transform', 'translate(' + PALETTE_NODE_BODY_X +
+                                                                     ', ' + ((-1 * PALETTE_NODE_HEIGHT / 2) + LABEL_Y_SHIFT) + ')');
+                    PRODUCTS.forEach(function(product, i) {
+                        labelText[product.id] =
+                                    labels.append('text')
+                                          .attr('class', 'rpd-jb-product-label')
+                                          .attr('transform', 'translate(' + (i * 14) + ',  0)')
+                                          .text(product.label);
+                    });
+                })
+                .call(function(rootGroup) {
+                    var palettes = rootGroup.append('g')
+                                            .attr('transform', 'translate(' + PALETTE_NODE_BODY_X +
+                                                                       ', ' + PALETTE_NODE_BODY_Y + ')');
+                    PRODUCTS.forEach(function(product, i) {
+                        var palette = product.palette;
+                        palettes.append('g')
+                                .attr('class', 'rpd-jb-palette-variant')
+                                .attr('transform', 'translate(' + (i * 14) + ', ' +
+                                                                (-1 * (palette.length / 2 * cellSide)) + ')')
+                                .call((function(palette) { return function(paletteGroup) {
+                                    palette.forEach(function(color, i) {
+                                        paletteGroup.append('rect').attr('rx', 4)
+                                                    .attr('x', 0).attr('y', i * cellSide)
+                                                    .attr('width', cellSide).attr('height', cellSide)
+                                                    .attr('fill', color);
+                                    });
+                                    Kefir.fromEvents(paletteGroup.node(), 'click').onValue(function() {
+                                        if (lastSelected) lastSelected.attr('class', 'rpd-jb-palette-variant')
+                                        paletteGroup.attr('class', 'rpd-jb-palette-variant rpd-jb-active-variant');
+                                        lastSelected = paletteGroup;
+                                        paletteChange.emit(palette);
+                                        productChange.emit(product.id);
+                                    });
+                                    paletteGroups.push(paletteGroup);
+                                } })(palette));
+                    });
                 });
-            });
+
             lastSelected = paletteGroups[0];
             paletteGroups[0].attr('class', 'rpd-jb-palette-variant rpd-jb-active-variant');
             return { 'palette': { valueOut: paletteChange },

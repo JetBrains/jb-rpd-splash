@@ -88,11 +88,16 @@ Rpd.nodetype('jb/preview', {
 Rpd.nodetype('jb/palette', {
     inlets: {
         'palette': { type: 'jb/palette', default: PRODUCTS[0].palette, label: 'selection', hidden: true },
-        'product': { type: 'jb/product', default: '', label: 'product', hidden: true },
+        'product': { type: 'jb/product', default: PRODUCTS[0].id, label: 'product', hidden: true },
     },
     outlets: {
         'palette': { type: 'jb/palette' },
         'product': { type: 'jb/product' }
     },
-    process: function(inlets) { return { palette: inlets.palette }; }
+    process: function(inlets) {
+        return {
+            palette: inlets.palette,
+            product: inlets.product
+        };
+    }
 });
