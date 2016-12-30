@@ -139,7 +139,8 @@ Rpd.noderenderer('jb/palette', 'svg', function() {
         first: function(bodyElm) {
             var paletteChange = Kefir.emitter();
             var productChange = Kefir.emitter();
-            var lastSelected, paletteGroups = [], labelText = {};
+            var lastSelected, lastHilitedLabel;
+            var paletteGroups = [], labelText = {};
             d3.select(bodyElm)
                 .append('g')
                 .call(function(rootGroup) {
@@ -164,7 +165,7 @@ Rpd.noderenderer('jb/palette', 'svg', function() {
                                 .attr('class', 'rpd-jb-palette-variant')
                                 .attr('transform', 'translate(' + (i * 14) + ', ' +
                                                                 (-1 * (palette.length / 2 * cellSide)) + ')')
-                                .call((function(palette) { return function(paletteGroup) {
+                                .call((function(palette, productId) { return function(paletteGroup) {
                                     palette.forEach(function(color, i) {
                                         paletteGroup.append('rect').attr('rx', 4)
                                                     .attr('x', 0).attr('y', i * cellSide)
@@ -172,14 +173,17 @@ Rpd.noderenderer('jb/palette', 'svg', function() {
                                                     .attr('fill', color);
                                     });
                                     Kefir.fromEvents(paletteGroup.node(), 'click').onValue(function() {
-                                        if (lastSelected) lastSelected.attr('class', 'rpd-jb-palette-variant')
+                                        if (lastSelected) lastSelected.attr('class', 'rpd-jb-palette-variant');
+                                        if (lastHilitedLabel) lastHilitedLabel.attr('class', 'rpd-jb-product-label');
+                                        labelText[productId].attr('class', 'rpd-jb-product-label rpd-jb-active-label');
                                         paletteGroup.attr('class', 'rpd-jb-palette-variant rpd-jb-active-variant');
                                         lastSelected = paletteGroup;
+                                        lastHilitedLabel = labelText[productId];
                                         paletteChange.emit(palette);
                                         productChange.emit(product.id);
                                     });
                                     paletteGroups.push(paletteGroup);
-                                } })(palette));
+                                } })(palette, product.id));
                     });
                 });
 
