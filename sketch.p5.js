@@ -9,6 +9,7 @@ var sketchConfig = {
         '#00ff00',
         '#0000ff'
     ],
+    product: null,
     maxSquareSize: 3,
     density: 6,
     inregularity: 0.7,
@@ -29,6 +30,8 @@ var lastPoint;
 var pointData = [];
 
 var lastBgImage;
+
+var productsImages = {};
 
 function preload() {
     loadImage(sketchConfig.backImgSrc, function(img) {
@@ -92,6 +95,8 @@ function draw() {
     rect(sketchConfig.width / 2, sketchConfig.height / 2,
          sketchConfig.width, sketchConfig.height);
     blendMode(BLEND);
+
+    drawLogo(sketchConfig.product);
 }
 
 function updateSketchConfig(newConfig) {
@@ -362,6 +367,34 @@ function drawLines(voronoi, config, pixels, imgWidth, imgHeight) {
 
     }
 
+}
+
+var AVAILABLE_IMAGES = [
+    //'neon-1.svg'
+];
+
+var currentProductId;
+function drawLogo(productId) {
+    if (!productId) return;
+    currentProductId = productId;
+    var imagePath = productId + '.svg';
+    if (productsImages[productId]) {
+        image(productsImages[productId], 0, 0, width - 50, height - 50);
+    } else {
+        if (AVAILABLE_IMAGES.indexOf(imagePath) < 0) {
+            //console.log(imagePath + ' is not in the list of available images');
+            return;
+        }
+        loadImage(imagePath, function(img) {
+            productsImages[productId] = img;
+            if (currentProductId == productId) {
+                image(img, 0, 0, width - 50, height - 50);
+            }
+        }, function() {
+            console.log('failed to get ' + imagePath);
+            return false;
+        });
+    }
 }
 
 function pixelIndexByCoords(x, y, width, height, density) {

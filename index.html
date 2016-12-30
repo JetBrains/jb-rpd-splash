@@ -191,6 +191,7 @@
             var paletteNode = patch.addNode('jb/palette').move(30, 55);
 
             paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
+            paletteNode.outlets['product'].connect(configNode.inlets['product']);
 
             configNode.outlets['config'].connect(previewNode.inlets['config']);
 

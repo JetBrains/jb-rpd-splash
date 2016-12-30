@@ -30,6 +30,7 @@ Rpd.nodetype('jb/config', {
         'scale': { type: 'util/number', 'default': 1 },
         'bgcolor': { type: 'util/color', 'default': _rgb(24, 24, 24) },
         'palette': { type: 'jb/palette' },
+        'product': { type: 'jb/product' },
         'maxSquareSize': { type: 'jb/integer', 'default': 3, name: 'squareSize' },
         'density': { type: 'util/number', 'default': 6 },
         'inregularity': { type: 'util/number', 'default': 0.7 },
