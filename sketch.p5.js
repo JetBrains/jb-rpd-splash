@@ -278,6 +278,7 @@ function drawEdges(voronoi, config) {
 
 }
 
+
 function drawSquares(data, config) {
 
     var s = config.maxSquareSize;
