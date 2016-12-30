@@ -137,11 +137,13 @@ Rpd.noderenderer('jb/palette', 'svg', function() {
         size: { width: PALETTE_NODE_WIDTH, height: PALETTE_NODE_HEIGHT },
         first: function(bodyElm) {
             var paletteChange = Kefir.emitter();
+            var productChange = Kefir.emitter();
             var lastSelected, paletteGroups = [];
             d3.select(bodyElm)
                 .append('g').attr('transform', 'translate(' + PALETTE_NODE_BODY_X + ', ' + PALETTE_NODE_BODY_Y + ')')
                 .call(function(target) {
-                PALETTES.forEach(function(palette, i) {
+                PRODUCTS.forEach(function(product, i) {
+                    var palette = product.palette;
                     target.append('g')
                             .attr('class', 'rpd-jb-palette-variant')
                             .attr('transform', 'translate(' + (i * 14) + ', ' +
@@ -165,7 +167,8 @@ Rpd.noderenderer('jb/palette', 'svg', function() {
             });
             lastSelected = paletteGroups[0];
             paletteGroups[0].attr('class', 'rpd-jb-palette-variant rpd-jb-active-variant');
-            return { 'selection': { valueOut: paletteChange } };
+            return { 'palette': { valueOut: paletteChange },
+                     'product':  { valueOut: productChange } };
         }
     };
 });
