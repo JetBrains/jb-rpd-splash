@@ -1,7 +1,7 @@
 var sketchConfig = {
     width: window.innerWidth,
     height: window.innerHeight,
-    maxPoints: 5000,
+    maxPoints: 100000,
     scale: 1,
     bgcolor: _rgb(24, 24, 24),
     palette: [
@@ -9,10 +9,10 @@ var sketchConfig = {
         '#00ff00',
         '#0000ff'
     ],
-    maxSquareSize: 3,
+    maxSquareSize: 8,
     density: 6,
-    inregularity: 0.7,
-    step: 12,
+    irregularity: 0.5,
+    step: 10,
     backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
 
@@ -27,12 +27,13 @@ var backImg, grad, my;
 var lastPoint;
 
 var pointData = [];
+var cvsPointData = [];
 
 var lastBgImage;
+var cvsPixels;
 var canvas, ctx;
 
 function preload() {
-    console.log('preload');
     loadImage(sketchConfig.backImgSrc, function(img) {
         img.loadPixels();
         lastBgImage = img;
@@ -48,97 +49,100 @@ function preload() {
 }
 
 function setup() {
-    console.log('setup');
+
+
+    var bgcolor = sketchConfig.bgcolor;
+    background(color(bgcolor.r, bgcolor.g, bgcolor.b));
+    clear();
+
     canvas = createCanvas(sketchConfig.width, sketchConfig.height).parent('rpd-jb-preview-target');
     ctx = canvas.drawingContext;
-    console.log('ctx', ctx, ctx.createLinearGradient);
     noLoop();
     updateSketchConfig(sketchConfig);
 }
 
 function draw() {
-    // noStroke();
-    // for (var x = 0; x < width; x+=10) {
-    //     for (var y = 0; y < height; y+=10) {
-    //         var c = 255 * noise(0.01 * x, 0.01 * y);
-    //         fill(c);
-    //         rect(x, y, 10, 10);
-    //     }
-    // }
-
     clear();
-
-    var bgcolor = sketchConfig.bgcolor;
-    background(color(bgcolor.r, bgcolor.g, bgcolor.b));
     var width = sketchConfig.width;
     var height = sketchConfig.height;
+
+    noStroke();
+
+    for (var x = 0; x <= width/2+10; x+=10) {
+        for (var y = 0; y < height; y+=10) {
+            var c = 255 * noise(0.005 * x, 0.005 * y);
+            fill(c);
+            rect(x, y, 10, 10);
+            rect(width - x, y, 10, 10)
+
+        }
+    }
+
+
+    loadPixels();
+
+    cvsPixels = pixels;
+
+
+    cvsPointData = collectPointData(sketchConfig, cvsPixels, width, height);
+
+
     fill(color('white'));
     stroke(color('red'));
     //noStroke();
 
-    //console.log('draw');
 
-    if (pointData && pointData.length) {
-        //console.log('pointData', pointData);
-        /*for (var i = 0; i < pointData.length; i++) {
-            rect(pointData[i][0], pointData[i][1],
-                 10 * (pointData[i][2] / 255),
-                 10 * (pointData[i][2] / 255));
-        }*/
-
-        var voronoi = d3.voronoi()
-                        .size([sketchConfig.width, sketchConfig.height])
-                        (pointData);
-
-        if (lastBgImage) {
-           // image(lastBgImage, 0, 0, sketchConfig.width, sketchConfig.height);
-        }
-
-       // drawPolygons(voronoi, sketchConfig);
-        drawEdges(voronoi, sketchConfig);
-       //drawShapes(voronoi, sketchConfig);
-
-        if (lastBgImage) {
-            drawLines(voronoi, sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
-        }
-
-    }
-
-    var sizeRect = 200;
     var xRect = width/2;
     var yRect = height/2;
 
 
-    var rotation1 = map(1, 0, 100, 0, sizeRect);
-    var rotation2 = map(1, 0, 100, 0, sizeRect);
-    var location = map(50, 0, 100, 0, sizeRect);
+    var rotation1 = map(50, 0, 100, 0, width);
+    var rotation2 = map(50, 0, 100, 0, height);
+    var location = map(0, 50, 100, 0, width);
 
 
-    var startGrad1 = createVector(xRect + rotation1 + location, yRect + sizeRect - rotation2 - location);
-    var endGrad1 = createVector(xRect + sizeRect - rotation1 - location, yRect + rotation2 + location);
+    var startGrad1 = createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
+    var endGrad1 = createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
 
-    //rectangle
-    if (ctx) {
-        var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
-        gradient.addColorStop(0, "#0073CF");
-        gradient.addColorStop(1, "#FFCC00");
-        ctx.fillStyle = gradient;
-        ctx.fillRect(xRect, yRect, 200, 200);
+
+
+    if (cvsPointData && cvsPointData.length) {
+
+
+        var voronoi = d3.voronoi()
+                        .size([width, height])
+                        (cvsPointData);
+
+
+        drawEdges(voronoi, sketchConfig);
+        console.log('draw');
     }
 
-   //  rotate(QUARTER_PI)
-   //  gradient(0, 0, sqrt(pow(width,2) + pow(height,2)), sqrt(pow(width,2) + pow(height,2)), color(sketchConfig.palette[0]), color(sketchConfig.palette[1]), 'Y_AXIS');
-   // // blendMode(BLEND);
-   //  rotate(-QUARTER_PI)
+    //rectangle
+    blendMode(OVERLAY);
+    if (ctx) {
+        var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
+        gradient.addColorStop(0, sketchConfig.palette[0]);
+        gradient.addColorStop(1, sketchConfig.palette[2]);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+    }
+    blendMode(BLEND);
+
+
+    drawSquares(cvsPointData, sketchConfig);
+
+
+
 }
 
 function updateSketchConfig(newConfig) {
-    //console.log(sketchConfig.maxPoints, newConfig.maxPoints);
-    var recalcPoints = (newConfig.inregularity || newConfig.maxPoints || newConfig.width || newConfig.height) ? true : false;
+
+    var recalcPoints = (newConfig.irregularity || newConfig.maxPoints || newConfig.width || newConfig.height) ? true : false;
     loadChangedValuesFrom(newConfig);
-    if (recalcPoints && lastBgImage) {
-        pointData = collectPointData(sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
-    }
+    // if (recalcPoints && lastBgImage) {
+    //     pointData = collectPointData(sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
+    // }
     redraw();
 }
 
@@ -146,7 +150,7 @@ function collectPointData(config, pixels, imgWidth, imgHeight) {
     //console.log(config);
     var step = Math.floor(config.step);
     var maxPoints = config.maxPoints;
-    var inregularity = config.inregularity;
+    var inregularity = config.irregularity;
 
     var width = config.width;
     var height = config.height;
@@ -163,21 +167,19 @@ function collectPointData(config, pixels, imgWidth, imgHeight) {
 
     //console.log('maxPoints', maxPoints);
 
-    //console.log('imgWidth', imgWidth, 'imgHeight', imgHeight, 'step', step);
+   // console.log('imgWidth', imgWidth, 'imgHeight', imgHeight, 'step', step);
 
     for (var x = 0; x < imgWidth; x += step) {
-
-        //console.log('x', x, pointData.length >= maxPoints);
 
         if (pointData.length >= maxPoints) break;
 
         for (var y = 0; y < imgHeight; y += step) {
 
-            //console.log('y', y, pointData.length >= maxPoints);
+           // console.log('y', y, pointData.length >= maxPoints);
 
             if (pointData.length >= maxPoints) break;
 
-            idx = pixelIndexByCoords(x, y, imgWidth, imgHeight/*, density*/);
+            idx = pixelIndexByCoords(x, y, imgWidth, imgHeight);
 
             r = pixels[idx];
             g = pixels[idx+1];
@@ -188,7 +190,7 @@ function collectPointData(config, pixels, imgWidth, imgHeight) {
 
             //console.log('x', x, 'y', y, 'r', r, 'g', g, 'b', b, 'a', a, 'brightness', pxBrightness);
 
-            if ((pxBrightness > 3) && (random(0, pxBrightness) < 70)) {
+            if ((pxBrightness > 40)&&(random(0, pxBrightness)<30)) {
 
                 xpos = ((x / imgWidth) * width) + (random(-step / 2, step / 2) * inregularity);
                 ypos = ((y / imgHeight) * height) + (random(-step / 2, step / 2) * inregularity);
@@ -255,13 +257,10 @@ function drawPolygons(voronoi, config) {
 }
 
 function drawEdges(voronoi, config) {
-    var scale = config.scale;
 
-    rectMode(CENTER);
-    smooth(8);
 
-    strokeWeight(0.4);
-    //console.log(voronoi.triangles());
+
+    strokeWeight(0.25);
     var myEdges = voronoi.edges; //myDelaunay.getEdges();
 
     for (var n=0; n<myEdges.length; n++) {
@@ -270,17 +269,33 @@ function drawEdges(voronoi, config) {
         var startY = myEdges[n][0][1];
         var endX = myEdges[n][1][0];
         var endY = myEdges[n][1][1];
-        stroke(random(70,255));
-        if(dist(startX, startY, endX, endY) < 50) {
 
-            line(startX, startY, endX, endY);
-        }
-        var squareSize = Math.floor(random(1,config.maxSquareSize));
-        fill(random(90,180));
-        rect(startX, startY, squareSize, squareSize);
+            gradientLine(startX, startY, endX, endY, '#ffffff', '#000000');
+
+
+
     }
 
+}
+
+function drawSquares(data, config) {
+
+    var s = config.maxSquareSize;
+
+    rectMode(CENTER);
+
+
     noStroke();
+    for (var i = 0 ; i < data.length; i++) {
+        var point = data[i];
+        push();
+        translate(point[0], point[1]);
+        fill(255);
+        var sqSize = map(point[2], 40, 100, 1, s);
+        rect(0, 0, sqSize, sqSize);
+        pop();
+    }
+
 }
 
 function drawShapes(voronoi, config) {
@@ -348,27 +363,15 @@ function drawShapes(voronoi, config) {
     }
 }
 
-function drawLines(voronoi, config, pixels, imgWidth, imgHeight) {
+function drawLines(voronoi) {
 
     var edges = voronoi.edges;
     var cells = voronoi.cells;
-
-    var width = config.width;
-    var height = config.height;
-
-    //blendMode(SCREEN);
-    var shapes = [];
-   // int[] colors = {0xccd5df, 0x8da3b2, 0x6f899f, 0x3b5778, 0xd6dfe6};
-
-    var s = 0;
 
     var cellEdges;
 
     var l;
 
-    var pxBrightness, startX, startY, endX, endY;
-
-    var idx, r, g, b, a;
 
     for (var j = 0; j < cells.length; j++) {
         if (!cells[j]) continue;
@@ -382,19 +385,11 @@ function drawLines(voronoi, config, pixels, imgWidth, imgHeight) {
             endX = edges[cellEdges[l + 1]][0];
             endY = edges[cellEdges[l + 1]][1];
 
-            idx = pixelIndexByCoords(Math.floor(startX), Math.floor(startY), imgWidth, imgHeight/*, density*/);
+            strokeWeight(1);
+            stroke(255);
+            console.log('line',startX);
 
-            r = pixels[idx];
-            g = pixels[idx+1];
-            b = pixels[idx+2];
-            a = pixels[idx+3];
-
-            pxBrightness = brightness(color(r, g, b, a));
-
-            strokeWeight(map(pxBrightness, 0, 255, 0.4, 0.6));
-            stroke(map(pxBrightness, 0, 255, 100, 255));
-            line(startX, startY,
-                 endX, endY);
+            line(startX, startY, endX, endY);
         }
 
 
@@ -404,31 +399,24 @@ function drawLines(voronoi, config, pixels, imgWidth, imgHeight) {
 
 }
 
+function gradientLine(x1, y1, x2, y2, color1, color2) {
 
-function gradient(x, y, w, h, c1, c2, axis) {
+    if(ctx) {
+        // linear gradient from start to end of line
+        var grad = ctx.createLinearGradient(x1, y1, x2, y2);
+        grad.addColorStop(0, color1);
+        grad.addColorStop(1, color2);
 
-    noFill();
-    strokeWeight(2);
+        ctx.strokeStyle = grad;
 
 
-    if (axis == 'Y_AXIS') {  // Top to bottom gradient
-        for (var i = y; i <= y + h; i++) {
-            var inter = map(i, y, y + h, 0, 1);
-            var c = lerpColor(c1, c2, inter);
-            stroke(c);
-            line(x, i, x + w, i);
-        }
-    }
-    else if (axis == 'X_AXIS') {  // Left to right gradient
-        for (var i = x; i <= x + w; i++) {
-            var inter = map(i, x, x + w, 0, 1);
-            var c = lerpColor(c1, c2, inter);
-            stroke(c);
-            line(i, y, i, y + h);
-        }
+        line(x1, y1, x2, y2);
     }
 }
 
-function pixelIndexByCoords(x, y, width, height, density) {
+
+
+
+function pixelIndexByCoords(x, y, width, height) {
     return (x + y * width) * 4;
 }

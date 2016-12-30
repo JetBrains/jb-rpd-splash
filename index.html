@@ -174,9 +174,9 @@
 
             var saveNode = patch.addNode('jb/save', 'Save Image').move(1000, 400);
 
-            var randomNode = patch.addNode('util/random').move(300, 500);
+        //    var randomNode = patch.addNode('util/random').move(300, 500);
 
-            var metroNode = patch.addNode('util/metro').move(90, 500);
+          //  var metroNode = patch.addNode('util/metro').move(90, 500);
 
             var paletteNode = patch.addNode('jb/palette').move(30, 55);
 
@@ -189,10 +189,10 @@
             randomNode.inlets['min'].receive(12);
             randomNode.inlets['max'].receive(40);
 
-            randomNode.outlets['random'].connect(configNode.inlets['step']);
+          //  randomNode.outlets['random'].connect(configNode.inlets['step']);
 
             //setTimeout(function() {
-                metroNode.outlets['bang'].connect(randomNode.inlets['bang']);
+             //   metroNode.outlets['bang'].connect(randomNode.inlets['bang']);
             //}, 2000);
 
         </script>

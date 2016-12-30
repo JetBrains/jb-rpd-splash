@@ -24,14 +24,14 @@ Rpd.nodetype('jb/config', {
     inlets: {
         'width': { type: 'jb/integer', 'default': window.innerWidth },
         'height': { type: 'jb/integer', 'default': window.innerHeight },
-        'maxPoints': { type: 'jb/integer', 'default': 5000, name: 'max' },
+        'maxPoints': { type: 'jb/integer', 'default': 100000, name: 'max' },
         'scale': { type: 'util/number', 'default': 1 },
         'bgcolor': { type: 'util/color', 'default': _rgb(24, 24, 24) },
         'palette': { type: 'jb/palette' },
-        'maxSquareSize': { type: 'jb/integer', 'default': 3, name: 'squareSize' },
+        'maxSquareSize': { type: 'jb/integer', 'default': 8, name: 'squareSize' },
         'density': { type: 'util/number', 'default': 6 },
-        'inregularity': { type: 'util/number', 'default': 0.7 },
-        'step': { type: 'jb/integer', 'default': 12 }
+        'inregularity': { type: 'util/number', 'default': 0.5 },
+        'step': { type: 'jb/integer', 'default': 10 }
     },
     outlets: {
         'config': { type: 'jb/config' }
