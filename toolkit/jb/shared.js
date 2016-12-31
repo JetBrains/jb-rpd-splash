@@ -39,7 +39,7 @@ var PRODUCTS = [
     { label: 'JB1',  id: 'jetbrains-1',   palette: [ '#ec4476', '#fde74a', '#9151e1' ] }, // jetbrains-1
     { label: 'JB2',  id: 'jetbrains-2',   palette: [ '#dc57e4', '#eb3d7e', '#ec6e55', '#22c5fc' ] }, // jetbrains-2
     { label: 'JB3',  id: 'jetbrains-3',   palette: [ '#dc57e4', '#eb3984', '#783d96', '#22c5fc' ] }, // jetbrains-3
-    { label: 'IJ_',  id: 'idea',          palette: [ '#1a7ff6', '#fb3560', '#f77a29' ] },  // idea // IJ_
+    { label: 'IJ_',  id: 'intellij-idea', palette: [ '#1a7ff6', '#fb3560', '#f77a29' ] },  // idea // IJ_
     { label: 'PC_',  id: 'pycharm',       palette: [ '#31d68b', '#fcf65a', '#24c4f0' ] },  // pycharm // PC_
     { label: 'YT_',  id: 'youtrack',      palette: [ '#22b1ef', '#9062f7', '#fc378c' ] },  // youtrack // YT_
     { label: 'DT_',  id: 'dottrace',      palette: [ '#fc1681', '#786bfb', '#e14ce3' ] },  // dottrace // DT_
