@@ -20,6 +20,8 @@ Rpd.channeltype('jb/integer', {
 
 Rpd.channeltype('jb/palette', { show: howMuch('color', 'colors') });
 
+Rpd.channeltype('jb/product', { });
+
 Rpd.nodetype('jb/config', {
     inlets: {
         'width': { type: 'jb/integer', 'default': window.innerWidth },
@@ -28,6 +30,7 @@ Rpd.nodetype('jb/config', {
         'scale': { type: 'util/number', 'default': 1 },
         'bgcolor': { type: 'util/color', 'default': _rgb(24, 24, 24) },
         'palette': { type: 'jb/palette' },
+        'product': { type: 'jb/product' },
         'maxSquareSize': { type: 'jb/integer', 'default': 8, name: 'squareSize' },
         'density': { type: 'util/number', 'default': 6 },
         'inregularity': { type: 'util/number', 'default': 0.5 },
@@ -85,10 +88,17 @@ Rpd.nodetype('jb/preview', {
 
 Rpd.nodetype('jb/palette', {
     inlets: {
-        'selection': { type: 'jb/palette', default: PALETTES[0], label: 'selection', hidden: true }
+        'palette': { type: 'jb/palette', default: PRODUCTS[0].palette, label: 'selection', hidden: true },
+        'product': { type: 'jb/product', default: PRODUCTS[0].id, label: 'product', hidden: true },
     },
     outlets: {
-        'palette': { type: 'jb/palette' }
+        'palette': { type: 'jb/palette' },
+        'product': { type: 'jb/product' }
     },
-    process: function(inlets) { return { palette: inlets.selection }; }
+    process: function(inlets) {
+        return {
+            palette: inlets.palette,
+            product: inlets.product
+        };
+    }
 });

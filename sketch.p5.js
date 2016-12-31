@@ -9,6 +9,7 @@ var sketchConfig = {
         '#00ff00',
         '#0000ff'
     ],
+    product: null,
     maxSquareSize: 8,
     density: 6,
     irregularity: 0.5,
@@ -32,6 +33,8 @@ var cvsPointData = [];
 var lastBgImage;
 var cvsPixels;
 var canvas, ctx;
+
+var productsImages = {};
 
 function preload() {
     loadImage(sketchConfig.backImgSrc, function(img) {
@@ -131,11 +134,9 @@ function draw() {
     }
     blendMode(BLEND);
 
-
     drawSquares(cvsPointData, sketchConfig);
 
-
-
+    drawLogo(sketchConfig.product);
 }
 
 function updateSketchConfig(newConfig) {
@@ -417,9 +418,59 @@ function gradientLine(x1, y1, x2, y2, color1, color2) {
     }
 }
 
+var AVAILABLE_IMAGES = [
+    'logos/appcode.svg',
+    'logos/clion.svg',
+    'logos/datagrip.svg',
+    'logos/dotcover.svg',
+    'logos/dotmemory.svg',
+    'logos/dotpeek.svg',
+    'logos/dottrace.svg',
+    'logos/gogland.svg',
+    'logos/hub.svg',
+    'logos/intellij-idea.svg',
+    'logos/kotlin.svg',
+    'logos/mps.svg',
+    'logos/phpstorm.svg',
+    'logos/pycharm.svg',
+    'logos/resharper-cpp.svg',
+    'logos/resharper.svg',
+    'logos/rider.svg',
+    'logos/rubymine.svg',
+    'logos/teamcity.svg',
+    'logos/toolbox.svg',
+    'logos/upsource.svg',
+    'logos/webstorm.svg',
+    'logos/youtrack.svg'
+];
 
+var LOGO_PX_SIDE = 60;
+var LOGO_PX_SHIFT = -50;
 
+var currentProductId;
+function drawLogo(productId) {
+    if (!productId) return;
+    currentProductId = productId;
+    var imagePath = 'logos/' + productId + '.svg';
+    if (productsImages[productId]) {
+        image(productsImages[productId], width - LOGO_PX_SIDE - 10, height - LOGO_PX_SIDE - 10, LOGO_PX_SIDE, LOGO_PX_SIDE);
+    } else {
+        if (AVAILABLE_IMAGES.indexOf(imagePath) < 0) {
+            //console.log(imagePath + ' is not in the list of available images');
+            return;
+        }
+        loadImage(imagePath, function(img) {
+            productsImages[productId] = img;
+            if (currentProductId == productId) {
+                image(img, width - LOGO_PX_SIDE - 10, height - LOGO_PX_SIDE - 10, LOGO_PX_SIDE, LOGO_PX_SIDE);
+            }
+        }, function() {
+            console.log('failed to get ' + imagePath);
+            return false;
+        });
+    }
+}
 
-function pixelIndexByCoords(x, y, width, height) {
+function pixelIndexByCoords(x, y, width, height, density) {
     return (x + y * width) * 4;
 }

@@ -92,9 +92,19 @@
                 cursor: pointer;
             }
 
+            .rpd-node.rpd-jb-palette .rpd-process .rpd-jb-product-label {
+                font-size: 7px;
+                font-weight: bold;
+            }
+
+            .rpd-jb-active-label {
+                fill: white;
+            }
+
             .rpd-jb-palette-variant.rpd-jb-active-variant {
                 stroke: white;
             }
+
         </style>
 
         <link rel="stylesheet" href="./loaders.min.css"></link>
@@ -181,6 +191,7 @@
             var paletteNode = patch.addNode('jb/palette').move(30, 55);
 
             paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
+            paletteNode.outlets['product'].connect(configNode.inlets['product']);
 
             configNode.outlets['config'].connect(previewNode.inlets['config']);
 
