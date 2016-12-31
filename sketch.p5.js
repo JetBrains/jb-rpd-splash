@@ -62,9 +62,11 @@ function setup() {
 }
 
 function draw() {
+    var p5PxDensity = pixelDensity();
+
     clear();
-    var width = sketchConfig.width;
-    var height = sketchConfig.height;
+    //var sketchWidth = sketchConfig.width;
+    //var sketchHeight = sketchConfig.height;
 
     noStroke();
 
@@ -84,7 +86,7 @@ function draw() {
     cvsPixels = pixels;
 
 
-    cvsPointData = collectPointData(sketchConfig, cvsPixels, width, height);
+    cvsPointData = collectPointData(sketchConfig, cvsPixels, width * p5PxDensity, height * p5PxDensity);
 
 
     fill(color('white'));
