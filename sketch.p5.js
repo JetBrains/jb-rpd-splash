@@ -146,6 +146,7 @@ function updateSketchConfig(newConfig) {
     // if (recalcPoints && lastBgImage) {
     //     pointData = collectPointData(sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
     // }
+    noiseSeed(random(1000));
     redraw();
 }
 
