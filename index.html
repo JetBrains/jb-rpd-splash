@@ -184,21 +184,25 @@
 
             var saveNode = patch.addNode('jb/save', 'Save Image').move(1000, 400);
 
-        //    var randomNode = patch.addNode('util/random').move(300, 500);
+            //var randomNode = patch.addNode('util/random').move(300, 500);
 
+            var bangNode = patch.addNode('util/bang').move(90, 500);
           //  var metroNode = patch.addNode('util/metro').move(90, 500);
 
             var paletteNode = patch.addNode('jb/palette').move(30, 55);
 
+            bangNode.outlets['bang'].connect(configNode.inlets['bang']);
+
             paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
             paletteNode.outlets['product'].connect(configNode.inlets['product']);
+
 
             configNode.outlets['config'].connect(previewNode.inlets['config']);
 
             previewNode.outlets['image'].connect(saveNode.inlets['image']);
 
-            randomNode.inlets['min'].receive(12);
-            randomNode.inlets['max'].receive(40);
+            //randomNode.inlets['min'].receive(12);
+            //randomNode.inlets['max'].receive(40);
 
           //  randomNode.outlets['random'].connect(configNode.inlets['step']);
 

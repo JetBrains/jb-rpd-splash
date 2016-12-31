@@ -24,6 +24,7 @@ Rpd.channeltype('jb/product', { });
 
 Rpd.nodetype('jb/config', {
     inlets: {
+        'bang': { type: 'util/bang' },
         'width': { type: 'jb/integer', 'default': window.innerWidth },
         'height': { type: 'jb/integer', 'default': window.innerHeight },
         'maxPoints': { type: 'jb/integer', 'default': 100000, name: 'max' },
