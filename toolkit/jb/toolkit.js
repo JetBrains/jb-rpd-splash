@@ -35,7 +35,7 @@ Rpd.nodetype('jb/config', {
         'maxSquareSize': { type: 'jb/integer', 'default': 8, name: 'squareSize' },
         'density': { type: 'util/number', 'default': 6 },
         'inregularity': { type: 'util/number', 'default': 0.5 },
-        'step': { type: 'jb/integer', 'default': 10 }
+        'step': { type: 'jb/integer', 'default': 18 }
     },
     outlets: {
         'config': { type: 'jb/config' }

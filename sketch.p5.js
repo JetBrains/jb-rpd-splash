@@ -1,7 +1,7 @@
 var sketchConfig = {
     width: window.innerWidth,
     height: window.innerHeight,
-    maxPoints: 100000,
+    maxPoints: window.innerWidth*window.innerHeight,
     scale: 1,
     bgcolor: _rgb(24, 24, 24),
     palette: [
@@ -13,7 +13,7 @@ var sketchConfig = {
     maxSquareSize: 8,
     density: 6,
     irregularity: 0.5,
-    step: 10,
+    step: 18,
     backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
 
@@ -36,11 +36,12 @@ var canvas, ctx;
 
 var productsImages = {};
 
+
 function preload() {
     loadImage(sketchConfig.backImgSrc, function(img) {
         img.loadPixels();
         lastBgImage = img;
-        pointData = collectPointData(sketchConfig, img.pixels, img.width, img.height);
+        pointData = collectPointData(sketchConfig, img.pixels);
         console.log('image loaded');
         redraw();
         var loader = document.getElementById('loader');
@@ -48,6 +49,7 @@ function preload() {
             loader.style.opacity = 0;
         }
     });
+
 
 }
 
@@ -62,10 +64,11 @@ function setup() {
     ctx = canvas.drawingContext;
     noLoop();
     updateSketchConfig(sketchConfig);
+
 }
 
 function draw() {
-    var p5PxDensity = pixelDensity();
+
 
     clear();
     //var sketchWidth = sketchConfig.width;
@@ -89,7 +92,7 @@ function draw() {
     cvsPixels = pixels;
 
 
-    cvsPointData = collectPointData(sketchConfig, cvsPixels, width * p5PxDensity, height * p5PxDensity);
+    cvsPointData = collectPointData(sketchConfig, cvsPixels);
 
 
     fill(color('white'));
@@ -111,17 +114,7 @@ function draw() {
 
 
 
-    if (cvsPointData && cvsPointData.length) {
 
-
-        var voronoi = d3.voronoi()
-                        .size([width, height])
-                        (cvsPointData);
-
-
-        drawEdges(voronoi, sketchConfig);
-        console.log('draw');
-    }
 
     //rectangle
     blendMode(OVERLAY);
@@ -134,9 +127,25 @@ function draw() {
     }
     blendMode(BLEND);
 
-    drawSquares(cvsPointData, sketchConfig);
+    if (cvsPointData && cvsPointData.length) {
 
-    drawLogo(sketchConfig.product);
+
+        var voronoi = d3.voronoi()
+            .size([width, height])
+            (cvsPointData);
+
+
+        // drawPolygons(voronoi, sketchConfig);
+        //drawEdges(voronoi, sketchConfig);
+        drawMainSquares(voronoi, cvsPixels, sketchConfig);
+         console.log('draw');
+    }
+
+
+  //  drawSquares(cvsPointData, sketchConfig);
+
+
+  //  drawLogo(sketchConfig.product);
 }
 
 function updateSketchConfig(newConfig) {
@@ -150,14 +159,17 @@ function updateSketchConfig(newConfig) {
     redraw();
 }
 
-function collectPointData(config, pixels, imgWidth, imgHeight) {
+function collectPointData(config, bgPixels) {
+    var p5PxDensity = pixelDensity();
+
     //console.log(config);
     var step = Math.floor(config.step);
     var maxPoints = config.maxPoints;
     var inregularity = config.irregularity;
 
-    var width = config.width;
-    var height = config.height;
+    var imgWidth = config.width*p5PxDensity;
+    var imgHeight = config.height*p5PxDensity;
+
 
     var idx, pxBrightness, r, g, b, a;
 
@@ -183,21 +195,14 @@ function collectPointData(config, pixels, imgWidth, imgHeight) {
 
             if (pointData.length >= maxPoints) break;
 
-            idx = pixelIndexByCoords(x, y, imgWidth, imgHeight);
+            pxBrightness = pixelBrightnessByCoords(x, y, bgPixels,  imgWidth);
 
-            r = pixels[idx];
-            g = pixels[idx+1];
-            b = pixels[idx+2];
-            a = pixels[idx+3];
 
-            pxBrightness = brightness(color(r, g, b, a));
-
-            //console.log('x', x, 'y', y, 'r', r, 'g', g, 'b', b, 'a', a, 'brightness', pxBrightness);
 
             if ((pxBrightness > 40)&&(random(0, pxBrightness)<30)) {
 
-                xpos = ((x / imgWidth) * width) + (random(-step / 2, step / 2) * inregularity);
-                ypos = ((y / imgHeight) * height) + (random(-step / 2, step / 2) * inregularity);
+                xpos = x  + random(-step / 2, step / 2) * inregularity;
+                ypos = y  + random(-step / 2, step / 2) * inregularity;
 
                 pointData.push([ xpos, ypos, pxBrightness ]);
             }
@@ -220,8 +225,9 @@ function drawPolygons(voronoi, config) {
                    color(184,225,134), color(127,188,65), color(77,146,33)
                   ];
 
-    stroke(255);
 
+    stroke(255);
+    strokeWeight(0.5)
     // draw polygons
     for (var j = 0; j < polygons.length; j++) {
         var polygon = polygons[j];
@@ -231,22 +237,26 @@ function drawPolygons(voronoi, config) {
         // pick a random color
         var polyColor = vcolors[j % vcolors.length];
         fill(polyColor);
+        noFill();
 
         beginShape();
 
         for (var k = 0; k < polygon.length; k++) {
 
           var v = polygon[k];
+
           vertex(v[0], v[1]);
 
         }
 
         endShape(CLOSE);
+
+
     }
 
     // draw circles.
 
-    var circles = pointData.slice(1);
+    var circles = cvsPointData.slice(1);
 
     stroke(0);
     for (var i = 0 ; i < circles.length; i++) {
@@ -264,7 +274,7 @@ function drawEdges(voronoi, config) {
 
 
 
-    strokeWeight(0.25);
+    strokeWeight(0.5);
     var myEdges = voronoi.edges; //myDelaunay.getEdges();
 
     for (var n=0; n<myEdges.length; n++) {
@@ -275,6 +285,39 @@ function drawEdges(voronoi, config) {
         var endY = myEdges[n][1][1];
 
             gradientLine(startX, startY, endX, endY, '#ffffff', '#000000');
+
+
+
+    }
+
+}
+
+function drawMainSquares(voronoi, bgPixels, config) {
+
+    var s = config.maxSquareSize;
+
+
+    rectMode(CENTER);
+    console.log(s);
+
+
+    var myEdges = voronoi.edges; //myDelaunay.getEdges();
+
+    for (var n=0; n<myEdges.length; n++) {
+        if (!myEdges[n]) continue;
+        var startX = myEdges[n][0][0];
+        var startY = myEdges[n][0][1];
+        var endX = myEdges[n][1][0];
+        var endY = myEdges[n][1][1];
+
+        fill(255);
+       // var pxBrightness = pixelBrightnessByCoords(startX, startY, bgPixels, config);
+        var pxBrightness = 100;
+
+
+        console.log(pxBrightness);
+        var sqSize = map(pxBrightness, 40, 100, 1, s);
+        rect(startX, startY, sqSize, sqSize);
 
 
 
@@ -466,12 +509,30 @@ function drawLogo(productId) {
                 image(img, width - LOGO_PX_SIDE - 10, height - LOGO_PX_SIDE - 10, LOGO_PX_SIDE, LOGO_PX_SIDE);
             }
         }, function() {
-            console.log('failed to get ' + imagePath);
+            console.log('failed to get ' + imagoePath);
             return false;
         });
     }
 }
 
-function pixelIndexByCoords(x, y, width, height, density) {
-    return (x + y * width) * 4;
+// function pixelIndexByCoords(x, y, width) {
+//     return (x + y * width) * 4;
+// }
+
+function pixelBrightnessByCoords(x, y, bgPixels, config) {
+
+  //  var idx = pixelIndexByCoords(500, 500, config.width*pixelDensity());
+    var idx =(x + y * config.width*pixelDensity()) * 4;
+    console.log(idx);
+
+
+    var r = bgPixels[idx];
+    var g = bgPixels[idx+1];
+    var b = bgPixels[idx+2];
+    var a = bgPixels[idx+3];
+
+
+
+    return brightness(color(r, g, b, a));
+
 }
