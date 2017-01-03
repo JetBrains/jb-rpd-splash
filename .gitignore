@@ -1,0 +1,10 @@
+rpd.css
+rpd.min.js
+kefir.min.js
+d3.v4.min.js
+d3-voronoi.*.min.js
+loaders.min.css
+sample.sketch.java
+*.example.js
+p5.*.js
+*.pyc
