@@ -1,4 +1,5 @@
 var sketchConfig = {
+    srcPixels: null,
     width: window.innerWidth,
     height: window.innerHeight,
     maxPoints: window.innerWidth * window.innerHeight,
@@ -28,7 +29,6 @@ var backImg, grad, my;
 var lastPoint;
 
 var pointData = [];
-var cvsPointData = [];
 
 var lastBgImage;
 var cvsPixels;
@@ -40,19 +40,17 @@ var pxDensity;
 
 function preload() {
     pxDensity = pixelDensity();
-    loadImage(sketchConfig.backImgSrc, function(img) {
-        img.loadPixels();
-        lastBgImage = img;
-        pointData = collectPointData(sketchConfig, img.pixels);
-        console.log('image loaded');
-        redraw();
-        var loader = document.getElementById('loader');
-        if (loader) {
-            loader.style.opacity = 0;
-        }
-    });
-
-
+    // loadImage(sketchConfig.backImgSrc, function(img) {
+    //     img.loadPixels();
+    //     lastBgImage = img;
+    //     pointData = collectPointData(sketchConfig, img.pixels);
+    //     console.log('image loaded');
+    //     redraw();
+    //     var loader = document.getElementById('loader');
+    //     if (loader) {
+    //         loader.style.opacity = 0;
+    //     }
+    // });
 }
 
 function setup() {
@@ -77,28 +75,26 @@ function draw() {
 
     noStroke();
 
-    for (var x = 0; x <= width/2+10; x+=10) {
-        for (var y = 0; y < height; y+=10) {
-            var c = 255 * noise(0.005 * x, 0.005 * y);
-            fill(c);
-            rect(x, y, 10, 10);
-            rect(width - x, y, 10, 10)
+    // for (var x = 0; x <= width/2+10; x+=10) {
+    //     for (var y = 0; y < height; y+=10) {
+    //         var c = 255 * noise(0.005 * x, 0.005 * y);
+    //         fill(c);
+    //         rect(x, y, 10, 10);
+    //         rect(width - x, y, 10, 10)
 
-        }
-    }
-
-
-    loadPixels();
-
-    cvsPixels = pixels;
+    //     }
+    // }
 
 
+    // loadPixels();
 
+    // cvsPixels = pixels;
 
-    cvsPointData = collectPointData(sketchConfig, cvsPixels);
+    pointData = collectPointData(sketchConfig);
+
+    if (!pointData || !pointData.length) return;
 
     //noStroke();
-
 
     var xRect = width/2;
     var yRect = height/2;
@@ -112,10 +108,6 @@ function draw() {
     var startGrad1 = createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
     var endGrad1 = createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
 
-
-
-
-
     //rectangle
     blendMode(OVERLAY);
     if (ctx) {
@@ -127,29 +119,24 @@ function draw() {
     }
     blendMode(BLEND);
 
-    if (cvsPointData && cvsPointData.length) {
-
+    if (pointData && pointData.length) {
 
         var voronoi = d3.voronoi()
             .size([width, height])
-            (cvsPointData);
+            (pointData);
 
 
         // drawPolygons(voronoi, sketchConfig);
         drawShapes(voronoi,sketchConfig);
         drawEdgesSquares(voronoi, cvsPixels, sketchConfig);
-        drawBackEdgesSquares(cvsPointData, sketchConfig);
+        drawBackEdgesSquares(pointData, sketchConfig);
 
 
       //  drawMainSquares(voronoi, cvsPixels, sketchConfig);
          console.log('draw');
     }
 
-
-
-
-  //  drawSquares(cvsPointData, sketchConfig);
-
+  //  drawSquares(pointData, sketchConfig);
 
   //  drawLogo(sketchConfig.product);
 }
@@ -166,6 +153,10 @@ function updateSketchConfig(newConfig) {
 }
 
 function collectPointData(config, bgPixels) {
+
+    var bgPixels = bgPixels || config.srcPixels;
+
+    if (!bgPixels || !bgPixels.length) return [];
 
     //console.log(config);
     var step = Math.floor(config.step);
@@ -261,7 +252,7 @@ function drawPolygons(voronoi, config) {
 
     // draw circles.
 
-    var circles = cvsPointData.slice(1);
+    var circles = pointData.slice(1);
 
     stroke(0);
     for (var i = 0 ; i < circles.length; i++) {
