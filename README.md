@@ -1,1 +1,0 @@
-# jb-rpd-splash
