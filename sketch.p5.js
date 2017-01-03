@@ -1,7 +1,7 @@
 var sketchConfig = {
     width: window.innerWidth,
     height: window.innerHeight,
-    maxPoints: window.innerWidth * window.innerHeight,
+    maxPoints: window.innerWidth*window.innerHeight,
     scale: 1,
     bgcolor: _rgb(24, 24, 24),
     palette: [
@@ -10,10 +10,10 @@ var sketchConfig = {
         '#0000ff'
     ],
     product: null,
-    maxSquareSize: 12,
+    maxSquareSize: 8,
     density: 6,
     irregularity: 0.5,
-    step: 16,
+    step: 18,
     backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
 
@@ -36,10 +36,8 @@ var canvas, ctx;
 
 var productsImages = {};
 
-var pxDensity;
 
 function preload() {
-    pxDensity = pixelDensity();
     loadImage(sketchConfig.backImgSrc, function(img) {
         img.loadPixels();
         lastBgImage = img;
@@ -70,14 +68,15 @@ function setup() {
 }
 
 function draw() {
-    clear();
 
+
+    clear();
     //var sketchWidth = sketchConfig.width;
     //var sketchHeight = sketchConfig.height;
 
     noStroke();
 
-    for (var x = 0; x <= width/2; x+=10) {
+    for (var x = 0; x <= width/2+10; x+=10) {
         for (var y = 0; y < height; y+=10) {
             var c = 255 * noise(0.005 * x, 0.005 * y);
             fill(c);
@@ -91,12 +90,13 @@ function draw() {
     loadPixels();
 
     cvsPixels = pixels;
- //   clear();
-
 
 
     cvsPointData = collectPointData(sketchConfig, cvsPixels);
 
+
+    fill(color('white'));
+    stroke(color('red'));
     //noStroke();
 
 
@@ -136,16 +136,10 @@ function draw() {
 
 
         // drawPolygons(voronoi, sketchConfig);
-        drawShapes(voronoi,sketchConfig);
-        drawEdgesSquares(voronoi, cvsPixels, sketchConfig);
-        drawBackEdgesSquares(cvsPointData, sketchConfig);
-
-
-      //  drawMainSquares(voronoi, cvsPixels, sketchConfig);
+        //drawEdges(voronoi, sketchConfig);
+        drawMainSquares(voronoi, cvsPixels, sketchConfig);
          console.log('draw');
     }
-
-
 
 
   //  drawSquares(cvsPointData, sketchConfig);
@@ -166,13 +160,15 @@ function updateSketchConfig(newConfig) {
 }
 
 function collectPointData(config, bgPixels) {
+    var p5PxDensity = pixelDensity();
 
+    //console.log(config);
     var step = Math.floor(config.step);
     var maxPoints = config.maxPoints;
     var inregularity = config.irregularity;
 
-    var imgWidth = config.width*pxDensity;
-    var imgHeight = config.height*pxDensity;
+    var imgWidth = config.width*p5PxDensity;
+    var imgHeight = config.height*p5PxDensity;
 
 
     var idx, pxBrightness, r, g, b, a;
@@ -182,6 +178,12 @@ function collectPointData(config, bgPixels) {
     var pointData = [];
 
     var xpos, ypos;
+
+    //var d = pixelDensity();
+
+    //console.log('maxPoints', maxPoints);
+
+   // console.log('imgWidth', imgWidth, 'imgHeight', imgHeight, 'step', step);
 
     for (var x = 0; x < imgWidth; x += step) {
 
@@ -197,7 +199,7 @@ function collectPointData(config, bgPixels) {
 
 
 
-            if ((pxBrightness > 50)&&(random(0, pxBrightness)<30)) {
+            if ((pxBrightness > 40)&&(random(0, pxBrightness)<30)) {
 
                 xpos = x  + random(-step / 2, step / 2) * inregularity;
                 ypos = y  + random(-step / 2, step / 2) * inregularity;
@@ -268,12 +270,11 @@ function drawPolygons(voronoi, config) {
 
 }
 
-function drawEdgesSquares(voronoi, bgPixels, config) {
-
-    var s = config.maxSquareSize;
-    rectMode(CENTER);
+function drawEdges(voronoi, config) {
 
 
+
+    strokeWeight(0.5);
     var myEdges = voronoi.edges; //myDelaunay.getEdges();
 
     for (var n=0; n<myEdges.length; n++) {
@@ -283,59 +284,7 @@ function drawEdgesSquares(voronoi, bgPixels, config) {
         var endX = myEdges[n][1][0];
         var endY = myEdges[n][1][1];
 
-
-        var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, bgPixels, config.width*pxDensity));
-        var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, bgPixels, config.width*pxDensity));
-
-            var colX = map(pxBrightnessStart, 0, 100, 0, 1);
-            var colY =  map(pxBrightnessEnd, 0, 100, 0, 1);
-            var colcolX = lerpColor(color(config.palette[2]), color(config.palette[0]), colX);
-            var colcolY = lerpColor(color(config.palette[2]), color(config.palette[0]), colY);
-
-        strokeWeight(0.8);
-        stroke(255);
-
-        if(pxBrightnessStart>60 && pxBrightnessEnd>60) {
-            strokeWeight(0.4);
-            colcolY = color('#ffffff');
-            colcolX = color('#aaaaaa');
-        }
-
-
-
-
-        var sqSize = Math.floor(map(pxBrightnessStart, 40, 100, 1, s));
-        blendMode(SCREEN);
-        if(!pxBrightnessStart || !pxBrightnessEnd) {
-            strokeWeight(0.25);
-            colcolY = color('#000000');
-            colcolX = color('#000000');
-
-
-        }
-        smooth(8);
-
-        gradientLine(startX, startY, endX, endY, colcolX, colcolY);
-
-
-
-
-
-
-            //    line(startX, startY, endX, endY);
-            fill(lerpColor(colcolX, color(255), random(0,1)));
-
-        if(pxBrightnessStart>70 ) {
-            fill(color('#ffffff'));
-
-        }
-
-            noStroke();
-                // console.log(pxBrightness);
-                rect(startX, startY, sqSize, sqSize);
-
-
-
+            gradientLine(startX, startY, endX, endY, '#ffffff', '#000000');
 
 
 
@@ -361,8 +310,13 @@ function drawMainSquares(voronoi, bgPixels, config) {
         var endX = myEdges[n][1][0];
         var endY = myEdges[n][1][1];
 
+        fill(255);
+        var pxBrightness = pixelBrightnessByCoords(startX, startY, bgPixels, config);
 
 
+        console.log(pxBrightness);
+        var sqSize = map(pxBrightness, 40, 100, 1, s);
+        rect(startX, startY, sqSize, sqSize);
 
 
 
@@ -371,9 +325,9 @@ function drawMainSquares(voronoi, bgPixels, config) {
 }
 
 
-function drawBackEdgesSquares(data, config) {
+function drawSquares(data, config) {
 
-
+    var s = config.maxSquareSize;
 
     rectMode(CENTER);
 
@@ -381,30 +335,13 @@ function drawBackEdgesSquares(data, config) {
     noStroke();
     for (var i = 0 ; i < data.length; i++) {
         var point = data[i];
-
-        fill(255, 40);
-
-        rect(point[0], point[1], 1, 1);
-
+        push();
+        translate(point[0], point[1]);
+        fill(255);
+        var sqSize = map(point[2], 40, 100, 1, s);
+        rect(0, 0, sqSize, sqSize);
+        pop();
     }
-    strokeWeight(0.25);
-    stroke(255,60);
-    blendMode(OVERLAY);
-
-    for (var i = 0 ; i < data.length; i++) {
-        for (var j = 0 ; j < data.length; j++) {
-        var point1 = data[i];
-        var point2 = data[j];
-            if(dist(point1[0], point1[1],point2[0], point2[1]) <50 ){
-                line(point1[0], point1[1],point2[0], point2[1]);
-
-            }
-        }
-
-
-    }
-
-
 
 }
 
@@ -463,7 +400,7 @@ function drawShapes(voronoi, config) {
 
     for (j = 0; j < shapes.length; j++) {
         if (!shapes[j]) continue;
-        fill(color(255, random(2, 20)));
+        fill(color(random(255)), random(40, 80));
         beginShape();
         coords = shapes[j];
         for (var l = 0; l < coords.length; ++l) {
@@ -512,6 +449,7 @@ function drawLines(voronoi) {
 function gradientLine(x1, y1, x2, y2, color1, color2) {
 
     if(ctx) {
+        // linear gradient from start to end of line
         var grad = ctx.createLinearGradient(x1, y1, x2, y2);
         grad.addColorStop(0, color1);
         grad.addColorStop(1, color2);
@@ -580,10 +518,12 @@ function drawLogo(productId) {
 //     return (x + y * width) * 4;
 // }
 
-function pixelBrightnessByCoords(x, y, bgPixels, width) {
+function pixelBrightnessByCoords(x, y, bgPixels, config) {
 
   //  var idx = pixelIndexByCoords(500, 500, config.width*pixelDensity());
-    var idx =(Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
+    var idx =(x + y * config.width*pixelDensity()) * 4;
+    console.log(idx);
+
 
     var r = bgPixels[idx];
     var g = bgPixels[idx+1];
