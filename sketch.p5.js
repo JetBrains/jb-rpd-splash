@@ -30,8 +30,6 @@ var lastPoint;
 
 var pointData = [];
 
-var lastBgImage;
-var cvsPixels;
 var canvas, ctx;
 
 var productsImages = {};
@@ -92,10 +90,12 @@ function draw() {
 
     if (!sketchConfig.srcPixels) return;
 
+    var srcPixels = sketchConfig.srcPixels;
+
     pointData = collectPointData(sketchConfig,
-                                 sketchConfig.srcPixels.pixels,
-                                 sketchConfig.srcPixels.width,
-                                 sketchConfig.srcPixels.height);
+                                 srcPixels.pixels,
+                                 srcPixels.width,
+                                 srcPixels.height);
 
     if (!pointData || !pointData.length) return;
 
@@ -135,9 +135,10 @@ function draw() {
 
         drawCurvedEdges(voronoi,sketchConfig);
         drawShapes(voronoi,sketchConfig);
-        drawEdgesSquares(voronoi, cvsPixels, sketchConfig);
-        drawBackEdgesSquares(cvsPointData, sketchConfig);
-        // drawSquares(pointData, sketchConfig); 
+        drawEdgesSquares(voronoi, srcPixels.pixels, srcPixels.width, srcPixels.height,
+                                  sketchConfig);
+        drawBackEdgesSquares(pointData, sketchConfig);
+        // drawSquares(pointData, sketchConfig);
         drawLogo(sketchConfig.product);
     }
 
@@ -164,6 +165,9 @@ function collectPointData(config, srcPixels, srcWidth, srcHeight) {
 
     srcWidth = srcWidth ? srcWidth*pxDensity : config.width*pxDensity;
     srcHeight = srcHeight ? srcHeight*pxDensity : config.height*pxDensity;
+
+    console.log('collectPointData', srcWidth, 'x', srcHeight, 'pixels length', srcPixels.length,
+                'expected length', srcHeight * srcWidth * 4);
 
     var idx, pxBrightness, r, g, b, a;
 
@@ -255,7 +259,12 @@ function collectPointData(config, srcPixels, srcWidth, srcHeight) {
 
 } */
 
-function drawEdgesSquares(voronoi, bgPixels, config) {
+function drawEdgesSquares(voronoi, srcPixels, srcWidth, srcHeight, config) {
+
+    srcWidth = srcWidth * pxDensity;
+    srcHeight = srcHeight * pxDensity;
+
+    var palette = config.palette;
 
     var s = config.maxSquareSize;
     rectMode(CENTER);
@@ -271,9 +280,9 @@ function drawEdgesSquares(voronoi, bgPixels, config) {
         var endY = myEdges[n][1][1];
 
 
-        var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, bgPixels, config.width*pxDensity));
-        var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, bgPixels, config.width*pxDensity));
-        if(pxBrightnessStart&pxBrightnessEnd) {
+        var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, srcPixels, srcWidth));
+        var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, srcPixels, srcWidth));
+        if (pxBrightnessStart & pxBrightnessEnd) {
             var colX = map(pxBrightnessStart, 0, 100, 0, 1);
             var colY =  map(pxBrightnessEnd, 0, 100, 0, 1);
             var colcolX = lerpColor(color(config.palette[2]), color(config.palette[0]), colX);
@@ -541,7 +550,7 @@ function drawLogo(productId) {
                 image(img, width - LOGO_PX_SIDE - 10, height - LOGO_PX_SIDE - 10, LOGO_PX_SIDE, LOGO_PX_SIDE);
             }
         }, function() {
-            console.log('failed to get ' + imagoePath);
+            console.log('failed to get ' + imagePath);
             return false;
         });
     }
@@ -554,7 +563,7 @@ function drawLogo(productId) {
 function pixelBrightnessByCoords(x, y, srcPixels, width) {
 
   //  var idx = pixelIndexByCoords(500, 500, config.width*pixelDensity());
-    var idx =(Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
+    var idx =(Math.floor(x) + Math.floor(y) * width) * 4/* * pxDensity*/;
 
     var r = srcPixels[idx];
     var g = srcPixels[idx+1];
