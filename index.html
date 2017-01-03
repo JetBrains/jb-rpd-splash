@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <!-- RPD: css -->
+        <link rel="stylesheet" href="./rpd.css"></link>
+        <!-- Toolkit: jb (svg) -->
+        <link rel="stylesheet" href="./toolkit/jb/svg.css"></link>
+
+        <!-- Kefir.js library -->
+        <script src="./kefir.min.js"></script>
+
+        <!-- RPD Library (http://shamansir.github.io/rpd) -->
+        <script src="./rpd.min.js"></script>
+
+        <!-- Toolkit: jb, utils -->
+        <script src="./toolkit/jb/shared.js"></script>
+        <!-- Toolkit: jb -->
+        <script src="./toolkit/jb/toolkit.js"></script>
+        <!-- Toolkit: jb (svg) -->
+        <script src="./toolkit/jb/svg.js"></script>
+
+        <!-- p5.js -->
+        <script src="./p5.min.js"></script>
+        <script src="./p5.dom.js"></script>
+
+        <!-- d3.v4.min.js -->
+        <script src="./d3.v4.min.js"></script>
+        <!-- d3.voronoi.js -->
+        <script src="./d3-voronoi.v1.min.js"></script>
+
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            #overlay {
+                background-color: rgba(0,0,0,0.5);
+                opacity: 1;
+                transition: opacity 500ms ease-in;
+            }
+
+            #overlay.hidden {
+                opacity: 0;
+            }
+
+            #patch-target {
+                opacity: 1;
+                transition: opacity 500ms ease-in;
+            }
+
+            #patch-target.hidden {
+                opacity: 0;
+            }
+
+            #patch-target .rpd-background {
+                /* fill: transparent; */
+                opacity: 0.3;
+            }
+
+            #rpd-jb-preview-target {
+                position: fixed;
+            }
+
+            #rpd-jb-preview-target,
+            #rpd-jb-preview-target canvas {
+                background: #12181C;
+            }
+
+            #front-layer {
+                position: relative;
+            }
+
+            .rpd-node .rpd-content {
+                opacity: 0.85;
+            }
+
+            .rpd-node.rpd-jb-save .rpd-process * {
+                pointer-events: all;
+                cursor: pointer;
+            }
+
+            .rpd-node.rpd-util-comment .rpd-process text {
+                fill: white;
+                font-size: 13px;
+            }
+
+            .rpd-node.rpd-jb-palette .rpd-process .rpd-jb-palette-variant * {
+                pointer-events: all;
+                cursor: pointer;
+            }
+
+            .rpd-node.rpd-jb-palette .rpd-process .rpd-jb-product-label {
+                font-size: 7px;
+                font-weight: bold;
+            }
+
+            .rpd-jb-active-label {
+                fill: white;
+            }
+
+            .rpd-jb-palette-variant.rpd-jb-active-variant {
+                stroke: white;
+            }
+
+        </style>
+
+        <link rel="stylesheet" href="./loaders.min.css"></link>
+
+        <style>
+            .ball-rotate {
+                position: absolute;
+                left: 30px;
+                top: 30px;
+                transition: opacity 500ms ease-out;
+            }
+        </style>
+
+    </head>
+    <body>
+
+        <div id="rpd-jb-preview-target"></div>
+        <div id="front-layer">
+            <div id="loader" class="loader-inner ball-rotate"><div></div></div>
+            <div id="overlay"></div>
+            <div id="patch-target"></div>
+        </div>
+
+        <script>
+            // window.___sketchUpdateProxy = function(config) {
+            window.updateSketchConfig = function(config) {
+                window.missedSketchConfig = config;
+            }; // sketch will replace it later
+        </script>
+
+        <script>
+
+            // ============= Build and render patch =============
+
+            var patch = Rpd.addPatch('jb-sketch');
+
+            patch.render('svg', document.getElementById('patch-target'),
+                         { style: 'ableton-out',
+                           fullPage: true,
+                           linkForm: 'curve' });
+
+            patch.addNode('util/nodelist').move(800, 50);
+
+            var configNode = patch.addNode('jb/config', 'Sketch Config').move(200, 200);
+
+            var commentRemoved = false;
+
+            var commentNode = patch.addNode('util/comment').move(500, -60);
+            commentNode.inlets['text'].receive('Press SPACE to hide nodes and show background');
+
+            var previewTarget = document.getElementById('rpd-jb-preview-target');
+            previewTarget.style.width = window.innerWidth + 'px';
+            previewTarget.style.height = window.innerHeight + 'px';
+
+            Kefir.fromEvents(document.body, 'keydown').filter(function(evt) {
+                return evt.keyCode === 32;
+            }).onValue(function(evt) {
+                evt.preventDefault();
+            });
+
+            var overlayElm = document.getElementById('overlay');
+            var patchElm = document.getElementById('patch-target');
+            Kefir.fromEvents(document.body, 'keydown').filter(function(evt) {
+                return evt.keyCode === 32;
+            }).scan(function(prev, next) {
+                return !prev;
+            }, true).onValue(function(value) {
+                overlayElm.className = value ? 'visible' : 'hidden';
+                patchElm.className = value ? 'visible' : 'hidden';
+                if (!value && !commentRemoved) {
+                    patch.removeNode(commentNode);
+                    commentRemoved = true;
+                }
+            });
+
+            var previewNode = patch.addNode('jb/preview', 'Preview').move(800, 400);
+
+            var saveNode = patch.addNode('jb/save', 'Save Image').move(1000, 400);
+
+            //var randomNode = patch.addNode('util/random').move(300, 500);
+
+            var bangNode = patch.addNode('util/bang').move(90, 500);
+          //  var metroNode = patch.addNode('util/metro').move(90, 500);
+
+            var paletteNode = patch.addNode('jb/palette').move(30, 55);
+
+            bangNode.outlets['bang'].connect(configNode.inlets['bang']);
+
+            paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
+            paletteNode.outlets['product'].connect(configNode.inlets['product']);
+
+
+            configNode.outlets['config'].connect(previewNode.inlets['config']);
+
+            previewNode.outlets['image'].connect(saveNode.inlets['image']);
+
+            //randomNode.inlets['min'].receive(12);
+            //randomNode.inlets['max'].receive(40);
+
+          //  randomNode.outlets['random'].connect(configNode.inlets['step']);
+
+            //setTimeout(function() {
+             //   metroNode.outlets['bang'].connect(randomNode.inlets['bang']);
+            //}, 2000);
+
+        </script>
+
+        <!-- p5.js -->
+        <script src="./p5.min.js"></script>
+        <!-- <script src="./p5.dom.js"></script> -->
+        <!-- p5 Sketch -->
+        <script src="./sketch.p5.js"></script>
+
+        <script>
+            window.addEventListener('load', function() {
+                /* window.___sketchUpdateProxy = function(config) {
+                    // uses a global function from the sketch
+                    updateSketchConfig(config);
+                }; */
+
+                //if (window.missedSketchConfig) window.___sketchUpdateProxy(window.missedSketchConfig);
+                if (window.missedSketchConfig) window.updateSketchConfig(window.missedSketchConfig);
+            });
+        </script>
+
+    </body>
+</html>
