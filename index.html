@@ -193,10 +193,10 @@
 
             var noiseNode = patch.addNode('jb/noise').move(30, 160);
 
-            bangNode.outlets['bang'].connect(configNode.inlets['bang']);
-
             paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
             paletteNode.outlets['product'].connect(configNode.inlets['product']);
+
+            bangNode.outlets['bang'].connect(noiseNode.inlets['bang']);
 
             noiseNode.outlets['pixels'].connect(configNode.inlets['srcPixels']);
 

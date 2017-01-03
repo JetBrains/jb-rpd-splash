@@ -24,7 +24,13 @@ Rpd.channeltype('jb/product', { });
 
 var PIXELS_COUNT_FACTOR = 4; // one pixel is four elements in the array
 Rpd.channeltype('jb/pixels', {
-    show: function(pixels) { return pixels ? (pixels.length / PIXELS_COUNT_FACTOR) + ' pixels' : '<No Pixels>'; }
+    show: function(value) {
+        if (!value) return '<None>';
+        return value.width + 'x' + value.height + ', ' +
+            ((value.pixels && value.pixels.length)
+             ? (Math.floor(value.pixels.length / PIXELS_COUNT_FACTOR / 100) / 10) + 'kpx'
+             : '0px');
+    }
 });
 
 Rpd.nodetype('jb/config', {
@@ -117,8 +123,8 @@ Rpd.nodetype('jb/noise', function() {
     var values = Kefir.emitter();
 
     var noiseSketch = function(p) {
-        var width = 1000;
-        var height = 1000;
+        var width = window.innerHeight;
+        var height = window.innerWidth;
 
         p.setup = function() {
             p.createCanvas(width, height);
@@ -126,6 +132,7 @@ Rpd.nodetype('jb/noise', function() {
         };
 
         refreshSketch = function() {
+            console.log('refresh called');
             p.redraw();
         };
 
@@ -139,7 +146,12 @@ Rpd.nodetype('jb/noise', function() {
                 }
             }
             p.loadPixels();
-            values.emit(p.pixels);
+            console.log('emitting pixels');
+            values.emit({
+                width: width,
+                height: height,
+                pixels: p.pixels
+            });
         };
     };
 
@@ -150,8 +162,12 @@ Rpd.nodetype('jb/noise', function() {
     return {
         inlets: { 'bang': { type: 'util/bang' } },
         outlets: { 'pixels': { type: 'jb/pixels' } },
-        process: function(inlets, outlets) {
-
+        process: function(inlets) {
+            console.log('process called', 'refresh sketch is ', refreshSketch ? 'defined' : 'not defined');
+            if (refreshSketch) refreshSketch();
+            return {
+                pixels: values
+            }
         }
     };
 });

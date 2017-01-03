@@ -90,7 +90,12 @@ function draw() {
 
     // cvsPixels = pixels;
 
-    pointData = collectPointData(sketchConfig);
+    if (!sketchConfig.srcPixels) return;
+
+    pointData = collectPointData(sketchConfig,
+                                 sketchConfig.srcPixels.pixels,
+                                 sketchConfig.srcPixels.width,
+                                 sketchConfig.srcPixels.height);
 
     if (!pointData || !pointData.length) return;
 
@@ -152,20 +157,17 @@ function updateSketchConfig(newConfig) {
     redraw();
 }
 
-function collectPointData(config, bgPixels) {
+function collectPointData(config, srcPixels, srcWidth, srcHeight) {
 
-    var bgPixels = bgPixels || config.srcPixels;
-
-    if (!bgPixels || !bgPixels.length) return [];
+    if (!srcPixels || !srcPixels.length) return [];
 
     //console.log(config);
     var step = Math.floor(config.step);
     var maxPoints = config.maxPoints;
     var inregularity = config.irregularity;
 
-    var imgWidth = config.width*pxDensity;
-    var imgHeight = config.height*pxDensity;
-
+    srcWidth = srcWidth ? srcWidth*pxDensity : config.width*pxDensity;
+    srcHeight = srcHeight ? srcHeight*pxDensity : config.height*pxDensity;
 
     var idx, pxBrightness, r, g, b, a;
 
@@ -181,19 +183,17 @@ function collectPointData(config, bgPixels) {
 
    // console.log('imgWidth', imgWidth, 'imgHeight', imgHeight, 'step', step);
 
-    for (var x = 0; x < imgWidth; x += step) {
+    for (var x = 0; x < srcWidth; x += step) {
 
         if (pointData.length >= maxPoints) break;
 
-        for (var y = 0; y < imgHeight; y += step) {
+        for (var y = 0; y < srcHeight; y += step) {
 
            // console.log('y', y, pointData.length >= maxPoints);
 
             if (pointData.length >= maxPoints) break;
 
-            pxBrightness = pixelBrightnessByCoords(x, y, bgPixels,  imgWidth);
-
-
+            pxBrightness = pixelBrightnessByCoords(x, y, srcPixels,  srcWidth);
 
             if ((pxBrightness > 40)&&(random(0, pxBrightness)<30)) {
 
@@ -339,12 +339,6 @@ function drawMainSquares(voronoi, bgPixels, config) {
         var startY = myEdges[n][0][1];
         var endX = myEdges[n][1][0];
         var endY = myEdges[n][1][1];
-
-
-
-
-
-
     }
 
 }
@@ -559,15 +553,15 @@ function drawLogo(productId) {
 //     return (x + y * width) * 4;
 // }
 
-function pixelBrightnessByCoords(x, y, bgPixels, width) {
+function pixelBrightnessByCoords(x, y, srcPixels, width) {
 
   //  var idx = pixelIndexByCoords(500, 500, config.width*pixelDensity());
     var idx =(Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
 
-    var r = bgPixels[idx];
-    var g = bgPixels[idx+1];
-    var b = bgPixels[idx+2];
-    var a = bgPixels[idx+3];
+    var r = srcPixels[idx];
+    var g = srcPixels[idx+1];
+    var b = srcPixels[idx+2];
+    var a = srcPixels[idx+3];
 
 
 
