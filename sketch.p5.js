@@ -116,7 +116,7 @@ function draw() {
 
 
 
-    //rectangle
+    //Main gradient
     blendMode(OVERLAY);
     if (ctx) {
         var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
@@ -134,24 +134,14 @@ function draw() {
             .size([width, height])
             (cvsPointData);
 
-
-        // drawPolygons(voronoi, sketchConfig);
+        drawCurvedEdges(voronoi,sketchConfig);
         drawShapes(voronoi,sketchConfig);
         drawEdgesSquares(voronoi, cvsPixels, sketchConfig);
         drawBackEdgesSquares(cvsPointData, sketchConfig);
-
-
-      //  drawMainSquares(voronoi, cvsPixels, sketchConfig);
-         console.log('draw');
+        blendMode(NORMAL);
+        drawLogo(sketchConfig.product);
     }
 
-
-
-
-  //  drawSquares(cvsPointData, sketchConfig);
-
-
-  //  drawLogo(sketchConfig.product);
 }
 
 function updateSketchConfig(newConfig) {
@@ -167,7 +157,6 @@ function updateSketchConfig(newConfig) {
 
 function collectPointData(config, bgPixels) {
 
-    //console.log(config);
     var step = Math.floor(config.step);
     var maxPoints = config.maxPoints;
     var inregularity = config.irregularity;
@@ -184,11 +173,6 @@ function collectPointData(config, bgPixels) {
 
     var xpos, ypos;
 
-    //var d = pixelDensity();
-
-    //console.log('maxPoints', maxPoints);
-
-   // console.log('imgWidth', imgWidth, 'imgHeight', imgHeight, 'step', step);
 
     for (var x = 0; x < imgWidth; x += step) {
 
@@ -216,64 +200,9 @@ function collectPointData(config, bgPixels) {
 
     }
 
-    //console.log(pointData.length, pointData);
-
     return pointData;
 }
 
-function drawPolygons(voronoi, config) {
-    var polygons = voronoi.polygons();
-
-    var vcolors = [
-                   color(197,27,125), color(222,119,174), color(241,182,218),
-                   color(253,224,239), color(247,247,247), color(230,245,208),
-                   color(184,225,134), color(127,188,65), color(77,146,33)
-                  ];
-
-
-    stroke(255);
-    strokeWeight(0.5)
-    // draw polygons
-    for (var j = 0; j < polygons.length; j++) {
-        var polygon = polygons[j];
-
-        if (!polygon) continue;
-
-        // pick a random color
-        var polyColor = vcolors[j % vcolors.length];
-        fill(polyColor);
-        noFill();
-
-        beginShape();
-
-        for (var k = 0; k < polygon.length; k++) {
-
-          var v = polygon[k];
-
-          vertex(v[0], v[1]);
-
-        }
-
-        endShape(CLOSE);
-
-
-    }
-
-    // draw circles.
-
-    var circles = cvsPointData.slice(1);
-
-    stroke(0);
-    for (var i = 0 ; i < circles.length; i++) {
-        var center = circles[i];
-        push();
-        translate(center[0], center[1]);
-        fill(0);
-        ellipse(0, 0, 1.5, 1.5);
-        pop();
-    }
-
-}
 
 function drawEdgesSquares(voronoi, bgPixels, config) {
 
@@ -293,12 +222,14 @@ function drawEdgesSquares(voronoi, bgPixels, config) {
 
         var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, bgPixels, config.width*pxDensity));
         var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, bgPixels, config.width*pxDensity));
+
+
+
         if(pxBrightnessStart&pxBrightnessEnd) {
             var colX = map(pxBrightnessStart, 0, 100, 0, 1);
             var colY =  map(pxBrightnessEnd, 0, 100, 0, 1);
             var colcolX = lerpColor(color(config.palette[2]), color(config.palette[0]), colX);
             var colcolY = lerpColor(color(config.palette[2]), color(config.palette[0]), colY);
-
 
 
             strokeWeight(0.8);
@@ -331,32 +262,6 @@ function drawEdgesSquares(voronoi, bgPixels, config) {
 
 }
 
-function drawMainSquares(voronoi, bgPixels, config) {
-
-    var s = config.maxSquareSize;
-
-
-    rectMode(CENTER);
-    console.log(s);
-
-
-    var myEdges = voronoi.edges; //myDelaunay.getEdges();
-
-    for (var n=0; n<myEdges.length; n++) {
-        if (!myEdges[n]) continue;
-        var startX = myEdges[n][0][0];
-        var startY = myEdges[n][0][1];
-        var endX = myEdges[n][1][0];
-        var endY = myEdges[n][1][1];
-
-
-
-
-
-
-    }
-
-}
 
 
 function drawBackEdgesSquares(data, config) {
@@ -376,7 +281,7 @@ function drawBackEdgesSquares(data, config) {
 
     }
     strokeWeight(0.25);
-    stroke(255,80);
+    stroke(255,20);
     blendMode(OVERLAY);
 
     for (var i = 0 ; i < data.length; i++) {
@@ -406,7 +311,6 @@ function drawShapes(voronoi, config) {
 
     //blendMode(SCREEN);
     var shapes = [];
-   // int[] colors = {0xccd5df, 0x8da3b2, 0x6f899f, 0x3b5778, 0xd6dfe6};
 
     var s = 0;
 
@@ -461,41 +365,7 @@ function drawShapes(voronoi, config) {
     }
 }
 
-function drawLines(voronoi) {
 
-    var edges = voronoi.edges;
-    var cells = voronoi.cells;
-
-    var cellEdges;
-
-    var l;
-
-
-    for (var j = 0; j < cells.length; j++) {
-        if (!cells[j]) continue;
-        cellEdges = cells[j].halfedges;
-
-        for (l = 0; l < cellEdges.length; l += 2) {
-            if (!cellEdges[l] || !cellEdges[l + 1]) continue;
-
-            startX = edges[cellEdges[l]][0];
-            startY = edges[cellEdges[l]][1];
-            endX = edges[cellEdges[l + 1]][0];
-            endY = edges[cellEdges[l + 1]][1];
-
-            strokeWeight(1);
-            stroke(255);
-            console.log('line',startX);
-
-            line(startX, startY, endX, endY);
-        }
-
-
-
-
-    }
-
-}
 
 function gradientLine(x1, y1, x2, y2, color1, color2) {
 
@@ -511,6 +381,50 @@ function gradientLine(x1, y1, x2, y2, color1, color2) {
     }
 }
 
+
+function drawCurvedEdges(voronoi, config) {
+
+    var myEdges = voronoi.edges;
+
+    for (var n=0; n<myEdges.length; n++) {
+        if (!myEdges[n]) continue;
+        var startX = myEdges[n][0][0];
+        var startY = myEdges[n][0][1];
+        var endX = myEdges[n][1][0];
+        var endY = myEdges[n][1][1];
+
+
+
+
+        var randomEdge = Math.floor(random(0, myEdges.length));
+        if (!myEdges[randomEdge]) continue;
+        var randomX = myEdges[randomEdge][0][0];
+        var randomY = myEdges[randomEdge][0][1];
+
+
+        if (random(0, 1) < 0.3 && dist(startX, startY, randomX, randomY) < 500 && dist(startX, startY, randomX, randomY) > 400) {
+            noFill();
+            stroke(random(100, 255));
+            strokeWeight(0.3);
+            blendMode(OVERLAY);
+
+            bezier(
+                startX, startY,
+                startX, startY + 500,
+                randomX, randomY - 500,
+                randomX, randomY
+            );
+            blendMode(BLEND);
+
+
+        }
+
+    }
+}
+
+
+
+
 var AVAILABLE_IMAGES = [
     'logos/appcode.svg',
     'logos/clion.svg',
@@ -521,7 +435,7 @@ var AVAILABLE_IMAGES = [
     'logos/dottrace.svg',
     'logos/gogland.svg',
     'logos/hub.svg',
-    'logos/intellij-idea.svg',
+    'logos/intellij-idea-text-square.svg',
     'logos/kotlin.svg',
     'logos/mps.svg',
     'logos/phpstorm.svg',
@@ -537,16 +451,17 @@ var AVAILABLE_IMAGES = [
     'logos/youtrack.svg'
 ];
 
-var LOGO_PX_SIDE = 60;
+var LOGO_PX_SIDE = 720;
+var LOGO_HEIGHT = 90;
 var LOGO_PX_SHIFT = -50;
 
 var currentProductId;
 function drawLogo(productId) {
     if (!productId) return;
     currentProductId = productId;
-    var imagePath = 'logos/' + productId + '.svg';
+    var imagePath = 'logos/' + productId + '-text-square.svg';
     if (productsImages[productId]) {
-        image(productsImages[productId], width - LOGO_PX_SIDE - 10, height - LOGO_PX_SIDE - 10, LOGO_PX_SIDE, LOGO_PX_SIDE);
+        image(productsImages[productId], width/2, height/2, LOGO_PX_SIDE, LOGO_HEIGHT);
     } else {
         if (AVAILABLE_IMAGES.indexOf(imagePath) < 0) {
             //console.log(imagePath + ' is not in the list of available images');
@@ -555,10 +470,10 @@ function drawLogo(productId) {
         loadImage(imagePath, function(img) {
             productsImages[productId] = img;
             if (currentProductId == productId) {
-                image(img, width - LOGO_PX_SIDE - 10, height - LOGO_PX_SIDE - 10, LOGO_PX_SIDE, LOGO_PX_SIDE);
+                image(img, width/2, height/2, LOGO_PX_SIDE, LOGO_HEIGHT);
             }
         }, function() {
-            console.log('failed to get ' + imagoePath);
+            console.log('failed to get ' + imagePath);
             return false;
         });
     }
