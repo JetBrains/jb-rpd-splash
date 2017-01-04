@@ -1,6 +1,7 @@
 var sketchConfig = {
     width: window.innerWidth,
     height: window.innerHeight,
+    srcPixels: null,
     maxPoints: window.innerWidth * window.innerHeight,
     scale: 1,
     bgcolor: _rgb(24, 24, 24),
@@ -57,7 +58,10 @@ function setup() {
     background(color(bgcolor.r, bgcolor.g, bgcolor.b));
     clear();
 
+    d3.select('#rpd-jb-preview-target').selectAll('.sketch-canvas').remove();
     canvas = createCanvas(sketchConfig.width, sketchConfig.height).parent('rpd-jb-preview-target');
+    canvas.canvas.className = 'sketch-canvas';
+    canvas.canvas.style.visibility = 'visible';
     ctx = canvas.drawingContext;
     noLoop();
     updateSketchConfig(sketchConfig);
@@ -133,7 +137,7 @@ function updateSketchConfig(newConfig) {
     // if (recalcPoints && lastBgImage) {
     //     pointData = collectPointData(sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
     // }
-    noiseSeed(random(1000));
+    //noiseSeed(random(1000));
     redraw();
 }
 

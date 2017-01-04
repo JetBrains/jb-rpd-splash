@@ -38,6 +38,7 @@ Rpd.nodetype('jb/config', {
         'bang': { type: 'util/bang' },
         'width': { type: 'jb/integer', 'default': window.innerWidth },
         'height': { type: 'jb/integer', 'default': window.innerHeight },
+        'srcPixels': { type: 'jb/pixels', 'default': null },
         'maxPoints': { type: 'jb/integer', 'default': window.innerWidth*window.innerHeight, name: 'max' },
         'scale': { type: 'util/number', 'default': 1 },
         'bgcolor': { type: 'util/color', 'default': _rgb(24, 24, 24) },
@@ -126,17 +127,25 @@ Rpd.nodetype('jb/noise', function() {
         var height = window.innerWidth;
 
         p.setup = function() {
-            p.createCanvas(width, height);
+            var cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
+            //cvs.position(-5000, -5000);
+            cvs.canvas.className = 'noise-canvas';
+            cvs.canvas.style.display = 'none';
+            console.log(cvs);
+            //cvs.style.display = 'none';
             p.noLoop();
         };
 
         var lastPixels;
         refreshSketch = function() {
+            p.noiseSeed(p.random(1000))
             p.redraw();
             return lastPixels;
         };
 
         p.draw = function() {
+            p.clear();
+            p.noStroke();
             for (var x = 0; x <= width/2+10; x+=10) {
                 for (var y = 0; y < height; y+=10) {
                     var c = 255 * p.noise(0.005 * x, 0.005 * y);
