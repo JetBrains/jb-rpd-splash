@@ -190,11 +190,13 @@
           //  var metroNode = patch.addNode('util/metro').move(90, 500);
 
             var paletteNode = patch.addNode('jb/palette').move(30, 55);
+            var logoNode = patch.addNode('jb/logo').move(50, 155);
 
             bangNode.outlets['bang'].connect(configNode.inlets['bang']);
 
             paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
-            paletteNode.outlets['product'].connect(configNode.inlets['product']);
+            paletteNode.outlets['product'].connect(logoNode.inlets['product']);
+            logoNode.outlets['out'].connect(configNode.inlets['logo']);
 
 
             configNode.outlets['config'].connect(previewNode.inlets['config']);

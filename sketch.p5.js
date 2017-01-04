@@ -9,7 +9,7 @@ var sketchConfig = {
         '#00ff00',
         '#0000ff'
     ],
-    product: null,
+    logo: null,
     maxSquareSize: 15,
     density: 6,
     irregularity: 0.5,
@@ -123,12 +123,23 @@ function draw() {
             .size([width, height])
             (cvsPointData);
 
+        // sketchConfig.layers = [
+        //     function() { rect(...); },
+        //     function() { circle(...); },
+        //     function() { circle(...); }
+        // ];
+        //
+        // sketchConfig.layers.forEach(function(layer) {
+        //     layer();
+        //
+        // });
+
         drawCurvedEdges(voronoi, sketchConfig);
         drawShapes(voronoi, sketchConfig);
         drawEdgesSquares(voronoi, cvsPixels, sketchConfig);
         drawBackEdgesSquares(cvsPointData, sketchConfig);
-        drawLogo(sketchConfig.product);
         blendMode(NORMAL);
+        drawLogo(sketchConfig.logo);
 
 
     }
@@ -149,7 +160,7 @@ function updateSketchConfig(newConfig) {
 function collectPointData(config, bgPixels) {
     var step = Math.floor(config.step);
     var maxPoints = config.maxPoints;
-    var inregularity = config.irregularity;
+    var chaos = config.irregularity;
 
     var imgWidth = config.width * pxDensity;
     var imgHeight = config.height * pxDensity;
@@ -179,8 +190,8 @@ function collectPointData(config, bgPixels) {
 
             if ((pxBrightness > 40) && (random(0, pxBrightness) < 30)) {
 
-                xpos = x + random(-step / 2, step / 2) * inregularity;
-                ypos = y + random(-step / 2, step / 2) * inregularity;
+                xpos = x + random(-step / 2, step / 2) * chaos;
+                ypos = y + random(-step / 2, step / 2) * chaos;
 
                 pointData.push([xpos, ypos, pxBrightness]);
             }
@@ -210,6 +221,7 @@ function drawEdgesSquares(voronoi, bgPixels, config) {
 
         var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, bgPixels, config.width * pxDensity));
         var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, bgPixels, config.width * pxDensity));
+
         if (pxBrightnessStart & pxBrightnessEnd) {
             var colX = map(pxBrightnessStart, 0, 100, 0, 1);
             var colY = map(pxBrightnessEnd, 0, 100, 0, 1);
@@ -439,15 +451,18 @@ var AVAILABLE_IMAGES = [
 var LOGO_PX_SIDE = 60;
 var LOGO_PX_SHIFT = -50;
 
-var currentProductId;
-function drawLogo(productId) {
+function putLogoAt(ctx, image, x, y) {
+    ctx.drawImage(image, x - 870 / 2, y - 55, 870, 110);
+}
+
+function drawLogo(logo) {
+    if (!logo) return;
+    var productId = logo.product;
     if (!productId) return;
-    currentProductId = productId;
     var imagePath = 'logos/' + productId + '-text-square.svg';
     if (productsImages[productId]) {
 
-            ctx.drawImage(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
-
+            putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
 
     } else {
         if (!ctx || AVAILABLE_IMAGES.indexOf(imagePath) < 0) {
@@ -457,9 +472,7 @@ function drawLogo(productId) {
         var img = new Image();
         img.onload = function() {
             productsImages[productId] = img;
-            if (currentProductId == productId) {
-                ctx.drawImage(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
-            }
+            putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
         };
         img.src = imagePath;
         // loadImage(imagePath, function (img) {
