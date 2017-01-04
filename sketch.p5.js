@@ -10,7 +10,7 @@ var sketchConfig = {
         '#00ff00',
         '#0000ff'
     ],
-    product: null,
+    logo: null,
     maxSquareSize: 15,
     density: 6,
     irregularity: 0.5,
@@ -118,13 +118,24 @@ function draw() {
             .size([width, height])
             (pointData);
 
+        // sketchConfig.layers = [
+        //     function() { rect(...); },
+        //     function() { circle(...); },
+        //     function() { circle(...); }
+        // ];
+        //
+        // sketchConfig.layers.forEach(function(layer) {
+        //     layer();
+        //
+        // });
+
         drawCurvedEdges(voronoi, sketchConfig);
         drawShapes(voronoi, sketchConfig);
         drawEdgesSquares(voronoi, srcPixels.pixels, srcPixels.width, srcPixels.height,
                                   sketchConfig);
         drawBackEdgesSquares(pointData, sketchConfig);
         blendMode(NORMAL);
-         drawLogo(sketchConfig.product);
+        drawLogo(sketchConfig.logo);
 
 
     }
@@ -147,7 +158,7 @@ function collectPointData(config, srcPixels, srcWidth, srcHeight) {
 
     var step = Math.floor(config.step);
     var maxPoints = config.maxPoints;
-    var inregularity = config.irregularity;
+    var chaos = config.irregularity;
 
     srcWidth = srcWidth ? srcWidth * pxDensity : config.width * pxDensity;
     srcHeight = srcHeight ? srcHeight * pxDensity : config.height * pxDensity;
@@ -178,8 +189,8 @@ function collectPointData(config, srcPixels, srcWidth, srcHeight) {
 
             if ((pxBrightness > 40) && (random(0, pxBrightness) < 30)) {
 
-                xpos = x + random(-step / 2, step / 2) * inregularity;
-                ypos = y + random(-step / 2, step / 2) * inregularity;
+                xpos = x + random(-step / 2, step / 2) * chaos;
+                ypos = y + random(-step / 2, step / 2) * chaos;
 
                 pointData.push([ xpos, ypos, pxBrightness ]);
             }
@@ -399,6 +410,21 @@ function drawCurvedEdges(voronoi, config) {
 }
 
 
+
+function pixelBrightnessByCoords(x, y, srcPixels, width) {
+
+    var idx = (Math.floor(x) + Math.floor(y) * width) * 4/* * pxDensity*/;
+
+    var r = srcPixels[idx];
+    var g = srcPixels[idx + 1];
+    var b = srcPixels[idx + 2];
+    var a = srcPixels[idx + 3];
+
+    return brightness(color(r, g, b, a));
+
+}
+
+
 var AVAILABLE_IMAGES = [
     'logos/appcode-text-square.svg',
     'logos/clion-text-square.svg',
@@ -428,16 +454,18 @@ var AVAILABLE_IMAGES = [
 var LOGO_PX_SIDE = 60;
 var LOGO_PX_SHIFT = -50;
 
-var currentProductId;
-function drawLogo(productId) {
+function putLogoAt(ctx, image, x, y) {
+    ctx.drawImage(image, x - 870 / 2, y - 55, 870, 110);
+}
+
+function drawLogo(logo) {
+    if (!logo) return;
+    var productId = logo.product;
     if (!productId) return;
-    currentProductId = productId;
     var imagePath = 'logos/' + productId + '-text-square.svg';
     if (productsImages[productId]) {
 
-        //image(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
-        ctx.drawImage(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
-
+            putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
 
     } else {
         if (!ctx || AVAILABLE_IMAGES.indexOf(imagePath) < 0) {
@@ -447,10 +475,7 @@ function drawLogo(productId) {
         var img = new Image();
         img.onload = function() {
             productsImages[productId] = img;
-            if (currentProductId == productId) {
-                //ctx.drawImage(productsImages[productId], 0, 0/*width/2 -870/2, height/2 -55, 870, 110*/);
-                ctx.drawImage(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
-            }
+            putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
         };
         img.src = imagePath;
         // loadImage(imagePath, function (img) {
@@ -463,21 +488,4 @@ function drawLogo(productId) {
         //     return false;
         // });
     }
-}
-
-// function pixelIndexByCoords(x, y, width) {
-//     return (x + y * width) * 4;
-// }
-
-function pixelBrightnessByCoords(x, y, srcPixels, width) {
-
-    var idx = (Math.floor(x) + Math.floor(y) * width) * 4/* * pxDensity*/;
-
-    var r = srcPixels[idx];
-    var g = srcPixels[idx + 1];
-    var b = srcPixels[idx + 2];
-    var a = srcPixels[idx + 3];
-
-    return brightness(color(r, g, b, a));
-
 }

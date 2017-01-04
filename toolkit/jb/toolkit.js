@@ -19,6 +19,7 @@ Rpd.channeltype('jb/integer', {
 });
 
 Rpd.channeltype('jb/palette', { show: howMuch('color', 'colors') });
+Rpd.channeltype('jb/logo', { show: function(logo) { return logo.product + ', ' + logo.x + ', '+ logo.y; } });
 
 Rpd.channeltype('jb/product', { });
 
@@ -43,7 +44,7 @@ Rpd.nodetype('jb/config', {
         'scale': { type: 'util/number', 'default': 1 },
         'bgcolor': { type: 'util/color', 'default': _rgb(24, 24, 24) },
         'palette': { type: 'jb/palette' },
-        'product': { type: 'jb/product' },
+        'logo': { type: 'jb/logo' },
         'maxSquareSize': { type: 'jb/integer', 'default': 15, name: 'squareSize' },
         'density': { type: 'util/number', 'default': 6 },
         'inregularity': { type: 'util/number', 'default': 0.5 },
@@ -71,6 +72,24 @@ Rpd.nodetype('jb/preview', {
         return { image: {} };
     }
 });
+
+
+Rpd.nodetype('jb/logo', {
+    inlets: {
+        product: { type: 'jb/product', 'default': '' },
+        x: { type: 'util/number', 'default': 0.5 },
+        y: { type: 'util/number', 'default': 0.5 }
+
+    },
+    outlets: {
+        out: { type: 'jb/logo', 'default': null }
+    },
+    process: function(inlets) {
+        return { out: inlets };
+        //return { out: { x: inlets.x, y: inlets.y, logo: inlets.logo } };
+    }
+});
+
 
 // FIXME: setting type to 'core/bool' causes "cannot set '.hidden' to undefined"
 // FIXME: Error: outlet/error — Outlet of type 'util/bang' is not allowed to connect to inlet of type 'jb/boolean'
