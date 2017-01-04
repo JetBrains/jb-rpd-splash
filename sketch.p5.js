@@ -80,41 +80,17 @@ function draw() {
 
     var srcPixels = sketchConfig.srcPixels;
 
-    var src = srcPixels.values;
+    var src = srcPixels.pixels;
     var step = srcPixels.step;
 
-    //loadPixels();
-    //var d = pxDensity;
+    loadPixels();
 
-    // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
-    // for (var i = 0; i < src.length; i++) {
-    //     pixels[i] = src[i];
-    // }
-    /* var d = pixelDensity;
-    for (var x = 0; x < width; x++) {
-        for (var y = 0; y < height; y++) {
-            for (var i = 0; i < d; i++) {
-                for (var j = 0; j < d; j++) {
-                    // loop over
-                    idx = 4 * ((y * d + j) * width * d + (x * d + i));
-
-                    pixels[idx] = src[idx];
-                    pixels[idx+1] = src[idx+1];
-                    pixels[idx+2] = src[idx+2];
-                    pixels[idx+3] = src[idx+3];
-                }
-            }
-        }
-    } */
-    var idx, x, y;
+    console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
     for (var i = 0; i < src.length; i++) {
-        for (var j = 0; j < src[i].length; j++) {
-            fill(src[i][j]);
-            rect(i * step, j * step, step, step);
-        }
+        pixels[i] = src[i];
     }
 
-    //updatePixels();
+    updatePixels();
 
     pointData = collectPointData(sketchConfig,
                                  srcPixels.pixels,
@@ -122,9 +98,6 @@ function draw() {
                                  srcPixels.height);
 
     if (!pointData || !pointData.length) return;
-
-    //noStroke();
-
 
     var xRect = width / 2;
     var yRect = height / 2;
