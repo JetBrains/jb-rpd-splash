@@ -17,22 +17,6 @@ function initP5(w, h) {
     return p.createImg(f.data);
 } */
 
-var DEFAULT_PALETTE = [
-    '#F9A857',
-    '#EC7B45',
-    '#FB5502',
-    '#FB2046',
-    '#E32581',
-    '#D73CEA',
-    '#9135E0',
-    '#961F8C',
-    '#5E2495',
-    '#5848F4',
-    '#05C1FD',
-    '#18D68C',
-    '#FCF84A'
-];
-
 var PRODUCTS = [
 
 

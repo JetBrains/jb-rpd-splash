@@ -107,23 +107,23 @@
 
         </style>
 
-        <link rel="stylesheet" href="./loaders.min.css"></link>
+        <!-- <link rel="stylesheet" href="./loaders.min.css"></link> -->
 
-        <style>
+        <!-- <style>
             .ball-rotate {
                 position: absolute;
                 left: 30px;
                 top: 30px;
                 transition: opacity 500ms ease-out;
             }
-        </style>
+        </style> -->
 
     </head>
     <body>
 
         <div id="rpd-jb-preview-target"></div>
         <div id="front-layer">
-            <div id="loader" class="loader-inner ball-rotate"><div></div></div>
+            <!-- <div id="loader" class="loader-inner ball-rotate"><div></div></div> -->
             <div id="overlay"></div>
             <div id="patch-target"></div>
         </div>
@@ -192,12 +192,15 @@
             var paletteNode = patch.addNode('jb/palette').move(30, 55);
             var logoNode = patch.addNode('jb/logo').move(50, 155);
 
-            bangNode.outlets['bang'].connect(configNode.inlets['bang']);
+            var noiseNode = patch.addNode('jb/noise').move(30, 400);
 
             paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
             paletteNode.outlets['product'].connect(logoNode.inlets['product']);
             logoNode.outlets['out'].connect(configNode.inlets['logo']);
 
+            bangNode.outlets['bang'].connect(noiseNode.inlets['bang']);
+
+            noiseNode.outlets['pixels'].connect(configNode.inlets['srcPixels']);
 
             configNode.outlets['config'].connect(previewNode.inlets['config']);
 

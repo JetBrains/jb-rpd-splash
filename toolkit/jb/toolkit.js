@@ -23,11 +23,23 @@ Rpd.channeltype('jb/logo', { show: function(logo) { return logo.product + ', ' +
 
 Rpd.channeltype('jb/product', { });
 
+var PIXELS_COUNT_FACTOR = 4; // one pixel is four elements in the array
+Rpd.channeltype('jb/pixels', {
+    show: function(value) {
+        if (!value) return '<None>';
+        return value.width + 'x' + value.height + ', ' +
+            ((value.pixels && value.pixels.length)
+             ? (Math.floor(value.pixels.length / PIXELS_COUNT_FACTOR / 100) / 10) + 'kpx'
+             : '0px');
+    }
+});
+
 Rpd.nodetype('jb/config', {
     inlets: {
         'bang': { type: 'util/bang' },
         'width': { type: 'jb/integer', 'default': window.innerWidth },
         'height': { type: 'jb/integer', 'default': window.innerHeight },
+        'srcPixels': { type: 'jb/pixels', 'default': null },
         'maxPoints': { type: 'jb/integer', 'default': window.innerWidth*window.innerHeight, name: 'max' },
         'scale': { type: 'util/number', 'default': 1 },
         'bgcolor': { type: 'util/color', 'default': _rgb(24, 24, 24) },
@@ -121,4 +133,68 @@ Rpd.nodetype('jb/palette', {
             product: inlets.product
         };
     }
+});
+
+Rpd.nodetype('jb/noise', function() {
+
+    var refreshSketch;
+
+    //var values = Kefir.emitter();
+
+    var noiseSketch = function(p) {
+        var width = window.innerHeight;
+        var height = window.innerWidth;
+
+        p.setup = function() {
+            var cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
+            //cvs.position(-5000, -5000);
+            cvs.canvas.className = 'noise-canvas';
+            cvs.canvas.style.display = 'none';
+            console.log(cvs);
+            //cvs.style.display = 'none';
+            p.noLoop();
+        };
+
+        var lastPixels;
+        refreshSketch = function() {
+            p.noiseSeed(p.random(1000))
+            p.redraw();
+            return lastPixels;
+        };
+
+        p.draw = function() {
+            p.clear();
+            p.noStroke();
+            for (var x = 0; x <= width/2+10; x+=10) {
+                for (var y = 0; y < height; y+=10) {
+                    var c = 255 * p.noise(0.005 * x, 0.005 * y);
+                    p.fill(c);
+                    p.rect(x, y, 10, 10);
+                    p.rect(width - x, y, 10, 10)
+                }
+            }
+            p.loadPixels();
+            lastPixels = {
+                width: width,
+                height: height,
+                pixels: p.pixels
+            };
+        };
+    };
+
+    var noiseP5 = new p5(noiseSketch);
+
+    console.log(noiseP5);
+
+    return {
+        inlets: {
+            'bang': { type: 'util/bang' }
+        },
+        outlets: { 'pixels': { type: 'jb/pixels' } },
+        process: function(inlets) {
+            return {
+                pixels: refreshSketch ? refreshSketch() : null
+            }
+        }
+    };
 });
