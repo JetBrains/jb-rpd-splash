@@ -43,6 +43,8 @@ var productsImages = {};
 
 var pxDensity;
 
+var lastPixelsTime, lastPointData;
+
 function preload() {
     console.log('preload');
 
@@ -132,10 +134,16 @@ function draw() {
 
     updatePixels();
 
-    pointData = collectPointData(sketchConfig,
-                                 srcPixels.pixels,
-                                 srcPixels.width,
-                                 srcPixels.height);
+    if (srcPixels.time === lastPixelsTime) {
+        pointData === lastPointData;
+    } else {
+        lastPixelsTime = srcPixels.time;
+        pointData = collectPointData(sketchConfig,
+                                    srcPixels.pixels,
+                                    srcPixels.width,
+                                    srcPixels.height);
+        lastPointData = pointData;
+    }
 
     if (!pointData || !pointData.length) return;
 
