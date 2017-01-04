@@ -19,7 +19,7 @@ var sketchConfig = {
 };
 
 function loadChangedValuesFrom(newConfig) {
-    Object.keys(newConfig).forEach(function(key) {
+    Object.keys(newConfig).forEach(function (key) {
         if (newConfig[key]) sketchConfig[key] = newConfig[key];
     });
 }
@@ -40,17 +40,17 @@ var pxDensity;
 
 function preload() {
     pxDensity = pixelDensity();
-    // loadImage(sketchConfig.backImgSrc, function(img) {
-    //     img.loadPixels();
-    //     lastBgImage = img;
-    //     pointData = collectPointData(sketchConfig, img.pixels);
-    //     console.log('image loaded');
-    //     redraw();
-    //     var loader = document.getElementById('loader');
-    //     if (loader) {
-    //         loader.style.opacity = 0;
-    //     }
-    // });
+    loadImage(sketchConfig.backImgSrc, function (img) {
+        img.loadPixels();
+        lastBgImage = img;
+        pointData = collectPointData(sketchConfig, img.pixels);
+        console.log('image loaded');
+        redraw();
+        var loader = document.getElementById('loader');
+        if (loader) {
+            loader.style.opacity = 0;
+        }
+    });
 }
 
 function setup() {
@@ -75,30 +75,27 @@ function draw() {
 
     noStroke();
 
-    // for (var x = 0; x <= width/2+10; x+=10) {
-    //     for (var y = 0; y < height; y+=10) {
-    //         var c = 255 * noise(0.005 * x, 0.005 * y);
-    //         fill(c);
-    //         rect(x, y, 10, 10);
-    //         rect(width - x, y, 10, 10)
+    for (var x = 0; x <= width / 2 + 10; x += 10) {
+        for (var y = 0; y < height; y += 10) {
+            var c = 255 * noise(0.005 * x, 0.005 * y);
+            fill(c);
+            rect(x, y, 10, 10);
+            rect(width - x, y, 10, 10)
+        }
+    }
 
-    //     }
-    // }
 
+    loadPixels();
 
-    // loadPixels();
+    cvsPixels = pixels;
 
-    // cvsPixels = pixels;
-
-    pointData = collectPointData(sketchConfig);
-
-    if (!pointData || !pointData.length) return;
+    cvsPointData = collectPointData(sketchConfig, cvsPixels);
 
     //noStroke();
 
-    var xRect = width/2;
-    var yRect = height/2;
 
+    var xRect = width / 2;
+    var yRect = height / 2;
 
     var rotation1 = map(50, 0, 100, 0, width);
     var rotation2 = map(50, 0, 100, 0, height);
@@ -108,7 +105,8 @@ function draw() {
     var startGrad1 = createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
     var endGrad1 = createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
 
-    //rectangle
+
+    //Main gradient
     blendMode(OVERLAY);
     if (ctx) {
         var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
@@ -125,20 +123,16 @@ function draw() {
             .size([width, height])
             (pointData);
 
-
-        // drawPolygons(voronoi, sketchConfig);
-        drawShapes(voronoi,sketchConfig);
+        drawCurvedEdges(voronoi, sketchConfig);
+        drawShapes(voronoi, sketchConfig);
         drawEdgesSquares(voronoi, cvsPixels, sketchConfig);
-        drawBackEdgesSquares(pointData, sketchConfig);
+        drawBackEdgesSquares(cvsPointData, sketchConfig);
+        blendMode(NORMAL);
+         drawLogo(sketchConfig.product);
 
 
-      //  drawMainSquares(voronoi, cvsPixels, sketchConfig);
-         console.log('draw');
     }
 
-  //  drawSquares(pointData, sketchConfig);
-
-  //  drawLogo(sketchConfig.product);
 }
 
 function updateSketchConfig(newConfig) {
@@ -153,18 +147,12 @@ function updateSketchConfig(newConfig) {
 }
 
 function collectPointData(config, bgPixels) {
-
-    var bgPixels = bgPixels || config.srcPixels;
-
-    if (!bgPixels || !bgPixels.length) return [];
-
-    //console.log(config);
     var step = Math.floor(config.step);
     var maxPoints = config.maxPoints;
     var inregularity = config.irregularity;
 
-    var imgWidth = config.width*pxDensity;
-    var imgHeight = config.height*pxDensity;
+    var imgWidth = config.width * pxDensity;
+    var imgHeight = config.height * pxDensity;
 
 
     var idx, pxBrightness, r, g, b, a;
@@ -175,11 +163,6 @@ function collectPointData(config, bgPixels) {
 
     var xpos, ypos;
 
-    //var d = pixelDensity();
-
-    //console.log('maxPoints', maxPoints);
-
-   // console.log('imgWidth', imgWidth, 'imgHeight', imgHeight, 'step', step);
 
     for (var x = 0; x < imgWidth; x += step) {
 
@@ -187,83 +170,26 @@ function collectPointData(config, bgPixels) {
 
         for (var y = 0; y < imgHeight; y += step) {
 
-           // console.log('y', y, pointData.length >= maxPoints);
+            // console.log('y', y, pointData.length >= maxPoints);
 
             if (pointData.length >= maxPoints) break;
 
-            pxBrightness = pixelBrightnessByCoords(x, y, bgPixels,  imgWidth);
+            pxBrightness = pixelBrightnessByCoords(x, y, bgPixels, imgWidth);
 
 
+            if ((pxBrightness > 40) && (random(0, pxBrightness) < 30)) {
 
-            if ((pxBrightness > 40)&&(random(0, pxBrightness)<30)) {
+                xpos = x + random(-step / 2, step / 2) * inregularity;
+                ypos = y + random(-step / 2, step / 2) * inregularity;
 
-                xpos = x  + random(-step / 2, step / 2) * inregularity;
-                ypos = y  + random(-step / 2, step / 2) * inregularity;
-
-                pointData.push([ xpos, ypos, pxBrightness ]);
+                pointData.push([xpos, ypos, pxBrightness]);
             }
 
         }
 
     }
 
-    //console.log(pointData.length, pointData);
-
     return pointData;
-}
-
-function drawPolygons(voronoi, config) {
-    var polygons = voronoi.polygons();
-
-    var vcolors = [
-                   color(197,27,125), color(222,119,174), color(241,182,218),
-                   color(253,224,239), color(247,247,247), color(230,245,208),
-                   color(184,225,134), color(127,188,65), color(77,146,33)
-                  ];
-
-
-    stroke(255);
-    strokeWeight(0.5)
-    // draw polygons
-    for (var j = 0; j < polygons.length; j++) {
-        var polygon = polygons[j];
-
-        if (!polygon) continue;
-
-        // pick a random color
-        var polyColor = vcolors[j % vcolors.length];
-        fill(polyColor);
-        noFill();
-
-        beginShape();
-
-        for (var k = 0; k < polygon.length; k++) {
-
-          var v = polygon[k];
-
-          vertex(v[0], v[1]);
-
-        }
-
-        endShape(CLOSE);
-
-
-    }
-
-    // draw circles.
-
-    var circles = pointData.slice(1);
-
-    stroke(0);
-    for (var i = 0 ; i < circles.length; i++) {
-        var center = circles[i];
-        push();
-        translate(center[0], center[1]);
-        fill(0);
-        ellipse(0, 0, 1.5, 1.5);
-        pop();
-    }
-
 }
 
 function drawEdgesSquares(voronoi, bgPixels, config) {
@@ -274,7 +200,7 @@ function drawEdgesSquares(voronoi, bgPixels, config) {
 
     var myEdges = voronoi.edges; //myDelaunay.getEdges();
 
-    for (var n=0; n<myEdges.length; n++) {
+    for (var n = 0; n < myEdges.length; n++) {
         if (!myEdges[n]) continue;
         var startX = myEdges[n][0][0];
         var startY = myEdges[n][0][1];
@@ -282,67 +208,32 @@ function drawEdgesSquares(voronoi, bgPixels, config) {
         var endY = myEdges[n][1][1];
 
 
-        var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, bgPixels, config.width*pxDensity));
-        var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, bgPixels, config.width*pxDensity));
-        if(pxBrightnessStart&pxBrightnessEnd) {
+        var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, bgPixels, config.width * pxDensity));
+        var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, bgPixels, config.width * pxDensity));
+        if (pxBrightnessStart & pxBrightnessEnd) {
             var colX = map(pxBrightnessStart, 0, 100, 0, 1);
-            var colY =  map(pxBrightnessEnd, 0, 100, 0, 1);
+            var colY = map(pxBrightnessEnd, 0, 100, 0, 1);
             var colcolX = lerpColor(color(config.palette[2]), color(config.palette[0]), colX);
             var colcolY = lerpColor(color(config.palette[2]), color(config.palette[0]), colY);
-
 
 
             strokeWeight(0.8);
             stroke(255);
 
-              blendMode(SCREEN);
+            blendMode(SCREEN);
 
-                gradientLine(startX, startY, endX, endY, colcolX, colcolY);
+            gradientLine(startX, startY, endX, endY, colcolX, colcolY);
             //    line(startX, startY, endX, endY);
 
 
-
-
-
-
-                var sqSize = Math.floor(map(pxBrightnessStart, 40, 100, 1, s));
-            fill(lerpColor(colcolX, color(255), random(0,1)));
+            var sqSize = Math.floor(map(pxBrightnessStart, 40, 100, 1, s));
+            fill(lerpColor(colcolX, color(255), random(0, 1)));
             noStroke();
-                // console.log(pxBrightness);
-                rect(startX, startY, sqSize, sqSize);
-
+            // console.log(pxBrightness);
+            rect(startX, startY, sqSize, sqSize);
 
 
         }
-
-
-
-
-    }
-
-}
-
-function drawMainSquares(voronoi, bgPixels, config) {
-
-    var s = config.maxSquareSize;
-
-
-    rectMode(CENTER);
-    console.log(s);
-
-
-    var myEdges = voronoi.edges; //myDelaunay.getEdges();
-
-    for (var n=0; n<myEdges.length; n++) {
-        if (!myEdges[n]) continue;
-        var startX = myEdges[n][0][0];
-        var startY = myEdges[n][0][1];
-        var endX = myEdges[n][1][0];
-        var endY = myEdges[n][1][1];
-
-
-
-
 
 
     }
@@ -353,12 +244,11 @@ function drawMainSquares(voronoi, bgPixels, config) {
 function drawBackEdgesSquares(data, config) {
 
 
-
     rectMode(CENTER);
 
 
     noStroke();
-    for (var i = 0 ; i < data.length; i++) {
+    for (var i = 0; i < data.length; i++) {
         var point = data[i];
 
         fill(255, 40);
@@ -367,22 +257,21 @@ function drawBackEdgesSquares(data, config) {
 
     }
     strokeWeight(0.25);
-    stroke(255,80);
+    stroke(255, 20);
     blendMode(OVERLAY);
 
-    for (var i = 0 ; i < data.length; i++) {
-        for (var j = 0 ; j < data.length; j++) {
-        var point1 = data[i];
-        var point2 = data[j];
-            if(dist(point1[0], point1[1],point2[0], point2[1]) <50 ){
-                line(point1[0], point1[1],point2[0], point2[1]);
+    for (var i = 0; i < data.length; i++) {
+        for (var j = 0; j < data.length; j++) {
+            var point1 = data[i];
+            var point2 = data[j];
+            if (dist(point1[0], point1[1], point2[0], point2[1]) < 50) {
+                line(point1[0], point1[1], point2[0], point2[1]);
 
             }
         }
 
 
     }
-
 
 
 }
@@ -397,7 +286,6 @@ function drawShapes(voronoi, config) {
 
     //blendMode(SCREEN);
     var shapes = [];
-   // int[] colors = {0xccd5df, 0x8da3b2, 0x6f899f, 0x3b5778, 0xd6dfe6};
 
     var s = 0;
 
@@ -452,45 +340,10 @@ function drawShapes(voronoi, config) {
     }
 }
 
-function drawLines(voronoi) {
-
-    var edges = voronoi.edges;
-    var cells = voronoi.cells;
-
-    var cellEdges;
-
-    var l;
-
-
-    for (var j = 0; j < cells.length; j++) {
-        if (!cells[j]) continue;
-        cellEdges = cells[j].halfedges;
-
-        for (l = 0; l < cellEdges.length; l += 2) {
-            if (!cellEdges[l] || !cellEdges[l + 1]) continue;
-
-            startX = edges[cellEdges[l]][0];
-            startY = edges[cellEdges[l]][1];
-            endX = edges[cellEdges[l + 1]][0];
-            endY = edges[cellEdges[l + 1]][1];
-
-            strokeWeight(1);
-            stroke(255);
-            console.log('line',startX);
-
-            line(startX, startY, endX, endY);
-        }
-
-
-
-
-    }
-
-}
 
 function gradientLine(x1, y1, x2, y2, color1, color2) {
 
-    if(ctx) {
+    if (ctx) {
         var grad = ctx.createLinearGradient(x1, y1, x2, y2);
         grad.addColorStop(0, color1);
         grad.addColorStop(1, color2);
@@ -502,30 +355,70 @@ function gradientLine(x1, y1, x2, y2, color1, color2) {
     }
 }
 
+
+function drawCurvedEdges(voronoi, config) {
+
+    var myEdges = voronoi.edges;
+
+    for (var n = 0; n < myEdges.length; n++) {
+        if (!myEdges[n]) continue;
+        var startX = myEdges[n][0][0];
+        var startY = myEdges[n][0][1];
+        var endX = myEdges[n][1][0];
+        var endY = myEdges[n][1][1];
+
+
+        var randomEdge = Math.floor(random(0, myEdges.length));
+        if (!myEdges[randomEdge]) continue;
+        var randomX = myEdges[randomEdge][0][0];
+        var randomY = myEdges[randomEdge][0][1];
+
+
+        if (random(0, 1) < 0.3 && dist(startX, startY, randomX, randomY) < 500 && dist(startX, startY, randomX, randomY) > 400) {
+            noFill();
+            stroke(random(100, 255));
+            strokeWeight(0.3);
+            blendMode(OVERLAY);
+
+            bezier(
+                startX, startY,
+                startX, startY + 500,
+                randomX, randomY - 500,
+                randomX, randomY
+            );
+            blendMode(BLEND);
+
+
+        }
+
+    }
+}
+
+
 var AVAILABLE_IMAGES = [
-    'logos/appcode.svg',
-    'logos/clion.svg',
-    'logos/datagrip.svg',
-    'logos/dotcover.svg',
-    'logos/dotmemory.svg',
-    'logos/dotpeek.svg',
-    'logos/dottrace.svg',
-    'logos/gogland.svg',
-    'logos/hub.svg',
-    'logos/intellij-idea.svg',
-    'logos/kotlin.svg',
-    'logos/mps.svg',
-    'logos/phpstorm.svg',
-    'logos/pycharm.svg',
-    'logos/resharper-cpp.svg',
-    'logos/resharper.svg',
-    'logos/rider.svg',
-    'logos/rubymine.svg',
-    'logos/teamcity.svg',
-    'logos/toolbox.svg',
-    'logos/upsource.svg',
-    'logos/webstorm.svg',
-    'logos/youtrack.svg'
+    'logos/appcode-text-square.svg',
+    'logos/clion-text-square.svg',
+    'logos/datagrip-text-square.svg',
+    'logos/dotcover-text-square.svg',
+    'logos/dotmemory-text-square.svg',
+    'logos/dotpeek-text-square.svg',
+    'logos/dottrace-text-square.svg',
+    'logos/hub-text-square.svg',
+    'logos/intellij-idea-text-square.svg',
+    'logos/jetbrains-text-square.svg',
+    'logos/kotlin-text-square.svg',
+    'logos/mps-text-square.svg',
+    'logos/phpstorm-text-square.svg',
+    'logos/pycharm-text-square.svg',
+    'logos/resharper-cpp-text-square.svg',
+    'logos/resharper-text-square.svg',
+    'logos/rider-text-square.svg',
+    'logos/rubymine-text-square.svg',
+    'logos/teamcity-text-square.svg',
+    'logos/toolbox-text-square.svg',
+    'logos/upsource-text-square.svg',
+    'logos/webstorm-text-square.svg',
+    'logos/youtrack-text-square.svg'
 ];
 
 var LOGO_PX_SIDE = 60;
@@ -535,41 +428,47 @@ var currentProductId;
 function drawLogo(productId) {
     if (!productId) return;
     currentProductId = productId;
-    var imagePath = 'logos/' + productId + '.svg';
+    var imagePath = 'logos/' + productId + '-text-square.svg';
     if (productsImages[productId]) {
-        image(productsImages[productId], width - LOGO_PX_SIDE - 10, height - LOGO_PX_SIDE - 10, LOGO_PX_SIDE, LOGO_PX_SIDE);
+
+        //image(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
+        ctx.drawImage(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
+
+
     } else {
-        if (AVAILABLE_IMAGES.indexOf(imagePath) < 0) {
+        if (!ctx || AVAILABLE_IMAGES.indexOf(imagePath) < 0) {
             //console.log(imagePath + ' is not in the list of available images');
             return;
         }
-        loadImage(imagePath, function(img) {
+        var img = new Image();
+        img.onload = function() {
             productsImages[productId] = img;
             if (currentProductId == productId) {
-                image(img, width - LOGO_PX_SIDE - 10, height - LOGO_PX_SIDE - 10, LOGO_PX_SIDE, LOGO_PX_SIDE);
+                //ctx.drawImage(productsImages[productId], 0, 0/*width/2 -870/2, height/2 -55, 870, 110*/);
+                ctx.drawImage(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
             }
-        }, function() {
-            console.log('failed to get ' + imagoePath);
-            return false;
-        });
+        };
+        img.src = imagePath;
+        // loadImage(imagePath, function (img) {
+        //     productsImages[productId] = img;
+        //     if (currentProductId == productId) {
+        //         image(productsImages[productId], 0, 0);//width/2 -870/2, height/2 -55, 870, 110);
+        //     }
+        // }, function () {
+        //     console.log('failed to get ' + imagoePath);
+        //     return false;
+        // });
     }
 }
 
-// function pixelIndexByCoords(x, y, width) {
-//     return (x + y * width) * 4;
-// }
-
 function pixelBrightnessByCoords(x, y, bgPixels, width) {
 
-  //  var idx = pixelIndexByCoords(500, 500, config.width*pixelDensity());
-    var idx =(Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
+    var idx = (Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
 
     var r = bgPixels[idx];
-    var g = bgPixels[idx+1];
-    var b = bgPixels[idx+2];
-    var a = bgPixels[idx+3];
-
-
+    var g = bgPixels[idx + 1];
+    var b = bgPixels[idx + 2];
+    var a = bgPixels[idx + 3];
 
     return brightness(color(r, g, b, a));
 
