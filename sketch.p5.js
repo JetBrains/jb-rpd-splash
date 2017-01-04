@@ -1,3 +1,10 @@
+var imagesToLoad = PRODUCTS.map(function(product) {
+    return {
+        product: product.id,
+        path: 'logos/' + product.id + '-text-square.svg'
+    };
+});
+
 var sketchConfig = {
     width: window.innerWidth,
     height: window.innerHeight,
@@ -49,6 +56,34 @@ function preload() {
     //         loader.style.opacity = 0;
     //     }
     // });
+    var readyImgCount = 0;
+    imagesToLoad.forEach(function(imgSpec) {
+        console.log('start loading image for', imgSpec.product);
+        loadImage(imgSpec.path, function(img) {
+            console.log('started loading', imgSpec.path);
+            productsImages[imgSpec.product] = img;
+            readyImgCount++;
+            console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
+            if (readyImgCount == imagesToLoad.length) {
+                console.log('finished loading images');
+            }
+            /*
+            var img = new Image();
+            img.onload = function() {
+                productsImages[productId] = img;
+                putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
+            };
+            img.src = imagePath;
+            */
+        }, function() {
+            console.log('image at ' + imgSpec.path + ' failed to load');
+            readyImgCount++;
+            console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
+            if (readyImgCount == imagesToLoad.length) {
+                console.log('finished loading images');
+            }
+        });
+    });
 }
 
 function setup() {
@@ -72,6 +107,11 @@ function draw() {
     clear();
 
     if (!sketchConfig.srcPixels) return;
+
+    // if (loadingImages) {
+    //     drawLoading();
+    //     return;
+    // }
 
     //var sketchWidth = sketchConfig.width;
     //var sketchHeight = sketchConfig.height;
@@ -424,33 +464,6 @@ function pixelBrightnessByCoords(x, y, srcPixels, width) {
 
 }
 
-
-var AVAILABLE_IMAGES = [
-    'logos/appcode-text-square.svg',
-    'logos/clion-text-square.svg',
-    'logos/datagrip-text-square.svg',
-    'logos/dotcover-text-square.svg',
-    'logos/dotmemory-text-square.svg',
-    'logos/dotpeek-text-square.svg',
-    'logos/dottrace-text-square.svg',
-    'logos/hub-text-square.svg',
-    'logos/intellij-idea-text-square.svg',
-    'logos/jetbrains-text-square.svg',
-    'logos/kotlin-text-square.svg',
-    'logos/mps-text-square.svg',
-    'logos/phpstorm-text-square.svg',
-    'logos/pycharm-text-square.svg',
-    'logos/resharper-cpp-text-square.svg',
-    'logos/resharper-text-square.svg',
-    'logos/rider-text-square.svg',
-    'logos/rubymine-text-square.svg',
-    'logos/teamcity-text-square.svg',
-    'logos/toolbox-text-square.svg',
-    'logos/upsource-text-square.svg',
-    'logos/webstorm-text-square.svg',
-    'logos/youtrack-text-square.svg'
-];
-
 var LOGO_PX_SIDE = 60;
 var LOGO_PX_SHIFT = -50;
 
@@ -463,29 +476,13 @@ function drawLogo(logo) {
     var productId = logo.product;
     if (!productId) return;
     var imagePath = 'logos/' + productId + '-text-square.svg';
-    if (productsImages[productId]) {
+    if (productsImages[productId] && ctx) {
+            image(productsImages[productId], 0, 0);//width/2 -870/2, height/2 -55, 870, 110);
+            //putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
 
-            putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
-
-    } else {
-        if (!ctx || AVAILABLE_IMAGES.indexOf(imagePath) < 0) {
-            //console.log(imagePath + ' is not in the list of available images');
-            return;
-        }
-        var img = new Image();
-        img.onload = function() {
-            productsImages[productId] = img;
-            putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
-        };
-        img.src = imagePath;
-        // loadImage(imagePath, function (img) {
-        //     productsImages[productId] = img;
-        //     if (currentProductId == productId) {
-        //         image(productsImages[productId], 0, 0);//width/2 -870/2, height/2 -55, 870, 110);
-        //     }
-        // }, function () {
-        //     console.log('failed to get ' + imagoePath);
-        //     return false;
-        // });
     }
+}
+
+function drawLoading() {
+    text('loading', 0, 0);
 }
