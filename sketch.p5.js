@@ -138,7 +138,6 @@ function draw() {
         drawShapes(voronoi,sketchConfig);
         drawEdgesSquares(voronoi, cvsPixels, sketchConfig);
         drawBackEdgesSquares(cvsPointData, sketchConfig);
-        blendMode(NORMAL);
         drawLogo(sketchConfig.product);
     }
 
@@ -222,14 +221,12 @@ function drawEdgesSquares(voronoi, bgPixels, config) {
 
         var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, bgPixels, config.width*pxDensity));
         var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, bgPixels, config.width*pxDensity));
-
-
-
         if(pxBrightnessStart&pxBrightnessEnd) {
             var colX = map(pxBrightnessStart, 0, 100, 0, 1);
             var colY =  map(pxBrightnessEnd, 0, 100, 0, 1);
             var colcolX = lerpColor(color(config.palette[2]), color(config.palette[0]), colX);
             var colcolY = lerpColor(color(config.palette[2]), color(config.palette[0]), colY);
+
 
 
             strokeWeight(0.8);
@@ -435,7 +432,7 @@ var AVAILABLE_IMAGES = [
     'logos/dottrace.svg',
     'logos/gogland.svg',
     'logos/hub.svg',
-    'logos/intellij-idea-text-square.svg',
+    'logos/intellij-idea.svg',
     'logos/kotlin.svg',
     'logos/mps.svg',
     'logos/phpstorm.svg',
@@ -451,17 +448,16 @@ var AVAILABLE_IMAGES = [
     'logos/youtrack.svg'
 ];
 
-var LOGO_PX_SIDE = 720;
-var LOGO_HEIGHT = 90;
+var LOGO_PX_SIDE = 60;
 var LOGO_PX_SHIFT = -50;
 
 var currentProductId;
 function drawLogo(productId) {
     if (!productId) return;
     currentProductId = productId;
-    var imagePath = 'logos/' + productId + '-text-square.svg';
+    var imagePath = 'logos/' + productId + '.svg';
     if (productsImages[productId]) {
-        image(productsImages[productId], width/2, height/2, LOGO_PX_SIDE, LOGO_HEIGHT);
+        image(productsImages[productId], width - LOGO_PX_SIDE - 10, height - LOGO_PX_SIDE - 10, LOGO_PX_SIDE, LOGO_PX_SIDE);
     } else {
         if (AVAILABLE_IMAGES.indexOf(imagePath) < 0) {
             //console.log(imagePath + ' is not in the list of available images');
@@ -470,10 +466,10 @@ function drawLogo(productId) {
         loadImage(imagePath, function(img) {
             productsImages[productId] = img;
             if (currentProductId == productId) {
-                image(img, width/2, height/2, LOGO_PX_SIDE, LOGO_HEIGHT);
+                image(img, width - LOGO_PX_SIDE - 10, height - LOGO_PX_SIDE - 10, LOGO_PX_SIDE, LOGO_PX_SIDE);
             }
         }, function() {
-            console.log('failed to get ' + imagePath);
+            console.log('failed to get ' + imagoePath);
             return false;
         });
     }
