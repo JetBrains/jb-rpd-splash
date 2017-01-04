@@ -139,7 +139,7 @@ function draw() {
                                   sketchConfig);
         drawBackEdgesSquares(pointData, sketchConfig);
         // drawSquares(pointData, sketchConfig);
-        drawLogo(sketchConfig.product);
+        //drawLogo(sketchConfig.product);
     }
 
 }
