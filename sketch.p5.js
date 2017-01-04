@@ -44,6 +44,8 @@ var productsImages = {};
 var pxDensity;
 
 function preload() {
+    console.log('preload');
+
     pxDensity = pixelDensity();
     // loadImage(sketchConfig.backImgSrc, function (img) {
     //     img.loadPixels();
@@ -87,6 +89,7 @@ function preload() {
 }
 
 function setup() {
+    console.log('setup');
 
 
     var bgcolor = sketchConfig.bgcolor;
@@ -104,6 +107,8 @@ function setup() {
 }
 
 function draw() {
+    console.log('draw');
+
     clear();
 
     if (!sketchConfig.srcPixels) return;
