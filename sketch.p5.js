@@ -205,60 +205,6 @@ function collectPointData(config, srcPixels, srcWidth, srcHeight) {
     return pointData;
 }
 
-/* function drawPolygons(voronoi, config) {
-    var polygons = voronoi.polygons();
-
-    var vcolors = [
-                   color(197,27,125), color(222,119,174), color(241,182,218),
-                   color(253,224,239), color(247,247,247), color(230,245,208),
-                   color(184,225,134), color(127,188,65), color(77,146,33)
-                  ];
-
-
-    stroke(255);
-    strokeWeight(0.5)
-    // draw polygons
-    for (var j = 0; j < polygons.length; j++) {
-        var polygon = polygons[j];
-
-        if (!polygon) continue;
-
-        // pick a random color
-        var polyColor = vcolors[j % vcolors.length];
-        fill(polyColor);
-        noFill();
-
-        beginShape();
-
-        for (var k = 0; k < polygon.length; k++) {
-
-          var v = polygon[k];
-
-          vertex(v[0], v[1]);
-
-        }
-
-        endShape(CLOSE);
-
-
-    }
-
-    // draw circles.
-
-    var circles = pointData.slice(1);
-
-    stroke(0);
-    for (var i = 0 ; i < circles.length; i++) {
-        var center = circles[i];
-        push();
-        translate(center[0], center[1]);
-        fill(0);
-        ellipse(0, 0, 1.5, 1.5);
-        pop();
-    }
-
-} */
-
 function drawEdgesSquares(voronoi, srcPixels, srcWidth, srcHeight, config) {
 
     srcWidth = srcWidth * pxDensity;
@@ -319,27 +265,6 @@ function drawEdgesSquares(voronoi, srcPixels, srcWidth, srcHeight, config) {
     }
 
 }
-
-/* function drawMainSquares(voronoi, bgPixels, config) {
-
-    var s = config.maxSquareSize;
-
-
-    rectMode(CENTER);
-    console.log(s);
-
-
-    var myEdges = voronoi.edges; //myDelaunay.getEdges();
-
-    for (var n=0; n<myEdges.length; n++) {
-        if (!myEdges[n]) continue;
-        var startX = myEdges[n][0][0];
-        var startY = myEdges[n][0][1];
-        var endX = myEdges[n][1][0];
-        var endY = myEdges[n][1][1];
-    }
-
-} */
 
 
 function drawBackEdgesSquares(data, config) {

@@ -120,7 +120,7 @@ Rpd.nodetype('jb/noise', function() {
 
     var refreshSketch;
 
-    var values = Kefir.emitter();
+    //var values = Kefir.emitter();
 
     var noiseSketch = function(p) {
         var width = window.innerHeight;
@@ -131,12 +131,24 @@ Rpd.nodetype('jb/noise', function() {
             p.noLoop();
         };
 
+        var lastEmitter;
+        var lastRefreshCall = 0;
+        var lastDrawCall = 0;
         refreshSketch = function() {
-            console.log('refresh called');
-            p.redraw();
+            console.log('refresh called', lastRefreshCall++);
+            lastEmitter = Kefir.emitter();
+            setTimeout(function() {
+                p.redraw();
+            }, 1);
+            lastEmitter.log('aa');
+            lastEmitter.emit('test');
+            return lastEmitter;
         };
 
         p.draw = function() {
+            console.log('draw called', 'lastEmitter is ', lastEmitter ? 'defined' : 'not defined')
+            if (!lastEmitter) return;
+            console.log('drawing', lastDrawCall++);
             for (var x = 0; x <= width/2+10; x+=10) {
                 for (var y = 0; y < height; y+=10) {
                     var c = 255 * p.noise(0.005 * x, 0.005 * y);
@@ -146,8 +158,9 @@ Rpd.nodetype('jb/noise', function() {
                 }
             }
             p.loadPixels();
-            console.log('emitting pixels');
-            values.emit({
+            console.log('emitting pixels', lastRefreshCall - 1, lastDrawCall - 1, p.pixels.length);
+            lastEmitter.log('bb');
+            lastEmitter.emit({
                 width: width,
                 height: height,
                 pixels: p.pixels
@@ -160,13 +173,16 @@ Rpd.nodetype('jb/noise', function() {
     console.log(noiseP5);
 
     return {
-        inlets: { 'bang': { type: 'util/bang' } },
+        inlets: {
+            'bang': { type: 'util/bang' }
+            //'pixels': { type: 'jb/pixels', hidden: true }
+        },
         outlets: { 'pixels': { type: 'jb/pixels' } },
         process: function(inlets) {
-            console.log('process called', 'refresh sketch is ', refreshSketch ? 'defined' : 'not defined');
-            if (refreshSketch) refreshSketch();
+            console.log('process called', 'refreshSketch is ', refreshSketch ? 'defined' : 'not defined');
+            //if (refreshSketch) refreshSketch();
             return {
-                pixels: values
+                pixels: refreshSketch ? refreshSketch() : null
             }
         }
     };
