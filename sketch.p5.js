@@ -125,15 +125,24 @@ function draw() {
 
     var srcPixels = sketchConfig.srcPixels;
 
+    var src = srcPixels.pixels;
+    var step = srcPixels.step;
+
+    loadPixels();
+
+    console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
+    for (var i = 0; i < src.length; i++) {
+        pixels[i] = src[i];
+    }
+
+    updatePixels();
+
     pointData = collectPointData(sketchConfig,
                                  srcPixels.pixels,
                                  srcPixels.width,
                                  srcPixels.height);
 
     if (!pointData || !pointData.length) return;
-
-    //noStroke();
-
 
     var xRect = width / 2;
     var yRect = height / 2;

@@ -142,8 +142,8 @@ Rpd.nodetype('jb/noise', function() {
     //var values = Kefir.emitter();
 
     var noiseSketch = function(p) {
-        var width = window.innerHeight;
-        var height = window.innerWidth;
+        var width = window.innerWidth;
+        var height = window.innerHeight;
 
         p.setup = function() {
             var cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
@@ -156,8 +156,11 @@ Rpd.nodetype('jb/noise', function() {
         };
 
         var lastPixels;
+        var lastSeed;
+        var lastValues;
         refreshSketch = function() {
-            p.noiseSeed(p.random(1000))
+            var lastSeed = p.random(1000);
+            p.noiseSeed(lastSeed);
             p.redraw();
             return lastPixels;
         };
@@ -165,19 +168,27 @@ Rpd.nodetype('jb/noise', function() {
         p.draw = function() {
             p.clear();
             p.noStroke();
-            for (var x = 0; x <= width/2+10; x+=10) {
+            lastValues = [];
+            //for (var x = 0; x <= width/2+10; x+=10) {
+            for (var x = 0; x < width; x+=10) {
+                var column = [];
                 for (var y = 0; y < height; y+=10) {
                     var c = 255 * p.noise(0.005 * x, 0.005 * y);
                     p.fill(c);
                     p.rect(x, y, 10, 10);
-                    p.rect(width - x, y, 10, 10)
+                    //p.rect(width - x, y, 10, 10);
+                    column.push(c);
                 }
+                lastValues.push(column);
             }
             p.loadPixels();
             lastPixels = {
                 width: width,
                 height: height,
-                pixels: p.pixels
+                pixels: p.pixels,
+                values: lastValues,
+                step: 10,
+                seed: lastSeed
             };
         };
     };
