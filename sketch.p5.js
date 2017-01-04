@@ -60,31 +60,26 @@ function preload() {
     // });
     var readyImgCount = 0;
     imagesToLoad.forEach(function(imgSpec) {
+        var img = new Image();
         console.log('start loading image for', imgSpec.product);
-        loadImage(imgSpec.path, function(img) {
-            console.log('started loading', imgSpec.path);
+        img.onload = function() {
+            console.log('received', imgSpec.path);
             productsImages[imgSpec.product] = img;
             readyImgCount++;
             console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             if (readyImgCount == imagesToLoad.length) {
                 console.log('finished loading images');
             }
-            /*
-            var img = new Image();
-            img.onload = function() {
-                productsImages[productId] = img;
-                putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
-            };
-            img.src = imagePath;
-            */
-        }, function() {
+        };
+        img.onerror = function() {
             console.log('image at ' + imgSpec.path + ' failed to load');
             readyImgCount++;
             console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             if (readyImgCount == imagesToLoad.length) {
                 console.log('finished loading images');
             }
-        });
+        };
+        img.src = imgSpec.path;
     });
 }
 
@@ -491,9 +486,7 @@ function drawLogo(logo) {
     if (!productId) return;
     var imagePath = 'logos/' + productId + '-text-square.svg';
     if (productsImages[productId] && ctx) {
-            image(productsImages[productId], 0, 0);//width/2 -870/2, height/2 -55, 870, 110);
-            //putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
-
+        putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
     }
 }
 
