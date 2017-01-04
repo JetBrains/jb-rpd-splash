@@ -127,8 +127,8 @@ function draw() {
         drawShapes(voronoi, sketchConfig);
         drawEdgesSquares(voronoi, cvsPixels, sketchConfig);
         drawBackEdgesSquares(cvsPointData, sketchConfig);
+        drawLogo(sketchConfig.product);
         blendMode(NORMAL);
-         drawLogo(sketchConfig.product);
 
 
     }
@@ -395,6 +395,21 @@ function drawCurvedEdges(voronoi, config) {
 }
 
 
+
+function pixelBrightnessByCoords(x, y, bgPixels, width) {
+
+    var idx = (Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
+
+    var r = bgPixels[idx];
+    var g = bgPixels[idx + 1];
+    var b = bgPixels[idx + 2];
+    var a = bgPixels[idx + 3];
+
+    return brightness(color(r, g, b, a));
+
+}
+
+
 var AVAILABLE_IMAGES = [
     'logos/appcode-text-square.svg',
     'logos/clion-text-square.svg',
@@ -431,8 +446,7 @@ function drawLogo(productId) {
     var imagePath = 'logos/' + productId + '-text-square.svg';
     if (productsImages[productId]) {
 
-        //image(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
-        ctx.drawImage(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
+            ctx.drawImage(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
 
 
     } else {
@@ -444,7 +458,6 @@ function drawLogo(productId) {
         img.onload = function() {
             productsImages[productId] = img;
             if (currentProductId == productId) {
-                //ctx.drawImage(productsImages[productId], 0, 0/*width/2 -870/2, height/2 -55, 870, 110*/);
                 ctx.drawImage(productsImages[productId], width/2 -870/2, height/2 -55, 870, 110);
             }
         };
@@ -461,15 +474,3 @@ function drawLogo(productId) {
     }
 }
 
-function pixelBrightnessByCoords(x, y, bgPixels, width) {
-
-    var idx = (Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
-
-    var r = bgPixels[idx];
-    var g = bgPixels[idx + 1];
-    var b = bgPixels[idx + 2];
-    var a = bgPixels[idx + 3];
-
-    return brightness(color(r, g, b, a));
-
-}
