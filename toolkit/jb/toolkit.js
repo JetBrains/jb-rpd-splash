@@ -22,15 +22,9 @@ Rpd.channeltype('jb/palette', { show: howMuch('color', 'colors') });
 
 Rpd.channeltype('jb/product', { });
 
-var PIXELS_COUNT_FACTOR = 4; // one pixel is four elements in the array
-Rpd.channeltype('jb/pixels', {
-    show: function(pixels) { return pixels ? (pixels.length / PIXELS_COUNT_FACTOR) + ' pixels' : '<No Pixels>'; }
-});
-
 Rpd.nodetype('jb/config', {
     inlets: {
         'bang': { type: 'util/bang' },
-        'srcPixels': { type: 'jb/pixels', default: null },
         'width': { type: 'jb/integer', 'default': window.innerWidth },
         'height': { type: 'jb/integer', 'default': window.innerHeight },
         'maxPoints': { type: 'jb/integer', 'default': window.innerWidth*window.innerHeight, name: 'max' },

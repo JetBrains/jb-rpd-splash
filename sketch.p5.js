@@ -1,5 +1,4 @@
 var sketchConfig = {
-    srcPixels: null,
     width: window.innerWidth,
     height: window.innerHeight,
     maxPoints: window.innerWidth * window.innerHeight,
@@ -29,6 +28,7 @@ var backImg, grad, my;
 var lastPoint;
 
 var pointData = [];
+var cvsPointData = [];
 
 var lastBgImage;
 var cvsPixels;
@@ -117,11 +117,11 @@ function draw() {
     }
     blendMode(BLEND);
 
-    if (pointData && pointData.length) {
+    if (cvsPointData && cvsPointData.length) {
 
         var voronoi = d3.voronoi()
             .size([width, height])
-            (pointData);
+            (cvsPointData);
 
         drawCurvedEdges(voronoi, sketchConfig);
         drawShapes(voronoi, sketchConfig);
