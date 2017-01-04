@@ -126,7 +126,7 @@ Rpd.noderenderer('jb/save', 'svg', {
     }
 } */
 
-var PALETTE_NODE_WIDTH = 365;
+var PALETTE_NODE_WIDTH = PRODUCTS.length * 14 + 20;
 var PALETTE_NODE_HEIGHT = 70;
 
 var PALETTE_NODE_BODY_X = -(PALETTE_NODE_WIDTH / 2) + 10;

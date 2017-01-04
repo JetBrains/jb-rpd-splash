@@ -36,7 +36,6 @@ Rpd.channeltype('jb/pixels', {
 Rpd.nodetype('jb/config', {
     inlets: {
         'bang': { type: 'util/bang' },
-        'srcPixels': { type: 'jb/pixels', default: null },
         'width': { type: 'jb/integer', 'default': window.innerWidth },
         'height': { type: 'jb/integer', 'default': window.innerHeight },
         'maxPoints': { type: 'jb/integer', 'default': window.innerWidth*window.innerHeight, name: 'max' },
