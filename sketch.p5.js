@@ -125,6 +125,8 @@ function draw() {
     var src = srcPixels.pixels;
     var step = srcPixels.step;
 
+    console.time('apply incoming pixels');
+
     loadPixels();
 
     console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
@@ -134,6 +136,9 @@ function draw() {
 
     updatePixels();
 
+    console.timeEnd('apply incoming pixels');
+
+    console.time('collectPointData');
     if (srcPixels.time === lastPixelsTime) {
         pointData === lastPointData;
     } else {
@@ -144,8 +149,11 @@ function draw() {
                                     srcPixels.height);
         lastPointData = pointData;
     }
+    console.timeEnd('collectPointData');
 
     if (!pointData || !pointData.length) return;
+
+    console.time('gradient');
 
     var xRect = width / 2;
     var yRect = height / 2;
@@ -158,6 +166,7 @@ function draw() {
     var startGrad1 = createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
     var endGrad1 = createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
 
+
     //Main gradient
     blendMode(OVERLAY);
     if (ctx) {
@@ -169,11 +178,17 @@ function draw() {
     }
     blendMode(BLEND);
 
+    console.timeEnd('gradient');
+
     if (pointData && pointData.length) {
+
+        console.time('voronoi');
 
         var voronoi = d3.voronoi()
             .size([width, height])
             (pointData);
+
+        console.timeEnd('voronoi');
 
         // sketchConfig.layers = [
         //     function() { rect(...); },
@@ -186,14 +201,23 @@ function draw() {
         //
         // });
 
+        console.time('drawCurvedEdges');
         drawCurvedEdges(voronoi, sketchConfig);
+        console.timeEnd('drawCurvedEdges');
+        console.time('drawShapes');
         drawShapes(voronoi, sketchConfig);
+        console.timeEnd('drawShapes');
+        console.time('drawEdgesSquares');
         drawEdgesSquares(voronoi, srcPixels.pixels, srcPixels.width, srcPixels.height,
                                   sketchConfig);
+        console.timeEnd('drawEdgesSquares');
+        console.time('drawBackEdgesSquares');
         drawBackEdgesSquares(pointData, sketchConfig);
+        console.timeEnd('drawBackEdgesSquares');
         blendMode(NORMAL);
+        console.time('drawLogo');
         drawLogo(sketchConfig.logo);
-
+        console.timeEnd('drawLogo');
 
     }
 }
@@ -320,8 +344,9 @@ function drawBackEdgesSquares(data, config) {
 
 
     noStroke();
+    var point;
     for (var i = 0; i < data.length; i++) {
-        var point = data[i];
+        point = data[i];
 
         fill(255, 40);
 
@@ -432,21 +457,26 @@ function drawCurvedEdges(voronoi, config) {
 
     var myEdges = voronoi.edges;
 
+    var startX, startY, endX, endY;
+
+    var randomEdge, randomX, randomY, myDist;
+
     for (var n = 0; n < myEdges.length; n++) {
         if (!myEdges[n]) continue;
-        var startX = myEdges[n][0][0];
-        var startY = myEdges[n][0][1];
-        var endX = myEdges[n][1][0];
-        var endY = myEdges[n][1][1];
+        startX = myEdges[n][0][0];
+        startY = myEdges[n][0][1];
+        endX = myEdges[n][1][0];
+        endY = myEdges[n][1][1];
 
 
-        var randomEdge = Math.floor(random(0, myEdges.length));
+        randomEdge = Math.floor(random(0, myEdges.length));
         if (!myEdges[randomEdge]) continue;
-        var randomX = myEdges[randomEdge][0][0];
-        var randomY = myEdges[randomEdge][0][1];
+        randomX = myEdges[randomEdge][0][0];
+        randomY = myEdges[randomEdge][0][1];
 
+        myDist = dist(startX, startY, randomX, randomY)
 
-        if (random(0, 1) < 0.3 && dist(startX, startY, randomX, randomY) < 500 && dist(startX, startY, randomX, randomY) > 400) {
+        if (random(0, 1) < 0.3 && (myDist < 500) && (myDist > 400)) {
             noFill();
             stroke(random(100, 255));
             strokeWeight(0.3);
