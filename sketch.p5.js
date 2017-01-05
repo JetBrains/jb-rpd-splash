@@ -25,6 +25,24 @@ var sketchConfig = {
     backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
 
+var loaderShown = false;
+
+function showLoader() {
+    console.log('+++++ showLoader');
+    //setTimeout(function() {
+        d3.select('#loader-wrapper').style('opacity', 1);
+        loaderShown = true;
+    //}, 1);
+}
+
+function hideLoader() {
+    console.log('+++++ hideLoader');
+    //setTimeout(function() {
+        d3.select('#loader-wrapper').style('opacity', 0);
+        loaderShown = false;
+    //}, 1);
+}
+
 function loadChangedValuesFrom(newConfig) {
     Object.keys(newConfig).forEach(function(key) {
         if (newConfig[key]) sketchConfig[key] = newConfig[key];
@@ -48,6 +66,8 @@ var lastPixelsTime, lastPointData;
 function preload() {
     console.log('preload');
 
+    showLoader();
+
     pxDensity = pixelDensity();
     // loadImage(sketchConfig.backImgSrc, function (img) {
     //     img.loadPixels();
@@ -70,6 +90,7 @@ function preload() {
             readyImgCount++;
             console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             if (readyImgCount == imagesToLoad.length) {
+                hideLoader();
                 console.log('finished loading images');
             }
         };
@@ -78,11 +99,13 @@ function preload() {
             readyImgCount++;
             console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             if (readyImgCount == imagesToLoad.length) {
+                hideLoader();
                 console.log('finished loading images');
             }
         };
         img.src = imgSpec.path;
     });
+
 }
 
 function setup() {
@@ -99,7 +122,7 @@ function setup() {
     canvas.canvas.style.visibility = 'visible';
     ctx = canvas.drawingContext;
     noLoop();
-    updateSketchConfig(sketchConfig);
+    updateSketchConfig(sketchConfig, true);
 
 }
 
@@ -117,6 +140,8 @@ function draw() {
 
     //var sketchWidth = sketchConfig.width;
     //var sketchHeight = sketchConfig.height;
+
+    showLoader();
 
     noStroke();
 
@@ -151,7 +176,10 @@ function draw() {
     }
     console.timeEnd('collectPointData');
 
-    if (!pointData || !pointData.length) return;
+    if (!pointData || !pointData.length) {
+        hideLoader();
+        return;
+    }
 
     console.time('gradient');
 
@@ -220,17 +248,19 @@ function draw() {
         console.timeEnd('drawLogo');
 
     }
+
+    hideLoader();
 }
 
-function updateSketchConfig(newConfig) {
+function updateSketchConfig(newConfig, noRedraw) {
 
-    var recalcPoints = (newConfig.irregularity || newConfig.maxPoints || newConfig.width || newConfig.height) ? true : false;
+    //var recalcPoints = (newConfig.irregularity || newConfig.maxPoints || newConfig.width || newConfig.height) ? true : false;
     loadChangedValuesFrom(newConfig);
     // if (recalcPoints && lastBgImage) {
     //     pointData = collectPointData(sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
     // }
     //noiseSeed(random(1000));
-    redraw();
+    if (!noRedraw) redraw();
 }
 
 function collectPointData(config, srcPixels, srcWidth, srcHeight) {
