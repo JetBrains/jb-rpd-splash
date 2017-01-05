@@ -252,15 +252,30 @@ function draw() {
     hideLoader();
 }
 
+var updateStream = Kefir.emitter();
+updateStream.filter(function(value) {
+                return value.config.srcPixels && value.config.srcPixels.pixels.length && value.config.logo && value.config.logo.product;
+            })
+            .throttle(5000)
+            .onValue(function(value) {
+                loadChangedValuesFrom(value.config);
+                if (!value.noRedraw) redraw();
+            });
+
 function updateSketchConfig(newConfig, noRedraw) {
 
     //var recalcPoints = (newConfig.irregularity || newConfig.maxPoints || newConfig.width || newConfig.height) ? true : false;
-    loadChangedValuesFrom(newConfig);
+    //loadChangedValuesFrom(newConfig);
     // if (recalcPoints && lastBgImage) {
     //     pointData = collectPointData(sketchConfig, lastBgImage.pixels, lastBgImage.width, lastBgImage.height);
     // }
     //noiseSeed(random(1000));
-    if (!noRedraw) redraw();
+    //if (!noRedraw) redraw();
+
+    updateStream.emit({
+        config: newConfig,
+        noRedraw: noRedraw
+    });
 }
 
 function collectPointData(config, srcPixels, srcWidth, srcHeight) {
