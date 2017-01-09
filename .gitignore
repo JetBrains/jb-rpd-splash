@@ -8,3 +8,5 @@ sample.sketch.java
 *.example.js
 p5.*.js
 *.pyc
+.idea
+.DS_STORE
