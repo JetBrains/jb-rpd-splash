@@ -87,7 +87,6 @@ Rpd.nodetype('jb/logo', {
     }
 });
 
-var pxDensity = 1;
 Rpd.nodetype('jb/rorschach', {
     inlets: {
         'pixels': { type: 'jb/pixels' }
@@ -97,21 +96,53 @@ Rpd.nodetype('jb/rorschach', {
     },
     process: function(inlets) {
         if (!inlets.pixels) return; // FIXME: why this condition needed?
-        var width =  inlets.pixels.width*pxDensity * 4;
-        var height = inlets.pixels.height*pxDensity;
-        var temp = inlets.pixels;
-        var pixls = inlets.pixels.pixels;
+        var d = inlets.pixels.density;
+        var width =  inlets.pixels.width;
+        var height = inlets.pixels.height;
+        var conf = inlets.pixels;
+        var source = inlets.pixels.pixels;
+        var target = [];
 
+        //var halfImage = 4 * (img.width/2 * d) * (img.height * d);
+        // for (var i = 0; i < halfImage; i++) {
+        //     pixels[i+halfImage] = pixels[i];
+        // }
 
-        for (var i = 0; i < height; i+=1) {
-            for (var j = 0; j < width/2; j+=1) {
-                pixls[(i+1)*width - j - 2] = pixls[i*width + j];
+        // var pixls = inlets.pixels.pixels;
+        //for (var i = 0; i < height; i+=1) {
+        //     for (var j = 0; j < width/2; j+=1) {
+        //         pixls[(i+1)*width - j - 2] = pixls[i*width + j];
+        //     }
+        //}
 
+        var trgIdx, srcIdx;
+        for (var x = 0; x < width; x++) {
+            for (var y = 0; y < height; y++) {
+                for (var i = 0; i < d; i++) {
+                    for (var j = 0; j < d; j++) {
+                        trgIdx = 4 * ((y * d + j) * width * d + (x * d + i));
+                        srcIdx = (x < width / 2) ? trgIdx : 4 * ((y * d + j) * width * d + ((width - x) * d + i));
+                        target[trgIdx] = source[srcIdx];
+                        target[trgIdx+1] = source[srcIdx+1];
+                        target[trgIdx+2] = source[srcIdx+2];
+                        target[trgIdx+3] = source[srcIdx+3];
+                    }
+                }
             }
         }
 
-         temp.pixels = pixls;
-        return { 'pixels': temp };
+      //   temp.pixels = pixls;
+       // return { 'pixels': temp };
+        // var halfImage = 4 * (width/2 * d) * (height * d);
+        // for (i = 0; i < halfImage; i++) {
+        //     target[i] = source[i];
+        // }
+        // for (var i = halfImage, len = source.length; i < len; i++) {
+        //     target[i] = source[len - (i - halfImage)];
+        // }
+
+         conf.pixels = target;
+        return { 'pixels': conf };
     }
 
 
@@ -216,6 +247,7 @@ Rpd.nodetype('jb/noise', function() {
                 //var column = [];
                 for (y = 0; y < height; y+=10) {
                     c = 255 * p.noise(0.005 * x, 0.005 * y);
+                    //c = (x / width) * 255;
                     p.fill(c);
                     p.rect(x, y, 10, 10);
                     //p.rect(width - x, y, 10, 10);
@@ -231,7 +263,7 @@ Rpd.nodetype('jb/noise', function() {
                 //values: lastValues,
                 step: 10,
                 time: new Date(),
-                density: p.pxDensity,
+                density: p.pixelDensity(),
                 seed: lastSeed
             };
         };
