@@ -40,14 +40,12 @@ Rpd.nodetype('jb/config', {
         'width': { type: 'jb/integer', 'default': window.innerWidth },
         'height': { type: 'jb/integer', 'default': window.innerHeight },
         'srcPixels': { type: 'jb/pixels', 'default': null },
-        'maxPoints': { type: 'jb/integer', 'default': window.innerWidth*window.innerHeight, name: 'max' },
-        'scale': { type: 'util/number', 'default': 1 },
         'bgcolor': { type: 'util/color', 'default': _rgb(24, 24, 24) },
         'palette': { type: 'jb/palette' },
         'logo': { type: 'jb/logo' },
         'maxSquareSize': { type: 'jb/integer', 'default': 15, name: 'squareSize' },
         'density': { type: 'util/number', 'default': 6 },
-        'inregularity': { type: 'util/number', 'default': 0.5 },
+        'chaos': { type: 'util/number', 'default': 0.5 },
         'step': { type: 'jb/integer', 'default': 16 }
     },
     outlets: {
@@ -88,6 +86,36 @@ Rpd.nodetype('jb/logo', {
         return { out: inlets };
         //return { out: { x: inlets.x, y: inlets.y, logo: inlets.logo } };
     }
+});
+
+var pxDensity = 1;
+Rpd.nodetype('jb/rorschach', {
+    inlets: {
+        'pixels': { type: 'jb/pixels' }
+    },
+    outlets: {
+        'pixip': { type: 'jb/pixels' }
+    },
+    process: function(inlets) {
+        if (!inlets.pixels) return; // FIXME: why this condition needed?
+        var width =  inlets.pixels.width*pxDensity * 4;
+        var height = inlets.pixels.height*pxDensity;
+        var temp = inlets.pixels;
+        var pixls = inlets.pixels.pixels;
+
+
+        for (var i = 0; i < height; i+=1) {
+            for (var j = 0; j < width/2; j+=1) {
+                pixls[(i+1)*width - j - 2] = pixls[i*width + j];
+
+            }
+        }
+
+         temp.pixels = pixls;
+        return { 'pixip': temp };
+    }
+
+
 });
 
 
@@ -135,30 +163,43 @@ Rpd.nodetype('jb/palette', {
     }
 });
 
+var EMPTY_PIXELS = {
+  width: 0,
+  height: 0,
+  pixels: [],
+  step: 10,
+    seed: -1,
+    density: -1,
+    time: -1
+};
 Rpd.nodetype('jb/noise', function() {
 
     var refreshSketch;
-
     //var values = Kefir.emitter();
 
     var noiseSketch = function(p) {
         var width = window.innerWidth;
         var height = window.innerHeight;
 
+        var setupCalled = false;
+
         p.setup = function() {
             var cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
             //cvs.position(-5000, -5000);
             cvs.canvas.className = 'noise-canvas';
             cvs.canvas.style.display = 'none';
-            console.log(cvs);
+         //  console.log(cvs);
             //cvs.style.display = 'none';
             p.noLoop();
+            setupCalled = true;
         };
 
         var lastPixels;
         var lastSeed;
         var lastValues;
-        refreshSketch = function() {
+        refreshSketch = function(inlets) {
+            if (!setupCalled) return;
+            p.noiseDetail(inlets.lod, inlets.falloff);
             var lastSeed = p.random(1000);
             p.noiseSeed(lastSeed);
             p.redraw();
@@ -170,6 +211,7 @@ Rpd.nodetype('jb/noise', function() {
             p.noStroke();
             //lastValues = [];
             var x, y, c;
+
             //for (var x = 0; x <= width/2+10; x+=10) {
             for (x = 0; x < width; x+=10) {
                 //var column = [];
@@ -190,6 +232,7 @@ Rpd.nodetype('jb/noise', function() {
                 //values: lastValues,
                 step: 10,
                 time: new Date(),
+                density: p.pxDensity,
                 seed: lastSeed
             };
         };
@@ -197,16 +240,19 @@ Rpd.nodetype('jb/noise', function() {
 
     var noiseP5 = new p5(noiseSketch);
 
-    console.log(noiseP5);
+  // console.log(noiseP5);
 
     return {
         inlets: {
-            'bang': { type: 'util/bang' }
+            'bang': { type: 'util/bang' },
+            'lod': { type: 'util/number' },
+            'falloff': { type: 'util/number' }
+
         },
         outlets: { 'pixels': { type: 'jb/pixels' } },
         process: function(inlets) {
             return {
-                pixels: refreshSketch ? refreshSketch() : null
+                pixels: refreshSketch ? refreshSketch(inlets) : EMPTY_PIXELS
             }
         }
     };

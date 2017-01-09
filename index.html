@@ -190,17 +190,24 @@
           //  var metroNode = patch.addNode('util/metro').move(90, 500);
 
             var paletteNode = patch.addNode('jb/palette').move(30, 55);
+
             var logoNode = patch.addNode('jb/logo').move(50, 155);
+            var rorschachNode = patch.addNode('jb/rorschach').move(350, 455);
 
             var noiseNode = patch.addNode('jb/noise').move(30, 400);
+            var lodNoiseNode = patch.addNode('util/knob').move(30, 600);
+
+            lodNoiseNode.inlets['max'].receive(1);
 
             paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
             paletteNode.outlets['product'].connect(logoNode.inlets['product']);
             logoNode.outlets['out'].connect(configNode.inlets['logo']);
+            lodNoiseNode.outlets['number'].connect(noiseNode.inlets['lod']);
 
             bangNode.outlets['bang'].connect(noiseNode.inlets['bang']);
 
-            noiseNode.outlets['pixels'].connect(configNode.inlets['srcPixels']);
+            noiseNode.outlets['pixels'].connect(rorschachNode.inlets['pixels']);
+            rorschachNode.outlets['pixip'].connect(configNode.inlets['srcPixels']);
 
             configNode.outlets['config'].connect(previewNode.inlets['config']);
 
