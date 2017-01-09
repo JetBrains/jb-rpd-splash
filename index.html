@@ -107,23 +107,31 @@
 
         </style>
 
-        <!-- <link rel="stylesheet" href="./loaders.min.css"></link> -->
+        <link rel="stylesheet" href="./loaders.min.css"></link>
 
-        <!-- <style>
-            .ball-rotate {
+        <style>
+            #loader-wrapper {
                 position: absolute;
+                font-family: sans-serif;
+                color: white;
+                /* transition: opacity 500ms ease-out; */
+            }
+
+            #loader-wrapper .ball-rotate {
                 left: 30px;
                 top: 30px;
-                transition: opacity 500ms ease-out;
             }
-        </style> -->
+        </style>
 
     </head>
     <body>
 
         <div id="rpd-jb-preview-target"></div>
         <div id="front-layer">
-            <!-- <div id="loader" class="loader-inner ball-rotate"><div></div></div> -->
+            <div id="loader-wrapper">
+                <div id="loader" class="loader-inner ball-rotate"><div></div></div>
+                <p>Loading...</p>
+            </div>
             <div id="overlay"></div>
             <div id="patch-target"></div>
         </div>
@@ -138,6 +146,8 @@
         <script>
 
             // ============= Build and render patch =============
+
+            d3.select('#loader-wrapper').style('opacity', '0');
 
             var patch = Rpd.addPatch('jb-sketch');
 

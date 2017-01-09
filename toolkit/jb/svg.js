@@ -41,9 +41,7 @@ Rpd.noderenderer('jb/save', 'svg', {
             saveButton.style('font-size', '24px');
         });
         Kefir.fromEvents(saveButton.node(), 'click').onValue(function() {
-            var canvasContainer = document.getElementById('rpd-jb-preview-target');
-            if (!canvasContainer) return;
-            var canvas = canvasContainer.children[0];
+            var canvas = d3.select('#rpd-jb-preview-target .sketch-canvas').node();
             if (!canvas) return;
             //hiddenLink.attr('href', canvas.toDataURL('image/png'));
             var blob = canvas.toBlob(function(blob) {
