@@ -390,7 +390,9 @@ function drawEdgesSquares(voronoi, srcPixels, srcWidth, srcHeight, config) {
             fill(lerpColor(colcolX, color(255), random(0, 1)));
             noStroke();
             // console.log(pxBrightness);
+
             rect(startX, startY, sqSize, sqSize);
+
 
 
 

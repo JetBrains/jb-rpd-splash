@@ -206,13 +206,16 @@
 
             var noiseNode = patch.addNode('jb/noise').move(100, window.innerHeight - 250);
             var lodNoiseNode = patch.addNode('util/knob', 'Lod').move(30, window.innerHeight - 300);
-
             lodNoiseNode.inlets['max'].receive(1);
+
+            var falloffNoiseNode = patch.addNode('util/knob', 'Fallogg').move(30, window.innerHeight - 200);
+            falloffNoiseNode.inlets['max'].receive(1);
 
             paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
             paletteNode.outlets['product'].connect(logoNode.inlets['product']);
             logoNode.outlets['out'].connect(configNode.inlets['logo']);
             lodNoiseNode.outlets['number'].connect(noiseNode.inlets['lod']);
+            falloffNoiseNode.outlets['number'].connect(noiseNode.inlets['falloff']);
 
             bangNode.outlets['bang'].connect(noiseNode.inlets['bang']);
 
