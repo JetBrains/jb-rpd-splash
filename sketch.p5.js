@@ -239,23 +239,28 @@ function draw() {
         //
         // });
 
-        console.time('drawCurvedEdges');
-        drawCurvedEdges(voronoi, sketchConfig);
-        console.timeEnd('drawCurvedEdges');
-        console.time('drawShapes');
-        drawShapes(voronoi, sketchConfig);
-        console.timeEnd('drawShapes');
-        console.time('drawEdgesSquares');
-        drawEdgesSquares(voronoi, srcPixels.pixels, srcPixels.width, srcPixels.height,
-                                  sketchConfig);
-        console.timeEnd('drawEdgesSquares');
-        console.time('drawBackEdgesSquares');
-        drawBackEdgesSquares(pointData, sketchConfig);
-        console.timeEnd('drawBackEdgesSquares');
-        blendMode(NORMAL);
-        console.time('drawLogo');
-        drawLogo(sketchConfig.logo);
-        console.timeEnd('drawLogo');
+        var layers = sketchConfig.layers;
+        for (var i = 0; i < layers.length; i++) {
+            layers[i].func(layers[i].config);
+        }
+
+        // console.time('drawCurvedEdges');
+        // drawCurvedEdges(voronoi, sketchConfig);
+        // console.timeEnd('drawCurvedEdges');
+        // console.time('drawShapes');
+        // drawShapes(voronoi, sketchConfig);
+        // console.timeEnd('drawShapes');
+        // console.time('drawEdgesSquares');
+        // drawEdgesSquares(voronoi, srcPixels.pixels, srcPixels.width, srcPixels.height,
+        //                           sketchConfig);
+        // console.timeEnd('drawEdgesSquares');
+        // console.time('drawBackEdgesSquares');
+        // drawBackEdgesSquares(pointData, sketchConfig);
+        // console.timeEnd('drawBackEdgesSquares');
+        // blendMode(NORMAL);
+        // console.time('drawLogo');
+        // drawLogo(sketchConfig.logo);
+        // console.timeEnd('drawLogo');
 
     }
 

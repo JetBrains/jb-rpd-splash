@@ -26,7 +26,7 @@ Rpd.channeltype('jb/product', { });
 Rpd.channeltype('jb/drawable', { });
 
 Rpd.channeltype('jb/layers', {
-    show: function(v) { return v.length + 'Layers'; }
+    show: function(v) { return v.length + ' Layers'; }
 });
 
 var PIXELS_COUNT_FACTOR = 4; // one pixel is four elements in the array
@@ -299,18 +299,94 @@ Rpd.nodetype('jb/layers', {
         'layer-1': { type: 'jb/drawable' },
         'layer-2': { type: 'jb/drawable' },
         'layer-3': { type: 'jb/drawable' },
-        'layer-4': { type: 'jb/drawable' }
+        'layer-4': { type: 'jb/drawable' },
+        'layer-5': { type: 'jb/drawable' },
+        'layer-6': { type: 'jb/drawable' }
     },
     outlets: {
         'layers': { type: 'jb/layers' }
     },
     process: function(inlets) {
         var layers = [];
-        for (var i = 0; i < 4; i++) {
+        for (var i = 0; i < 6; i++) {
             layers.push(inlets['layer-' + (i + 1)]);
         }
         return {
             'layers': layers
         }
     }
+});
+
+Rpd.nodetype('jb/collect-point-data', {
+    inlets: {
+        'width': { type: 'util/number' },
+        'height': { type: 'util/number' },
+        'pixels': { type: 'jb/pixels' },
+    },
+    outlets: {
+        'drawable': { type: 'jb/drawable' }
+    },
+    process: function(inlets) { }
+});
+
+Rpd.nodetype('jb/apply-gradient', {
+    inlets: {
+        'width': { type: 'util/number' },
+        'height': { type: 'util/number' },
+        'palette': { type: 'jb/palette' },
+    },
+    outlets: {
+        'drawable': { type: 'jb/drawable' }
+    },
+    process: function(inlets) { }
+});
+
+Rpd.nodetype('jb/curved-edges', {
+    inlets: {
+        'voronoi': { type: 'jb/voronoi' }
+    },
+    outlets: {
+        'drawable': { type: 'jb/drawable' }
+    },
+    process: function(inlets) { }
+});
+
+Rpd.nodetype('jb/shapes', {
+    inlets: {
+        'voronoi': { type: 'jb/voronoi' }
+    },
+    outlets: {
+        'drawable': { type: 'jb/drawable' }
+    },
+    process: function(inlets) { }
+});
+
+Rpd.nodetype('jb/edges-squares', {
+    inlets: {
+        'voronoi': { type: 'jb/voronoi' }
+    },
+    outlets: {
+        'drawable': { type: 'jb/drawable' }
+    },
+    process: function(inlets) { }
+});
+
+Rpd.nodetype('jb/back-edges-squares', {
+    inlets: {
+        'points': { type: 'jb/extracted-points' }
+    },
+    outlets: {
+        'drawable': { type: 'jb/drawable' }
+    },
+    process: function(inlets) { }
+});
+
+Rpd.nodetype('jb/logo', {
+    inlets: {
+        'logo': { type: 'jb/logo' }
+    },
+    outlets: {
+        'drawable': { type: 'jb/drawable' }
+    },
+    process: function(inlets) { }
 });
