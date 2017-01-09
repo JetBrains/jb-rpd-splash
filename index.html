@@ -156,9 +156,9 @@
                            fullPage: true,
                            linkForm: 'curve' });
 
-            patch.addNode('util/nodelist').move(800, 50);
+            patch.addNode('util/nodelist').move( window.innerWidth - 250, window.innerHeight - 350);
 
-            var configNode = patch.addNode('jb/config', 'Sketch Config').move(200, 200);
+            var configNode = patch.addNode('jb/config', 'Sketch Config').move(500, window.innerHeight - 300);
 
             var commentRemoved = false;
 
@@ -190,22 +190,22 @@
                 }
             });
 
-            var previewNode = patch.addNode('jb/preview', 'Preview').move(800, 400);
+            var previewNode = patch.addNode('jb/preview', 'Preview').move(650, window.innerHeight - 150);
 
-            var saveNode = patch.addNode('jb/save', 'Save Image').move(1000, 400);
+            var saveNode = patch.addNode('jb/save', 'Save Image').move(800, window.innerHeight - 150);
 
             //var randomNode = patch.addNode('util/random').move(300, 500);
 
-            var bangNode = patch.addNode('util/bang').move(90, 500);
+            var bangNode = patch.addNode('util/bang').move(20, window.innerHeight - 500);
           //  var metroNode = patch.addNode('util/metro').move(90, 500);
 
-            var paletteNode = patch.addNode('jb/palette').move(30, 55);
+            var paletteNode = patch.addNode('jb/palette').move(100,  window.innerHeight - 500);
 
-            var logoNode = patch.addNode('jb/logo').move(50, 155);
-            var rorschachNode = patch.addNode('jb/rorschach').move(350, 455);
+            var logoNode = patch.addNode('jb/logo').move(350, window.innerHeight - 350);
+            var rorschachNode = patch.addNode('jb/rorschach').move(250, window.innerHeight - 200);
 
-            var noiseNode = patch.addNode('jb/noise').move(30, 400);
-            var lodNoiseNode = patch.addNode('util/knob').move(30, 600);
+            var noiseNode = patch.addNode('jb/noise').move(100, window.innerHeight - 250);
+            var lodNoiseNode = patch.addNode('util/knob', 'Lod').move(30, window.innerHeight - 300);
 
             lodNoiseNode.inlets['max'].receive(1);
 
@@ -217,7 +217,7 @@
             bangNode.outlets['bang'].connect(noiseNode.inlets['bang']);
 
             noiseNode.outlets['pixels'].connect(rorschachNode.inlets['pixels']);
-            rorschachNode.outlets['pixip'].connect(configNode.inlets['srcPixels']);
+            rorschachNode.outlets['pixels'].connect(configNode.inlets['srcPixels']);
 
             configNode.outlets['config'].connect(previewNode.inlets['config']);
 

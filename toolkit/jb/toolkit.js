@@ -36,7 +36,7 @@ Rpd.channeltype('jb/pixels', {
 
 Rpd.nodetype('jb/config', {
     inlets: {
-        'bang': { type: 'util/bang' },
+
         'width': { type: 'jb/integer', 'default': window.innerWidth },
         'height': { type: 'jb/integer', 'default': window.innerHeight },
         'srcPixels': { type: 'jb/pixels', 'default': null },
@@ -44,7 +44,6 @@ Rpd.nodetype('jb/config', {
         'palette': { type: 'jb/palette' },
         'logo': { type: 'jb/logo' },
         'maxSquareSize': { type: 'jb/integer', 'default': 15, name: 'squareSize' },
-        'density': { type: 'util/number', 'default': 6 },
         'chaos': { type: 'util/number', 'default': 0.5 },
         'step': { type: 'jb/integer', 'default': 16 }
     },
@@ -94,7 +93,7 @@ Rpd.nodetype('jb/rorschach', {
         'pixels': { type: 'jb/pixels' }
     },
     outlets: {
-        'pixip': { type: 'jb/pixels' }
+        'pixels': { type: 'jb/pixels' }
     },
     process: function(inlets) {
         if (!inlets.pixels) return; // FIXME: why this condition needed?
@@ -112,7 +111,7 @@ Rpd.nodetype('jb/rorschach', {
         }
 
          temp.pixels = pixls;
-        return { 'pixip': temp };
+        return { 'pixels': temp };
     }
 
 

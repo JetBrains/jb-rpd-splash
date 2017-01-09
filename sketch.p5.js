@@ -17,7 +17,6 @@ var sketchConfig = {
     ],
     logo: null,
     maxSquareSize: 15,
-    density: 6,
     chaos: 0.5,
     step: 16,
     backImgSrc: 'http://localhost:8000/experiment_bg.png'

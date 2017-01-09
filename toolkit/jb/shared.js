@@ -40,8 +40,6 @@ var PRODUCTS = [
     { label: 'YT',  id: 'youtrack',      palette: [ '#22b1ef', '#9062f7', '#fc378c' ] },  // youtrack // YT_
     { label: 'MPS', id: 'mps',           palette: [ '#31d68b', '#3188cd', '#f1e969' ] },  // mps // MPS_
     { label: 'KT',  id: 'kotlin',        palette: [ '#1b84f2', '#24dea7', '#ed4baa' ] },   // kotlin // KT_
-    { label: 'N1',   id: 'neon-1',        palette: [ '#ff0000', '#00ff00', '#0000ff' ] }, // neon-1
-    { label: 'N2',   id: 'neon-2',        palette: [ '#ffff00', '#ff00ff', '#00ffff' ] }, // neon-2
     { label: 'JB1',  id: 'jetbrains',   palette: [ '#ec4476', '#fde74a', '#9151e1' ] } // jetbrains-1
 
 ];
