@@ -23,6 +23,12 @@ Rpd.channeltype('jb/logo', { show: function(logo) { return logo.product + ', ' +
 
 Rpd.channeltype('jb/product', { });
 
+Rpd.channeltype('jb/drawable', { });
+
+Rpd.channeltype('jb/layers', {
+    show: function(v) { return v.length + 'Layers'; }
+});
+
 var PIXELS_COUNT_FACTOR = 4; // one pixel is four elements in the array
 Rpd.channeltype('jb/pixels', {
     show: function(value) {
@@ -286,4 +292,25 @@ Rpd.nodetype('jb/noise', function() {
             }
         }
     };
+});
+
+Rpd.nodetype('jb/layers', {
+    inlets: {
+        'layer-1': { type: 'jb/drawable' },
+        'layer-2': { type: 'jb/drawable' },
+        'layer-3': { type: 'jb/drawable' },
+        'layer-4': { type: 'jb/drawable' }
+    },
+    outlets: {
+        'layers': { type: 'jb/layers' }
+    },
+    process: function(inlets) {
+        var layers = [];
+        for (var i = 0; i < 4; i++) {
+            layers.push(inlets['layer-' + (i + 1)]);
+        }
+        return {
+            'layers': layers
+        }
+    }
 });

@@ -10,6 +10,7 @@ var sketchConfig = {
     height: window.innerHeight,
     srcPixels: null,
     bgcolor: _rgb(24, 24, 24),
+    layers: [],
     palette: [
         '#ff0000',
         '#00ff00',
