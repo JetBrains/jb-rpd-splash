@@ -297,14 +297,21 @@ function collectPointData(config, srcPixels, srcWidth, srcHeight) {
     if (!srcPixels || !srcPixels.length) return [];
 
     var step = Math.floor(config.step);
+
+    if (!step) return [];
+
     var chaos = config.chaos;
-    srcWidth = srcWidth ? srcWidth * pxDensity : config.width * pxDensity;
-    srcHeight = srcHeight ? srcHeight * pxDensity : config.height * pxDensity;
+    var d = pxDensity;
+    if (!srcWidth) srcWidth = config.width;
+    if (!srcHeight) srcHeight = config.height;
 
-    var maxPoints =  srcWidth  * srcHeight;
+    var dsrcWidth = srcWidth * d;
+    var dsrcHeight = srcHeight * d;
 
-    console.log('collectPointData', srcWidth, 'x', srcHeight, 'pixels length', srcPixels.length,
-                'expected length', srcHeight * srcWidth * 4);
+    var maxPoints =  dsrcWidth * dsrcHeight * 4;
+
+    console.log('collectPointData', dsrcWidth, 'x', dsrcHeight, 'pixels length', srcPixels.length,
+                'expected length', maxPoints);
 
     var idx, pxBrightness, r, g, b, a;
 
@@ -316,16 +323,9 @@ function collectPointData(config, srcPixels, srcWidth, srcHeight) {
 
 
     for (var x = 0; x < srcWidth; x += step) {
-
-        if (pointData.length >= maxPoints) break;
-
         for (var y = 0; y < srcHeight; y += step) {
-
             // console.log('y', y, pointData.length >= maxPoints);
-
-            if (pointData.length >= maxPoints) break;
-
-            pxBrightness = pixelBrightnessByCoords(x, y, srcPixels,  srcWidth);
+            pxBrightness = pixelBrightnessByCoords(x, y, srcPixels, srcWidth, d);
 
             if ((pxBrightness > 40) && (random(0, pxBrightness) < 30)) {
 
@@ -333,6 +333,7 @@ function collectPointData(config, srcPixels, srcWidth, srcHeight) {
                 ypos = y + random(-step / 2, step / 2) * chaos;
 
                 pointData.push([ xpos, ypos, pxBrightness ]);
+                if (pointData.length >= maxPoints) break;
             }
 
         }
@@ -344,8 +345,10 @@ function collectPointData(config, srcPixels, srcWidth, srcHeight) {
 
 function drawEdgesSquares(voronoi, srcPixels, srcWidth, srcHeight, config) {
 
-    srcWidth = srcWidth * pxDensity;
-    srcHeight = srcHeight * pxDensity;
+    var dsrcWidth = srcWidth * pxDensity;
+    var dsrcHeight = srcHeight * pxDensity;
+
+    var d = pxDensity;
 
     var palette = config.palette;
 
@@ -363,8 +366,8 @@ function drawEdgesSquares(voronoi, srcPixels, srcWidth, srcHeight, config) {
         var endY = myEdges[n][1][1];
 
 
-        var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, srcPixels, srcWidth));
-        var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, srcPixels, srcWidth));
+        var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, srcPixels, srcWidth, d));
+        var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, srcPixels, srcWidth, d));
         if(!pxBrightnessEnd) { pxBrightnessEnd = 0 };
         if(!pxBrightnessStart) { pxBrightnessStart = 0 };
 
@@ -561,9 +564,9 @@ function drawCurvedEdges(voronoi, config) {
 
 
 
-function pixelBrightnessByCoords(x, y, srcPixels, width) {
+function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {
 
-    var idx = (Math.floor(x) + Math.floor(y) * width) * 4/* * pxDensity*/;
+    var idx = (Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
 
     var r = srcPixels[idx];
     var g = srcPixels[idx + 1];
