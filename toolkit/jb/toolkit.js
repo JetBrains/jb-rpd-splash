@@ -1,6 +1,6 @@
-Rpd.channeltype('jb/config', {
+/* Rpd.channeltype('jb/config', {
     show: function(cfg) { return cfg ? '[Config]' : '[No Config]'; }
-});
+}); */
 
 Rpd.channeltype('jb/image', {
     show: function(img) { return img ? '[Image]' : '[No Image]'; }
@@ -31,16 +31,16 @@ Rpd.channeltype('jb/layers', {
 
 var PIXELS_COUNT_FACTOR = 4; // one pixel is four elements in the array
 Rpd.channeltype('jb/pixels', {
-    show: function(value) {
-        if (!value) return '<None>';
-        return value.width + 'x' + value.height + ', ' +
-            ((value.pixels && value.pixels.length)
-             ? (Math.floor(value.pixels.length / PIXELS_COUNT_FACTOR / 100) / 10) + 'kpx'
+    show: function(pixels) {
+        if (!pixels) return '<None>';
+        return pixels.width + 'x' + pixels.height + ', ' +
+            ((pixels.values && pixels.values.length)
+             ? (Math.floor(pixels.values.length / PIXELS_COUNT_FACTOR / 100) / 10) + 'kpx'
              : '0px');
     }
 });
 
-Rpd.nodetype('jb/config', {
+/* Rpd.nodetype('jb/config', {
     inlets: {
         'bang': { type: 'util/bang' },
         'width': { type: 'jb/integer', 'default': window.innerWidth },
@@ -62,17 +62,19 @@ Rpd.nodetype('jb/config', {
             config: inlets
         };
     }
-});
+}); */
 
 Rpd.nodetype('jb/preview', {
     inlets: {
-        config: { type: 'jb/config', 'default': {} }
+        layers: { type: 'jb/layers', 'default': [] }
     },
     outlets: {
         image: { type: 'jb/image', 'default': null }
     },
     process: function(inlets) {
-        window.updateSketchConfig(inlets.config);
+        var config = {};
+        config.layers = inlets.layers;
+        window.updateSketchConfig(config);
         return { image: {} };
     }
 });
@@ -103,11 +105,11 @@ Rpd.nodetype('jb/rorschach', {
     },
     process: function(inlets) {
         if (!inlets.pixels) return; // FIXME: why this condition needed?
-        var d = inlets.pixels.density;
-        var width =  inlets.pixels.width;
-        var height = inlets.pixels.height;
-        var conf = inlets.pixels;
-        var source = inlets.pixels.pixels;
+        var pixels = inlets.pixels;
+        var d = pixels.density;
+        var width =  pixels.width;
+        var height = pixels.height;
+        var source = pixels.values;
         var target = [];
 
         //var halfImage = 4 * (img.width/2 * d) * (img.height * d);
@@ -146,8 +148,8 @@ Rpd.nodetype('jb/rorschach', {
         //     target[i] = source[len - (i - halfImage)];
         // }
 
-         conf.pixels = target;
-        return { 'pixip': conf };
+        pixels.values = target;
+        return { 'pixip': pixels };
     }
 
 
@@ -201,11 +203,11 @@ Rpd.nodetype('jb/palette', {
 var EMPTY_PIXELS = {
   width: 0,
   height: 0,
-  pixels: [],
+  values: [],
   step: 10,
-    seed: -1,
-    density: -1,
-    time: -1
+  seed: -1,
+  density: -1,
+  time: -1
 };
 Rpd.nodetype('jb/noise', function() {
 
@@ -264,7 +266,7 @@ Rpd.nodetype('jb/noise', function() {
             lastPixels = {
                 width: width,
                 height: height,
-                pixels: p.pixels,
+                values: p.pixels,
                 //values: lastValues,
                 step: 10,
                 time: new Date(),
@@ -317,11 +319,40 @@ Rpd.nodetype('jb/layers', {
     }
 });
 
+Rpd.nodetype('jb/draw-pixels', {
+    inlets: {
+        'pixels': { type: 'jb/pixels' },
+    },
+    outlets: {
+        'drawable': { type: 'jb/drawable' }
+    },
+    process: function(inlets) {
+        return {
+            'drawable': {
+                'conf': pixels,
+                'func': function(p, pixels) {
+                    p.loadPixels();
+
+                    var src = pixels.values;
+                    var pixels = p.pixels;
+
+                    // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
+                    for (var i = 0; i < src.length; i++) {
+                       pixels[i] = src[i];
+                    }
+
+                    p.updatePixels();
+                }
+            }
+        }
+    }
+});
+
 Rpd.nodetype('jb/collect-point-data', {
     inlets: {
-        'width': { type: 'util/number' },
-        'height': { type: 'util/number' },
-        'pixels': { type: 'jb/pixels' },
+        //'width': { type: 'util/number' },
+        //'height': { type: 'util/number' },
+        'pixels': { type: 'jb/pixels' }
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
@@ -333,7 +364,7 @@ Rpd.nodetype('jb/apply-gradient', {
     inlets: {
         'width': { type: 'util/number' },
         'height': { type: 'util/number' },
-        'palette': { type: 'jb/palette' },
+        'palette': { type: 'jb/palette' }
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
@@ -381,7 +412,7 @@ Rpd.nodetype('jb/back-edges-squares', {
     process: function(inlets) { }
 });
 
-Rpd.nodetype('jb/logo', {
+Rpd.nodetype('jb/draw-logo', {
     inlets: {
         'logo': { type: 'jb/logo' }
     },

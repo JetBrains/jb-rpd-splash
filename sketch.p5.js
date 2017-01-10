@@ -130,69 +130,67 @@ function draw() {
 
     clear();
 
-    if (!sketchConfig.srcPixels) return;
-
-    // if (loadingImages) {
-    //     drawLoading();
-    //     return;
-    // }
+    var layers = sketchConfig.layers;
+    for (var i = 0; i < layers.length; i++) {
+        layers[i].func(this, layers[i].config);
+    }
 
     //var sketchWidth = sketchConfig.width;
     //var sketchHeight = sketchConfig.height;
 
-    showLoader();
+    // showLoader();
 
-    noStroke();
+    // noStroke();
 
-    var srcPixels = sketchConfig.srcPixels;
+    // var srcPixels = sketchConfig.srcPixels;
 
-    var src = srcPixels.pixels;
-    var step = srcPixels.step;
+    // var src = srcPixels.pixels;
+    // var step = srcPixels.step;
 
-    console.time('apply incoming pixels');
+    // console.time('apply incoming pixels');
 
-    loadPixels();
+    // loadPixels();
 
-    console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
-    for (var i = 0; i < src.length; i++) {
-        pixels[i] = src[i];
-    }
+    // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
+    // for (var i = 0; i < src.length; i++) {
+    //     pixels[i] = src[i];
+    // }
 
-    updatePixels();
-
-
-    console.timeEnd('apply incoming pixels');
-
-    console.time('collectPointData');
-    if (srcPixels.time === lastPixelsTime) {
-        pointData === lastPointData;
-    } else {
-        lastPixelsTime = srcPixels.time;
-        pointData = collectPointData(sketchConfig,
-                                    srcPixels.pixels,
-                                    srcPixels.width,
-                                    srcPixels.height);
-        lastPointData = pointData;
-    }
-    console.timeEnd('collectPointData');
-
-    if (!pointData || !pointData.length) {
-        hideLoader();
-        return;
-    }
-
-    console.time('gradient');
-
-    var xRect = width / 2;
-    var yRect = height / 2;
-
-    var rotation1 = map(50, 0, 100, 0, width);
-    var rotation2 = map(50, 0, 100, 0, height);
-    var location = map(0, 50, 100, 0, width);
+    // updatePixels();
 
 
-    var startGrad1 = createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
-    var endGrad1 = createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
+    // console.timeEnd('apply incoming pixels');
+
+    // console.time('collectPointData');
+    // if (srcPixels.time === lastPixelsTime) {
+    //     pointData === lastPointData;
+    // } else {
+    //     lastPixelsTime = srcPixels.time;
+    //     pointData = collectPointData(sketchConfig,
+    //                                 srcPixels.pixels,
+    //                                 srcPixels.width,
+    //                                 srcPixels.height);
+    //     lastPointData = pointData;
+    // }
+    // console.timeEnd('collectPointData');
+
+    // if (!pointData || !pointData.length) {
+    //     hideLoader();
+    //     return;
+    // }
+
+    // console.time('gradient');
+
+    // var xRect = width / 2;
+    // var yRect = height / 2;
+
+    // var rotation1 = map(50, 0, 100, 0, width);
+    // var rotation2 = map(50, 0, 100, 0, height);
+    // var location = map(0, 50, 100, 0, width);
+
+
+    // var startGrad1 = createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
+    // var endGrad1 = createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
 
     // //Main gradient
     // blendMode(OVERLAY);
@@ -203,30 +201,19 @@ function draw() {
     //     ctx.fillStyle = gradient;
     //     ctx.fillRect(0, 0, width, height);
     // }
-    // blendMode(NORMAL);
+    // blendMode(BLEND);
 
-    //Main gradient
-    blendMode(OVERLAY);
-    if (ctx) {
-        var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
-        gradient.addColorStop(0, sketchConfig.palette[0]);
-        gradient.addColorStop(1, sketchConfig.palette[2]);
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
-    }
-    blendMode(BLEND);
+    // console.timeEnd('gradient');
 
-    console.timeEnd('gradient');
+    // if (pointData && pointData.length) {
 
-    if (pointData && pointData.length) {
+    //     console.time('voronoi');
 
-        console.time('voronoi');
+    //     var voronoi = d3.voronoi()
+    //         .size([width, height])
+    //         (pointData);
 
-        var voronoi = d3.voronoi()
-            .size([width, height])
-            (pointData);
-
-        console.timeEnd('voronoi');
+    //     console.timeEnd('voronoi');
 
         // sketchConfig.layers = [
         //     function() { rect(...); },
@@ -238,11 +225,6 @@ function draw() {
         //     layer();
         //
         // });
-
-        var layers = sketchConfig.layers;
-        for (var i = 0; i < layers.length; i++) {
-            layers[i].func(layers[i].config);
-        }
 
         // console.time('drawCurvedEdges');
         // drawCurvedEdges(voronoi, sketchConfig);
@@ -262,9 +244,9 @@ function draw() {
         // drawLogo(sketchConfig.logo);
         // console.timeEnd('drawLogo');
 
-    }
+    // }
 
-    hideLoader();
+    // hideLoader();
 }
 
 var updateStream = Kefir.emitter();
@@ -280,7 +262,7 @@ updateStream.filter(function(value) {
 
 function updateSketchConfig(newConfig, noRedraw) {
 
-    var recalcPoints = (newConfig.chaos ||  newConfig.width || newConfig.height) ? true : false;
+    //var recalcPoints = (newConfig.chaos ||  newConfig.width || newConfig.height) ? true : false;
     loadChangedValuesFrom(newConfig);
 
 

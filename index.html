@@ -158,7 +158,9 @@
 
             patch.addNode('util/nodelist').move(800, 50);
 
-            var configNode = patch.addNode('jb/config', 'Sketch Config').move(200, 200);
+            //var configNode = patch.addNode('jb/config', 'Sketch Config').move(200, 200);
+
+            var layersNode = patch.addNode('jb/layers', 'Layers').move(200, 200);
 
             var commentRemoved = false;
 
@@ -209,19 +211,26 @@
 
             lodNoiseNode.inlets['max'].receive(1);
 
-            paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
+            //paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
             paletteNode.outlets['product'].connect(logoNode.inlets['product']);
-            logoNode.outlets['out'].connect(configNode.inlets['logo']);
+            //logoNode.outlets['out'].connect(configNode.inlets['logo']);
             lodNoiseNode.outlets['number'].connect(noiseNode.inlets['lod']);
 
             bangNode.outlets['bang'].connect(noiseNode.inlets['bang']);
 
             noiseNode.outlets['pixels'].connect(rorschachNode.inlets['pixels']);
-            rorschachNode.outlets['pixip'].connect(configNode.inlets['srcPixels']);
+            //rorschachNode.outlets['pixip'].connect(configNode.inlets['srcPixels']);
 
-            configNode.outlets['config'].connect(previewNode.inlets['config']);
+            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(60, 600);
+            rorschachNode.outlets['pixip'].connect(drawPixelsNode.inlets['pixels']);
+            drawPixelsNode.outlets['drawable'].connect(layersNode.inlets['layer-1']);
+
+            //configNode.outlets['config'].connect(previewNode.inlets['config']);
+            layersNode.outlets['layers'].connect(previewNode.inlets['layers']);
 
             previewNode.outlets['image'].connect(saveNode.inlets['image']);
+
+
 
             //randomNode.inlets['min'].receive(12);
             //randomNode.inlets['max'].receive(40);
