@@ -193,16 +193,11 @@
             });
 
             var previewNode = patch.addNode('jb/preview', 'Preview').move(800, 400);
-
             var saveNode = patch.addNode('jb/save', 'Save Image').move(1000, 400);
 
-            //var randomNode = patch.addNode('util/random').move(300, 500);
-
             var bangNode = patch.addNode('util/bang').move(50, 300);
-          //  var metroNode = patch.addNode('util/metro').move(90, 500);
 
             var paletteNode = patch.addNode('jb/palette').move(30, 55);
-
             var logoNode = patch.addNode('jb/logo').move(50, 155);
             var rorschachNode = patch.addNode('jb/rorschach').move(350, 455);
 
@@ -212,10 +207,11 @@
             var collectPointDataNode = patch.addNode('jb/collect-point-data').move(380, 250);
 
             var drawPixelsNode = patch.addNode('jb/draw-pixels').move(360, 600);
+            var applyGradientNode = patch.addNode('jb/apply-gradient').move(600, 400);
 
             lodNoiseNode.inlets['max'].receive(1);
 
-            //paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
+            paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
             paletteNode.outlets['product'].connect(logoNode.inlets['product']);
             //logoNode.outlets['out'].connect(configNode.inlets['logo']);
             lodNoiseNode.outlets['number'].connect(noiseNode.inlets['lod']);
@@ -227,6 +223,8 @@
             noiseNode.outlets['pixels'].connect(rorschachNode.inlets['pixels']);
             rorschachNode.outlets['pixip'].connect(drawPixelsNode.inlets['pixels']);
             drawPixelsNode.outlets['drawable'].connect(layersNode.inlets['layer-1']);
+
+            applyGradientNode.outlets['drawable'].connect(layersNode.inlets['layer-2']);
 
             layersNode.outlets['layers'].connect(previewNode.inlets['layers']);
 

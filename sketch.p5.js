@@ -132,7 +132,7 @@ function draw() {
 
     var layers = sketchConfig.layers;
     for (var i = 0; i < layers.length; i++) {
-        layers[i].func(this, layers[i].conf);
+        if (layers[i]) layers[i].func(this, layers[i].conf, ctx);
     }
 
 
@@ -231,7 +231,7 @@ updateStream.filter(function(value) {
                 //return value.config.srcPixels && value.config.srcPixels.pixels.length && value.config.logo && value.config.logo.product;
                 return value.config.layers && (value.config.layers.length > 0);
             })
-            .throttle(5000)
+            .throttle(5000, { leading: false })
             .onValue(function(value) {
                 loadChangedValuesFrom(value.config);
                 if (!value.noRedraw) redraw();

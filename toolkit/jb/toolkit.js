@@ -279,14 +279,21 @@ Rpd.nodetype('jb/collect-point-data', {
 
 Rpd.nodetype('jb/apply-gradient', {
     inlets: {
-        'width': { type: 'util/number' },
-        'height': { type: 'util/number' },
+        'width': { type: 'util/number', default: window.innerWidth },
+        'height': { type: 'util/number', default: window.innerHeight },
         'palette': { type: 'jb/palette' }
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
     },
-    process: function(inlets) { }
+    process: function(inlets) {
+        return {
+            'drawable': {
+                'conf': inlets,
+                'func': applyGradient
+            }
+        }
+    }
 });
 
 Rpd.nodetype('jb/curved-edges', {

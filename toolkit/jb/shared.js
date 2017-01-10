@@ -232,3 +232,34 @@ function collectPointData(pixels, config) {
 
     return pointData;
 }
+
+// jb/apply-gradient
+function applyGradient(p, config, ctx) {
+    var palette = config.palette;
+
+    if (!palette) return;
+
+    var width = config.width || window.innerWidth;
+    var height = config.height || window.innerHeight;
+
+    var xRect = width / 2;
+    var yRect = height / 2;
+
+    var rotation1 = p.map(50, 0, 100, 0, width);
+    var rotation2 = p.map(50, 0, 100, 0, height);
+    var location = p.map(0, 50, 100, 0, width);
+
+    var startGrad1 = p.createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
+    var endGrad1 = p.createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
+
+    //Main gradient
+    p.blendMode(OVERLAY);
+    if (ctx) {
+        var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
+        gradient.addColorStop(0, palette[0]);
+        gradient.addColorStop(1, palette[2]);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+    }
+    p.blendMode(BLEND);
+}
