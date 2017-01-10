@@ -19,6 +19,7 @@ var sketchConfig = {
     maxSquareSize: 15,
     chaos: 0.5,
     step: 16,
+    tmp: 50,
     backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
 
@@ -181,29 +182,33 @@ function draw() {
 
     console.time('gradient');
 
-    var xRect = width / 2;
-    var yRect = height / 2;
+    var xRect = 0;
+    var yRect = 0;
 
-    var rotation1 = map(50, 0, 100, 0, width);
-    var rotation2 = map(50, 0, 100, 0, height);
-    var location = map(0, 50, 100, 0, width);
-
-
-    var startGrad1 = createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
-    var endGrad1 = createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
+    //var rotation1 = map(sketchConfig.tmp, 0, 100, 0, width);
+    //var rotation2 = map(50, 0, 100, 0, height);
+    //var location = map(0, 50, 100, 0, width);
 
 
+  //  var startGrad1 = createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
+  //  var endGrad1 = createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
+   // console.log('sg', startGrad1);
+
+  // fill(0, 70);
+  //  rect(0, 0, width, height);
     //Main gradient
     blendMode(OVERLAY);
+   // blendMode(NORMAL);
     if (ctx) {
-        var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
-        gradient.addColorStop(0, sketchConfig.palette[0]);
-     //   gradient.addColorStop(0.5, sketchConfig.palette[1]);
-        gradient.addColorStop(1, sketchConfig.palette[2]);
+       // var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
+        var gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, sketchConfig.palette[2]);
+        gradient.addColorStop(0.3, sketchConfig.palette[1]);
+        gradient.addColorStop(1, sketchConfig.palette[0]);
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
     }
-    blendMode(NORMAL);
+   // blendMode(NORMAL);
 
     console.timeEnd('gradient');
 
@@ -241,10 +246,30 @@ function draw() {
         console.time('drawBackEdgesSquares');
         drawBackEdgesSquares(pointData, sketchConfig);
         console.timeEnd('drawBackEdgesSquares');
+        if (ctx) {
+            blendMode(OVERLAY);
+            // var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
+            var gradient = ctx.createRadialGradient(width/2, height/2, height/4, width/2, height/2, 0.4*width);
+            gradient.addColorStop(0, color(255, 0));
+            gradient.addColorStop(1, color(24, 24, 24));
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            blendMode(NORMAL);
+
+            blendMode(MULTIPLY);
+            // var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
+            var gradient = ctx.createRadialGradient(width/2, height/2, height/3, width/2, height/2, 0.53*width);
+            gradient.addColorStop(0, color(255, 0));
+            gradient.addColorStop(1, color(24, 24, 24));
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+        }
         blendMode(NORMAL);
         console.time('drawLogo');
         drawLogo(sketchConfig.logo);
         console.timeEnd('drawLogo');
+
+
 
     }
 

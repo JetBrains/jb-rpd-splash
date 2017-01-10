@@ -45,6 +45,7 @@ Rpd.nodetype('jb/config', {
         'logo': { type: 'jb/logo' },
         'maxSquareSize': { type: 'jb/integer', 'default': 15, name: 'squareSize' },
         'chaos': { type: 'util/number', 'default': 0.5 },
+        'tmp' : {type: 'util/number'},
         'step': { type: 'jb/integer', 'default': 16 }
     },
     outlets: {
