@@ -23,11 +23,11 @@ Rpd.channeltype('jb/logo', { show: function(logo) { return logo.product + ', ' +
 
 Rpd.channeltype('jb/product', { });
 
-Rpd.channeltype('jb/drawable', { });
+Rpd.channeltype('jb/drawable', { show: function(v) { return v ? '<Drawable>' : '<Empty>'; } });
 
-Rpd.channeltype('jb/layers', {
-    show: function(v) { return v.length + ' Layers'; }
-});
+Rpd.channeltype('jb/point-data', { show: howMuch('point', 'points') });
+
+Rpd.channeltype('jb/layers', { show: howMuch('layer', 'layers') });
 
 var PIXELS_COUNT_FACTOR = 4; // one pixel is four elements in the array
 Rpd.channeltype('jb/pixels', {
@@ -200,97 +200,21 @@ Rpd.nodetype('jb/palette', {
     }
 });
 
-var EMPTY_PIXELS = {
-  width: 0,
-  height: 0,
-  values: [],
-  step: 10,
-  seed: -1,
-  density: -1,
-  time: -1
-};
 Rpd.nodetype('jb/noise', function() {
 
-    var refreshSketch;
-    //var values = Kefir.emitter();
-
-    var noiseSketch = function(p) {
-        var width = window.innerWidth;
-        var height = window.innerHeight;
-
-        var setupCalled = false;
-
-        p.setup = function() {
-            var cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
-            //cvs.position(-5000, -5000);
-            cvs.canvas.className = 'noise-canvas';
-            cvs.canvas.style.display = 'none';
-         //  console.log(cvs);
-            //cvs.style.display = 'none';
-            p.noLoop();
-            setupCalled = true;
-        };
-
-        var lastPixels;
-        var lastSeed;
-        var lastValues;
-        refreshSketch = function(inlets) {
-            if (!setupCalled) return;
-            p.noiseDetail(inlets.lod, inlets.falloff);
-            var lastSeed = p.random(1000);
-            p.noiseSeed(lastSeed);
-            p.redraw();
-            return lastPixels;
-        };
-
-        p.draw = function() {
-            p.clear();
-            p.noStroke();
-            //lastValues = [];
-            var x, y, c;
-
-            //for (var x = 0; x <= width/2+10; x+=10) {
-            for (x = 0; x < width; x+=10) {
-                //var column = [];
-                for (y = 0; y < height; y+=10) {
-                    c = 255 * p.noise(0.005 * x, 0.005 * y);
-                    //c = (x / width) * 255;
-                    p.fill(c);
-                    p.rect(x, y, 10, 10);
-                    //p.rect(width - x, y, 10, 10);
-                    //column.push(c);
-                }
-                //lastValues.push(column);
-            }
-            p.loadPixels();
-            lastPixels = {
-                width: width,
-                height: height,
-                values: p.pixels,
-                //values: lastValues,
-                step: 10,
-                time: new Date(),
-                density: p.pixelDensity(),
-                seed: lastSeed
-            };
-        };
-    };
-
-    var noiseP5 = new p5(noiseSketch);
-
-  // console.log(noiseP5);
+    var refreshSketch = initNoiseSketch();
 
     return {
         inlets: {
             'bang': { type: 'util/bang' },
             'lod': { type: 'util/number' },
-            'falloff': { type: 'util/number' }
-
+            'falloff': { type: 'util/number' },
+            'step': { type: 'util/number', default: 10 }
         },
         outlets: { 'pixels': { type: 'jb/pixels' } },
         process: function(inlets) {
             return {
-                pixels: refreshSketch ? refreshSketch(inlets) : EMPTY_PIXELS
+                pixels: refreshSketch(inlets)
             }
         }
     };
@@ -330,19 +254,7 @@ Rpd.nodetype('jb/draw-pixels', {
         return {
             'drawable': {
                 'conf': inlets.pixels,
-                'func': function(p, pixels) {
-                    p.loadPixels();
-
-                    var src = pixels.values;
-                    var pixels = p.pixels;
-
-                    // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
-                    for (var i = 0; i < src.length; i++) {
-                       pixels[i] = src[i];
-                    }
-
-                    p.updatePixels();
-                }
+                'func': drawPixels
             }
         }
     }
@@ -350,14 +262,19 @@ Rpd.nodetype('jb/draw-pixels', {
 
 Rpd.nodetype('jb/collect-point-data', {
     inlets: {
-        //'width': { type: 'util/number' },
-        //'height': { type: 'util/number' },
+        'chaos': { type: 'util/number', default: 0.5 },
+        'step': { type: 'util/number', default: 16 },
         'pixels': { type: 'jb/pixels' }
     },
     outlets: {
-        'drawable': { type: 'jb/drawable' }
+        'point-data': { type: 'jb/point-data' }
     },
-    process: function(inlets) { }
+    process: function(inlets) {
+        if (!inlets.pixels) return;
+        return {
+            'point-data': collectPointData(inlets.pixels, inlets)
+        }
+    }
 });
 
 Rpd.nodetype('jb/apply-gradient', {

@@ -72,3 +72,163 @@ function stopPropagation(event) {
     event.stopPropagation();
     return event;
 }
+
+// ============= Sketch-specific
+
+// jb/noise
+var EMPTY_PIXELS = {
+  width: 0,
+  height: 0,
+  values: [],
+  step: 10,
+  seed: -1,
+  density: -1,
+  time: -1
+};
+function initNoiseSketch() {
+
+    var refresher;
+    //var values = Kefir.emitter();
+
+    function refreshSketch(inlets) {
+        return refresher ? refresher(inlets) : EMPTY_PIXELS;
+    }
+
+    var noiseSketch = function(p) {
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+
+        var setupCalled = false;
+
+        p.setup = function() {
+            var cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
+            //cvs.position(-5000, -5000);
+            cvs.canvas.className = 'noise-canvas';
+            cvs.canvas.style.display = 'none';
+         //  console.log(cvs);
+            //cvs.style.display = 'none';
+            p.noLoop();
+            setupCalled = true;
+        };
+
+        var lastPixels;
+        var lastSeed;
+        var lastValues;
+        var lastStep;
+        refresher = function(inlets) {
+            if (!setupCalled) return;
+            p.noiseDetail(inlets.lod, inlets.falloff);
+            lastSeed = p.random(1000);
+            lastStep = inlets.step;
+            p.noiseSeed(lastSeed);
+            p.redraw();
+            return lastPixels;
+        };
+
+        p.draw = function() {
+            p.clear();
+            p.noStroke();
+            //lastValues = [];
+            var x, y, c;
+
+            //for (var x = 0; x <= width/2+10; x+=10) {
+            for (x = 0; x < width; x+=lastStep) {
+                //var column = [];
+                for (y = 0; y < height; y+=lastStep) {
+                    c = 255 * p.noise(0.005 * x, 0.005 * y);
+                    //c = (x / width) * 255;
+                    p.fill(c);
+                    p.rect(x, y, 10, 10);
+                    //p.rect(width - x, y, 10, 10);
+                    //column.push(c);
+                }
+                //lastValues.push(column);
+            }
+            p.loadPixels();
+            lastPixels = {
+                width: width,
+                height: height,
+                values: p.pixels,
+                //values: lastValues,
+                step: lastStep || 10,
+                time: new Date(),
+                density: p.pixelDensity(),
+                seed: lastSeed
+            };
+        };
+    };
+
+    var noiseP5 = new p5(noiseSketch);
+
+    return refreshSketch;
+
+}
+
+// jb/draw-pixels
+function drawPixels(p, pixels) {
+    p.loadPixels();
+
+    var src = pixels.values;
+    var pixels = p.pixels;
+
+    // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
+    for (var i = 0; i < src.length; i++) {
+        pixels[i] = src[i];
+    }
+
+    p.updatePixels();
+}
+
+// jb/collect-point-data
+function collectPointData(pixels, config) {
+
+    var srcPixels = pixels.values;
+
+    if (!srcPixels || !srcPixels.length) return [];
+
+    var step = Math.floor(config.step || pixels.step);
+
+    if (!step) return [];
+
+    var chaos = config.chaos;
+    var d = pxDensity;
+    var srcWidth = pixels.width;
+    var srcHeight = pixels.height;
+
+    var dsrcWidth = srcWidth * d;
+    var dsrcHeight = srcHeight * d;
+
+    var maxPoints =  dsrcWidth * dsrcHeight * 4;
+
+    console.log('collectPointData', dsrcWidth, 'x', dsrcHeight, 'pixels length', srcPixels.length,
+                'expected length', maxPoints);
+
+    var idx, pxBrightness, r, g, b, a;
+
+    var lastPoint;
+
+    var pointData = [];
+
+    var xpos, ypos;
+
+
+    for (var x = 0; x < srcWidth; x += step) {
+        for (var y = 0; y < srcHeight; y += step) {
+            // console.log('y', y, pointData.length >= maxPoints);
+            pxBrightness = pixelBrightnessByCoords(x, y, srcPixels, srcWidth, d);
+
+            if ((pxBrightness > 40) && (random(0, pxBrightness) < 30)) {
+
+                xpos = x + random(-step / 2, step / 2) * chaos;
+                ypos = y + random(-step / 2, step / 2) * chaos;
+
+                pointData.push([ xpos, ypos, pxBrightness ]);
+                if (pointData.length >= maxPoints) break;
+            }
+
+        }
+
+    }
+
+    return pointData;
+}

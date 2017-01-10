@@ -135,29 +135,6 @@ function draw() {
         layers[i].func(this, layers[i].conf);
     }
 
-    //var sketchWidth = sketchConfig.width;
-    //var sketchHeight = sketchConfig.height;
-
-    // showLoader();
-
-    // noStroke();
-
-    // var srcPixels = sketchConfig.srcPixels;
-
-    // var src = srcPixels.pixels;
-    // var step = srcPixels.step;
-
-    // console.time('apply incoming pixels');
-
-    // loadPixels();
-
-    // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
-    // for (var i = 0; i < src.length; i++) {
-    //     pixels[i] = src[i];
-    // }
-
-    // updatePixels();
-
 
     // console.timeEnd('apply incoming pixels');
 
@@ -279,57 +256,6 @@ function updateSketchConfig(newConfig, noRedraw) {
         config: newConfig,
         noRedraw: noRedraw
     });
-}
-
-function collectPointData(config, srcPixels, srcWidth, srcHeight) {
-
-    if (!srcPixels || !srcPixels.length) return [];
-
-    var step = Math.floor(config.step);
-
-    if (!step) return [];
-
-    var chaos = config.chaos;
-    var d = pxDensity;
-    if (!srcWidth) srcWidth = config.width;
-    if (!srcHeight) srcHeight = config.height;
-
-    var dsrcWidth = srcWidth * d;
-    var dsrcHeight = srcHeight * d;
-
-    var maxPoints =  dsrcWidth * dsrcHeight * 4;
-
-    console.log('collectPointData', dsrcWidth, 'x', dsrcHeight, 'pixels length', srcPixels.length,
-                'expected length', maxPoints);
-
-    var idx, pxBrightness, r, g, b, a;
-
-    var lastPoint;
-
-    var pointData = [];
-
-    var xpos, ypos;
-
-
-    for (var x = 0; x < srcWidth; x += step) {
-        for (var y = 0; y < srcHeight; y += step) {
-            // console.log('y', y, pointData.length >= maxPoints);
-            pxBrightness = pixelBrightnessByCoords(x, y, srcPixels, srcWidth, d);
-
-            if ((pxBrightness > 40) && (random(0, pxBrightness) < 30)) {
-
-                xpos = x + random(-step / 2, step / 2) * chaos;
-                ypos = y + random(-step / 2, step / 2) * chaos;
-
-                pointData.push([ xpos, ypos, pxBrightness ]);
-                if (pointData.length >= maxPoints) break;
-            }
-
-        }
-
-    }
-
-    return pointData;
 }
 
 function drawEdgesSquares(voronoi, srcPixels, srcWidth, srcHeight, config) {

@@ -160,7 +160,7 @@
 
             //var configNode = patch.addNode('jb/config', 'Sketch Config').move(200, 200);
 
-            var layersNode = patch.addNode('jb/layers', 'Layers').move(200, 200);
+            var layersNode = patch.addNode('jb/layers', 'Layers').move(600, 200);
 
             var commentRemoved = false;
 
@@ -198,7 +198,7 @@
 
             //var randomNode = patch.addNode('util/random').move(300, 500);
 
-            var bangNode = patch.addNode('util/bang').move(90, 500);
+            var bangNode = patch.addNode('util/bang').move(50, 300);
           //  var metroNode = patch.addNode('util/metro').move(90, 500);
 
             var paletteNode = patch.addNode('jb/palette').move(30, 55);
@@ -209,6 +209,10 @@
             var noiseNode = patch.addNode('jb/noise').move(30, 400);
             var lodNoiseNode = patch.addNode('util/knob').move(30, 600);
 
+            var collectPointDataNode = patch.addNode('jb/collect-point-data').move(380, 250);
+
+            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(360, 600);
+
             lodNoiseNode.inlets['max'].receive(1);
 
             //paletteNode.outlets['palette'].connect(configNode.inlets['palette']);
@@ -216,16 +220,14 @@
             //logoNode.outlets['out'].connect(configNode.inlets['logo']);
             lodNoiseNode.outlets['number'].connect(noiseNode.inlets['lod']);
 
+            rorschachNode.outlets['pixip'].connect(collectPointDataNode.inlets['pixels']);
+
             bangNode.outlets['bang'].connect(noiseNode.inlets['bang']);
 
             noiseNode.outlets['pixels'].connect(rorschachNode.inlets['pixels']);
-            //rorschachNode.outlets['pixip'].connect(configNode.inlets['srcPixels']);
-
-            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(60, 600);
             rorschachNode.outlets['pixip'].connect(drawPixelsNode.inlets['pixels']);
             drawPixelsNode.outlets['drawable'].connect(layersNode.inlets['layer-1']);
 
-            //configNode.outlets['config'].connect(previewNode.inlets['config']);
             layersNode.outlets['layers'].connect(previewNode.inlets['layers']);
 
             previewNode.outlets['image'].connect(saveNode.inlets['image']);
