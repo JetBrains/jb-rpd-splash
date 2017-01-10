@@ -192,27 +192,18 @@ function draw() {
     var startGrad1 = createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
     var endGrad1 = createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
 
-    // //Main gradient
-    // blendMode(OVERLAY);
-    // if (ctx) {
-    //     var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
-    //     gradient.addColorStop(0, sketchConfig.palette[0]);
-    //     gradient.addColorStop(1, sketchConfig.palette[2]);
-    //     ctx.fillStyle = gradient;
-    //     ctx.fillRect(0, 0, width, height);
-    // }
-    // blendMode(NORMAL);
 
     //Main gradient
     blendMode(OVERLAY);
     if (ctx) {
         var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
         gradient.addColorStop(0, sketchConfig.palette[0]);
+     //   gradient.addColorStop(0.5, sketchConfig.palette[1]);
         gradient.addColorStop(1, sketchConfig.palette[2]);
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
     }
-    blendMode(BLEND);
+    blendMode(NORMAL);
 
     console.timeEnd('gradient');
 
