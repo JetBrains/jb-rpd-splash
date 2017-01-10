@@ -103,18 +103,6 @@ Rpd.nodetype('jb/rorschach', {
         var source = inlets.pixels.pixels;
         var target = [];
 
-        //var halfImage = 4 * (img.width/2 * d) * (img.height * d);
-        // for (var i = 0; i < halfImage; i++) {
-        //     pixels[i+halfImage] = pixels[i];
-        // }
-
-        // var pixls = inlets.pixels.pixels;
-        //for (var i = 0; i < height; i+=1) {
-        //     for (var j = 0; j < width/2; j+=1) {
-        //         pixls[(i+1)*width - j - 2] = pixls[i*width + j];
-        //     }
-        //}
-
         var trgIdx, srcIdx;
         for (var x = 0; x < width; x++) {
             for (var y = 0; y < height; y++) {
@@ -131,17 +119,53 @@ Rpd.nodetype('jb/rorschach', {
             }
         }
 
-      //   temp.pixels = pixls;
-       // return { 'pixels': temp };
-        // var halfImage = 4 * (width/2 * d) * (height * d);
-        // for (i = 0; i < halfImage; i++) {
-        //     target[i] = source[i];
-        // }
-        // for (var i = halfImage, len = source.length; i < len; i++) {
-        //     target[i] = source[len - (i - halfImage)];
-        // }
 
          conf.pixels = target;
+        return { 'pixels': conf };
+    }
+
+
+});
+
+
+
+
+Rpd.nodetype('jb/rorschach_vertical', {
+    inlets: {
+        'pixels': { type: 'jb/pixels' }
+    },
+    outlets: {
+        'pixels': { type: 'jb/pixels' }
+    },
+    process: function(inlets) {
+        if (!inlets.pixels) return; // FIXME: why this condition needed?
+        var d = inlets.pixels.density;
+        var width =  inlets.pixels.width;
+        var height = inlets.pixels.height;
+        var conf = inlets.pixels;
+        var source = inlets.pixels.pixels;
+        var target = [];
+
+
+        var trgIdx, srcIdx;
+        for (var x = 0; x < width; x++) {
+            for (var y = 0; y < height; y++) {
+                for (var i = 0; i < d; i++) {
+                    for (var j = 0; j < d; j++) {
+                        trgIdx = 4 * ((y * d + j) * width * d + (x * d + i));
+                        srcIdx = (y < height / 2) ? trgIdx : 4 * (((height - y) * d + j) * width * d + ((x * d + i)));
+                        target[trgIdx] = source[srcIdx];
+                        target[trgIdx+1] = source[srcIdx+1];
+                        target[trgIdx+2] = source[srcIdx+2];
+                        target[trgIdx+3] = source[srcIdx+3];
+                    }
+                }
+            }
+        }
+
+        console.log(target)
+
+        conf.pixels = target;
         return { 'pixels': conf };
     }
 
@@ -276,8 +300,8 @@ Rpd.nodetype('jb/noise', function() {
     return {
         inlets: {
             'bang': { type: 'util/bang' },
-            'lod': { type: 'util/number' },
-            'falloff': { type: 'util/number' }
+            'octave': { type: 'util/dial', 'default': 4 },
+            'falloff': { type: 'util/number', 'default': 0.5 }
 
         },
         outlets: { 'pixels': { type: 'jb/pixels' } },
