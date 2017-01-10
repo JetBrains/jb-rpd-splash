@@ -132,7 +132,7 @@ function draw() {
 
     var layers = sketchConfig.layers;
     for (var i = 0; i < layers.length; i++) {
-        layers[i].func(this, layers[i].config);
+        layers[i].func(this, layers[i].conf);
     }
 
     //var sketchWidth = sketchConfig.width;
@@ -251,7 +251,8 @@ function draw() {
 
 var updateStream = Kefir.emitter();
 updateStream.filter(function(value) {
-                return value.config.srcPixels && value.config.srcPixels.pixels.length && value.config.logo && value.config.logo.product;
+                //return value.config.srcPixels && value.config.srcPixels.pixels.length && value.config.logo && value.config.logo.product;
+                return value.config.layers && (value.config.layers.length > 0);
             })
             .throttle(5000)
             .onValue(function(value) {

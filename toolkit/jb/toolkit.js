@@ -329,7 +329,7 @@ Rpd.nodetype('jb/draw-pixels', {
     process: function(inlets) {
         return {
             'drawable': {
-                'conf': pixels,
+                'conf': inlets.pixels,
                 'func': function(p, pixels) {
                     p.loadPixels();
 
