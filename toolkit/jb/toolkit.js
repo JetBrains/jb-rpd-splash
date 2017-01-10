@@ -25,6 +25,8 @@ Rpd.channeltype('jb/product', { });
 
 Rpd.channeltype('jb/drawable', { show: function(v) { return v ? '<Drawable>' : '<Empty>'; } });
 
+Rpd.channeltype('jb/voronoi', { show: function(v) { return v ? '<Voronoi>' : '<Empty>'; } });
+
 Rpd.channeltype('jb/point-data', { show: howMuch('point', 'points') });
 
 Rpd.channeltype('jb/layers', { show: howMuch('layer', 'layers') });
@@ -277,6 +279,23 @@ Rpd.nodetype('jb/apply-gradient', {
                 'conf': inlets,
                 'func': applyGradient
             }
+        }
+    }
+});
+
+Rpd.nodetype('jb/voronoi', {
+    inlets: {
+        'width': { type: 'util/number', default: window.innerWidth },
+        'height': { type: 'util/number', default: window.innerHeight },
+        'point-data': { type: 'jb/point-data' }
+    },
+    outlets: {
+        'voronoi': { type: 'jb/voronoi' }
+    },
+    process: function(inlets) {
+        if (!inlets['point-data'] || !inlets.width || !inlets.height) return;
+        return {
+            'voronoi': d3.voronoi().size([inlets.width, inlets.height])(inlets['point-data'])
         }
     }
 });

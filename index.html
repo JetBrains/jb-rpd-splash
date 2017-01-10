@@ -208,8 +208,11 @@
 
             var drawPixelsNode = patch.addNode('jb/draw-pixels').move(360, 600);
             var applyGradientNode = patch.addNode('jb/apply-gradient').move(600, 400);
+            var voronoiNode = patch.addNode('jb/voronoi').move(600, 600);
 
             lodNoiseNode.inlets['max'].receive(1);
+
+            collectPointDataNode.outlets['point-data'].connect(voronoiNode.inlets['point-data']);
 
             paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
             paletteNode.outlets['product'].connect(drawLogoNode.inlets['product']);
