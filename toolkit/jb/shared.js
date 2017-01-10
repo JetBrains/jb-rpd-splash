@@ -73,7 +73,43 @@ function stopPropagation(event) {
     return event;
 }
 
-// ============= Sketch-specific
+// ============= Sketch-specific =============
+
+var imagesToLoad = PRODUCTS.map(function(product) {
+    return {
+        product: product.id,
+        path: 'logos/' + product.id + '-text-square.svg'
+    };
+});
+
+var readyImgCount = 0;
+var productsImages = {};
+function loadSketchImages(p) {
+    imagesToLoad.forEach(function(imgSpec) {
+        var img = new Image();
+        console.log('start loading image for', imgSpec.product);
+        img.onload = function() {
+            console.log('received', imgSpec.path);
+            productsImages[imgSpec.product] = img;
+            readyImgCount++;
+            console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
+            if (readyImgCount == imagesToLoad.length) {
+                hideLoader();
+                console.log('finished loading images');
+            }
+        };
+        img.onerror = function() {
+            console.log('image at ' + imgSpec.path + ' failed to load');
+            readyImgCount++;
+            console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
+            if (readyImgCount == imagesToLoad.length) {
+                hideLoader();
+                console.log('finished loading images');
+            }
+        };
+        img.src = imgSpec.path;
+    });
+}
 
 // jb/noise
 var EMPTY_PIXELS = {
@@ -262,4 +298,21 @@ function applyGradient(p, config, ctx) {
         ctx.fillRect(0, 0, width, height);
     }
     p.blendMode(BLEND);
+}
+
+// jb/draw-logo
+//var LOGO_PX_SIDE = 60;
+//var LOGO_PX_SHIFT = -50;
+
+function putLogoAt(ctx, image, x, y) {
+    ctx.drawImage(image, x - 870 / 2, y - 55, 870, 110);
+}
+
+function drawLogo(p, logo, ctx) {
+    if (!logo || !logo.product) return;
+    var productId = logo.product;
+    var imagePath = 'logos/' + productId + '-text-square.svg';
+    if (productsImages[productId] && ctx) {
+        putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
+    }
 }

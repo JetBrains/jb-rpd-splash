@@ -1,10 +1,3 @@
-var imagesToLoad = PRODUCTS.map(function(product) {
-    return {
-        product: product.id,
-        path: 'logos/' + product.id + '-text-square.svg'
-    };
-});
-
 var sketchConfig = {
     width: window.innerWidth,
     height: window.innerHeight,
@@ -56,7 +49,7 @@ var pointData = [];
 
 var canvas, ctx;
 
-var productsImages = {};
+
 
 var pxDensity;
 
@@ -79,32 +72,7 @@ function preload() {
     //         loader.style.opacity = 0;
     //     }
     // });
-    var readyImgCount = 0;
-    imagesToLoad.forEach(function(imgSpec) {
-        var img = new Image();
-        console.log('start loading image for', imgSpec.product);
-        img.onload = function() {
-            console.log('received', imgSpec.path);
-            productsImages[imgSpec.product] = img;
-            readyImgCount++;
-            console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
-            if (readyImgCount == imagesToLoad.length) {
-                hideLoader();
-                console.log('finished loading images');
-            }
-        };
-        img.onerror = function() {
-            console.log('image at ' + imgSpec.path + ' failed to load');
-            readyImgCount++;
-            console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
-            if (readyImgCount == imagesToLoad.length) {
-                hideLoader();
-                console.log('finished loading images');
-            }
-        };
-        img.src = imgSpec.path;
-    });
-
+    loadSketchImages();
 }
 
 function setup() {
@@ -477,8 +445,6 @@ function drawCurvedEdges(voronoi, config) {
     }
 }
 
-
-
 function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {
 
     var idx = (Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
@@ -490,23 +456,6 @@ function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {
 
     return brightness(color(r, g, b, a));
 
-}
-
-var LOGO_PX_SIDE = 60;
-var LOGO_PX_SHIFT = -50;
-
-function putLogoAt(ctx, image, x, y) {
-    ctx.drawImage(image, x - 870 / 2, y - 55, 870, 110);
-}
-
-function drawLogo(logo) {
-    if (!logo) return;
-    var productId = logo.product;
-    if (!productId) return;
-    var imagePath = 'logos/' + productId + '-text-square.svg';
-    if (productsImages[productId] && ctx) {
-        putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
-    }
 }
 
 function drawLoading() {

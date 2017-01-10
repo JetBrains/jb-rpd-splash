@@ -80,22 +80,6 @@ Rpd.nodetype('jb/preview', {
 });
 
 
-Rpd.nodetype('jb/logo', {
-    inlets: {
-        product: { type: 'jb/product', 'default': '' },
-        x: { type: 'util/number', 'default': 0.5 },
-        y: { type: 'util/number', 'default': 0.5 }
-
-    },
-    outlets: {
-        out: { type: 'jb/logo', 'default': null }
-    },
-    process: function(inlets) {
-        return { out: inlets };
-        //return { out: { x: inlets.x, y: inlets.y, logo: inlets.logo } };
-    }
-});
-
 Rpd.nodetype('jb/rorschach', {
     inlets: {
         'pixels': { type: 'jb/pixels' }
@@ -222,6 +206,7 @@ Rpd.nodetype('jb/noise', function() {
 
 Rpd.nodetype('jb/layers', {
     inlets: {
+        'bang': { type: 'util/bang' },
         'layer-1': { type: 'jb/drawable' },
         'layer-2': { type: 'jb/drawable' },
         'layer-3': { type: 'jb/drawable' },
@@ -338,10 +323,19 @@ Rpd.nodetype('jb/back-edges-squares', {
 
 Rpd.nodetype('jb/draw-logo', {
     inlets: {
-        'logo': { type: 'jb/logo' }
+        product: { type: 'jb/product', 'default': '' },
+        x: { type: 'util/number', 'default': 0.5 },
+        y: { type: 'util/number', 'default': 0.5 }
     },
     outlets: {
-        'drawable': { type: 'jb/drawable' }
+        drawable: { type: 'jb/drawable' }
     },
-    process: function(inlets) { }
+    process: function(inlets) {
+        return {
+            'drawable': {
+                'conf': inlets,
+                'func': drawLogo
+            }
+        }
+    }
 });
