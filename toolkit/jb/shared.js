@@ -84,7 +84,8 @@ var readyImgCount = 0;
 var productsImages = {};
 var imagesErrors = {};
 function loadSketchImages(p, onComplete) {
-    imagesToLoad.forEach(function(imgSpec) {
+    showLoaderAt(0);
+    imagesToLoad.forEach(function(imgSpec, index) {
         if (productsImages[imgSpec.product] || imagesErrors[imgSpec.product]) return;
         var img = new Image();
         console.log('start loading image for', imgSpec.product);
@@ -93,8 +94,10 @@ function loadSketchImages(p, onComplete) {
             productsImages[imgSpec.product] = img;
             readyImgCount++;
             console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
+            showLoaderAt(readyImgCount / imagesToLoad.length, 'Loading Images');
             if (readyImgCount == imagesToLoad.length) {
                 if (onComplete) onComplete();
+                hideLoader();
                 console.log('finished loading images');
             }
         };
@@ -103,8 +106,10 @@ function loadSketchImages(p, onComplete) {
             console.log('image at ' + imgSpec.path + ' failed to load');
             readyImgCount++;
             console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
+            showLoaderAt(readyImgCount / imagesToLoad.length, 'Loading Images');
             if (readyImgCount == imagesToLoad.length) {
                 if (onComplete) onComplete();
+                hideLoader();
                 console.log('finished loading images');
             }
         };

@@ -6,13 +6,12 @@ var sketchConfig = {
     //backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
 
-var loaderShown = false;
-
-function showLoader() {
-    console.log('+++++ showLoader');
+function showLoaderAt(pos) {
+    console.log('+++++ showLoaderAt ', pos);
     //setTimeout(function() {
         d3.select('#loader-wrapper').style('opacity', 1);
-        loaderShown = true;
+        d3.select('#loader-wrapper p').text('Rendering... ' + Math.floor(pos * 100) + '%');
+        d3.select('#loading-bar').style('width', Math.floor(pos * 100) + '%');
     //}, 1);
 }
 
@@ -20,7 +19,7 @@ function hideLoader() {
     console.log('+++++ hideLoader');
     //setTimeout(function() {
         d3.select('#loader-wrapper').style('opacity', 0);
-        loaderShown = false;
+        d3.select('#loading-bar').style('width', '0%');
     //}, 1);
 }
 
@@ -73,20 +72,58 @@ function draw() {
 
     console.log('draw');
 
-    //showLoader();
+    showLoaderAt(0, 'Rendering');
 
-    clear();
+    var p5 = this;
+
+    // ==========
+    // faster version, just ensures loading bar is shown, usually it stays at 0% until the end,
+    // since GPU is busy with drawing layers
+
+    // setTimeout(function() {
+    //     clear();
+
+    //     var layers = sketchConfig.layers;
+    //     for (var i = 0; i < layers.length; i++) {
+    //         if (layers[i] && layers[i] != 'dark') {
+    //             showLoaderAt((i + 1) / layers.length, 'Rendering');
+    //             console.time(layers[i].name || 'layer-' + i);
+    //             layers[i].func(p5, layers[i].conf, ctx);
+    //             console.timeEnd(layers[i].name || 'layer-' + i);
+    //         }
+    //         if (i == (layers.length - 1)) hideLoader();
+    //     }
+
+    //     hideLoader();
+    // }, 10);
+
+    // ==========
+    // a tiny bit slower version, ensures to show loading bar for every step by waiting 10msec
+    // between calls to free up GPU
 
     var layers = sketchConfig.layers;
-    for (var i = 0; i < layers.length; i++) {
-        if (layers[i] && layers[i] != 'dark') {
-            console.time(layers[i].name || 'layer-' + i);
-            layers[i].func(this, layers[i].conf, ctx);
-            console.timeEnd(layers[i].name || 'layer-' + i);
-        }
-    }
+    var drawLayer = Kefir.emitter();
 
-    //hideLoader();
+    var p5 = this;
+    clear();
+
+    drawLayer.filter(function(v) {
+        return v.layer && v.layer != 'dark';
+    }).delay(10).onValue(function(v) {
+        showLoaderAt((v.index + 1) / layers.length, 'Rendering');
+        var layer = v.layer;
+        console.time(layer.name || 'layer-' + v.index);
+        layer.func(p5, layer.conf, ctx);
+        console.timeEnd(layer.name || 'layer-' + v.index);
+        if (v.index == (layers.length - 1)) hideLoader();
+    });
+
+    for (var i = 0; i < layers.length; i++) {
+        drawLayer.emit({
+            index: i,
+            layer: layers[i]
+        });
+    }
 }
 
 var updateStream = Kefir.emitter();

@@ -114,6 +114,15 @@
                 background-color: aliceblue;
             }
 
+            #loading-bar {
+                position: absolute;
+                top: 0;
+                width: 0%;
+                height: 20px;
+                background-color: navajowhite;
+                /* background-color: rgba(255, 0, 0, 0.7); */
+            }
+
         </style>
 
         <link rel="stylesheet" href="./loaders.min.css"></link>
@@ -124,6 +133,11 @@
                 font-family: sans-serif;
                 color: white;
                 /* transition: opacity 500ms ease-out; */
+            }
+
+            #loader-wrapper p {
+                position: relative;
+                left: 80px;
             }
 
             #loader-wrapper .ball-rotate {
@@ -143,6 +157,7 @@
             </div>
             <div id="overlay"></div>
             <div id="patch-target"></div>
+            <div id="loading-bar"></div>
         </div>
 
         <script>
