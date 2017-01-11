@@ -184,7 +184,7 @@
 
             patch.addNode('util/nodelist').move(900, 50);
 
-            var layersNode = patch.addNode('jb/layers').move(600, 160);
+            var layersNode = patch.addNode('jb/layers').move(600, 120);
 
             var commentRemoved = false;
 
@@ -227,6 +227,7 @@
             var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(250, 555);
 
             var noiseNode = patch.addNode('jb/noise').move(30, 400);
+            var backgroundNode = patch.addNode('jb/background').move(800, 20);
 
             var lodNoiseNode = patch.addNode('util/dial', 'Octaves').move(30, 550);
             lodNoiseNode.inlets['max'].receive(10);
@@ -256,6 +257,7 @@
             rorschachNode.outlets['pixels'].connect(edgesSquaresNode.inlets['pixels']);
             voronoiNode.outlets['voronoi'].connect(curvedEdgesNode.inlets['voronoi']);
             voronoiNode.outlets['voronoi'].connect(shapesNode.inlets['voronoi']);
+            //paletteNode.outlets['product'].connect(backgroundNode.inlets['product']);
 
             collectPointDataNode.outlets['points'].connect(voronoiNode.inlets['points']);
             collectPointDataNode.outlets['points'].connect(backEdgesSquaresNode.inlets['points']);

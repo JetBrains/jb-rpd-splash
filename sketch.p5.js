@@ -101,27 +101,28 @@ function draw() {
     // a tiny bit slower version, ensures to show loading bar for every step by waiting 10msec
     // between calls to free up GPU
 
-    var layers = sketchConfig.layers;
+    var layersToRender = sketchConfig.layers.filter(function(v) {
+        return (v && v != 'dark');
+    });
+
     var drawLayer = Kefir.emitter();
 
     var p5 = this;
     clear();
 
-    drawLayer.filter(function(v) {
-        return v.layer && v.layer != 'dark';
-    }).delay(10).onValue(function(v) {
-        showLoaderAt((v.index + 1) / layers.length, 'Rendering');
+    drawLayer.delay(10).onValue(function(v) {
+        showLoaderAt((v.index + 1) / layersToRender.length, 'Rendering');
         var layer = v.layer;
         console.time(layer.name || 'layer-' + v.index);
         layer.func(p5, layer.conf, ctx);
         console.timeEnd(layer.name || 'layer-' + v.index);
-        if (v.index == (layers.length - 1)) hideLoader();
+        if (v.index == (layersToRender.length - 1)) hideLoader();
     });
 
-    for (var i = 0; i < layers.length; i++) {
+    for (var i = 0; i < layersToRender.length; i++) {
         drawLayer.emit({
             index: i,
-            layer: layers[i]
+            layer: layersToRender[i]
         });
     }
 }
