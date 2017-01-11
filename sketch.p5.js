@@ -226,66 +226,6 @@ function updateSketchConfig(newConfig, noRedraw) {
     });
 }
 
-function drawEdgesSquares(voronoi, srcPixels, srcWidth, srcHeight, config) {
-
-    var dsrcWidth = srcWidth * pxDensity;
-    var dsrcHeight = srcHeight * pxDensity;
-
-    var d = pxDensity;
-
-    var palette = config.palette;
-
-    var s = config.maxSquareSize;
-    rectMode(CENTER);
-
-
-    var myEdges = voronoi.edges; //myDelaunay.getEdges();
-
-    for (var n = 0; n < myEdges.length; n++) {
-        if (!myEdges[n]) continue;
-        var startX = myEdges[n][0][0];
-        var startY = myEdges[n][0][1];
-        var endX = myEdges[n][1][0];
-        var endY = myEdges[n][1][1];
-
-
-        var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, srcPixels, srcWidth, d));
-        var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, srcPixels, srcWidth, d));
-        if(!pxBrightnessEnd) { pxBrightnessEnd = 0 };
-        if(!pxBrightnessStart) { pxBrightnessStart = 0 };
-
-      //  if (pxBrightnessStart & pxBrightnessEnd) {
-            var colX = map(pxBrightnessStart, 0, 100, 0, 1);
-            var colY = map(pxBrightnessEnd, 0, 100, 0, 1);
-            var colcolX = lerpColor(color(palette[2]), color(palette[0]), colX);
-            var colcolY = lerpColor(color(palette[2]), color(palette[0]), colY);
-
-
-            strokeWeight(0.8);
-            stroke(255);
-
-            blendMode(SCREEN);
-
-            gradientLine(startX, startY, endX, endY, colcolX, colcolY);
-           //     line(startX, startY, endX, endY);
-
-
-            var sqSize = Math.floor(map(pxBrightnessStart, 40, 100, 1, s));
-            fill(lerpColor(colcolX, color(255), random(0, 1)));
-            noStroke();
-            // console.log(pxBrightness);
-            rect(startX, startY, sqSize, sqSize);
-
-
-
-       // }
-
-
-    }
-
-}
-
-
 function drawBackEdgesSquares(data, config) {
 
 

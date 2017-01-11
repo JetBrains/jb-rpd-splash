@@ -289,7 +289,7 @@ function applyGradient(p, config, ctx) {
     var endGrad1 = p.createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
 
     //Main gradient
-    p.blendMode(OVERLAY);
+    p.blendMode(p.OVERLAY);
     if (ctx) {
         var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
         gradient.addColorStop(0, palette[0]);
@@ -297,13 +297,10 @@ function applyGradient(p, config, ctx) {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
     }
-    p.blendMode(BLEND);
+    p.blendMode(p.BLEND);
 }
 
 // jb/draw-logo
-//var LOGO_PX_SIDE = 60;
-//var LOGO_PX_SHIFT = -50;
-
 function putLogoAt(ctx, image, x, y) {
     ctx.drawImage(image, x - 870 / 2, y - 55, 870, 110);
 }
@@ -312,7 +309,85 @@ function drawLogo(p, logo, ctx) {
     if (!logo || !logo.product) return;
     var productId = logo.product;
     var imagePath = 'logos/' + productId + '-text-square.svg';
+    p.blendMode(p.NORMAL);
     if (productsImages[productId] && ctx) {
         putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
     }
+}
+
+// jb/edges-squares
+function drawEdgesSquares(p, config) {
+    var voronoi = config.voronoi;
+    var srcPixels = config.pixels.values;
+    var srcWidth = config.pixels.width || window.innerWidth;
+    var srcHeight = config.pixels.height || window.innerHeight;
+
+    var dsrcWidth = srcWidth * pxDensity;
+    var dsrcHeight = srcHeight * pxDensity;
+
+    var d = pxDensity;
+
+    var palette = config.palette;
+
+    var s = config.maxSquareSize;
+    p.rectMode(p.CENTER);
+
+
+    var myEdges = voronoi.edges; //myDelaunay.getEdges();
+
+    for (var n = 0; n < myEdges.length; n++) {
+        if (!myEdges[n]) continue;
+        var startX = myEdges[n][0][0];
+        var startY = myEdges[n][0][1];
+        var endX = myEdges[n][1][0];
+        var endY = myEdges[n][1][1];
+
+
+        var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, srcPixels, srcWidth, d));
+        var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, srcPixels, srcWidth, d));
+        if(!pxBrightnessEnd) { pxBrightnessEnd = 0 };
+        if(!pxBrightnessStart) { pxBrightnessStart = 0 };
+
+      //  if (pxBrightnessStart & pxBrightnessEnd) {
+            var colX = p.map(pxBrightnessStart, 0, 100, 0, 1);
+            var colY = p.map(pxBrightnessEnd, 0, 100, 0, 1);
+            var colcolX = p.lerpColor(p.color(palette[2]), p.color(palette[0]), colX);
+            var colcolY = p.lerpColor(p.color(palette[2]), p.color(palette[0]), colY);
+
+
+            p.strokeWeight(0.8);
+            p.stroke(255);
+
+            p.blendMode(p.SCREEN);
+
+            p.gradientLine(startX, startY, endX, endY, colcolX, colcolY);
+           //     line(startX, startY, endX, endY);
+
+
+            var sqSize = Math.floor(p.map(pxBrightnessStart, 40, 100, 1, s));
+            p.fill(p.lerpColor(colcolX, p.color(255), p.random(0, 1)));
+            p.noStroke();
+            // console.log(pxBrightness);
+            p.rect(startX, startY, sqSize, sqSize);
+
+
+
+       // }
+
+
+    }
+
+}
+
+function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {
+
+    var idx = (Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
+
+    var r = srcPixels[idx];
+    var g = srcPixels[idx + 1];
+    var b = srcPixels[idx + 2];
+    var a = srcPixels[idx + 3];
+
+    return brightness(color(r, g, b, a));
+
 }

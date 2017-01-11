@@ -208,20 +208,21 @@ Rpd.nodetype('jb/noise', function() {
 
 Rpd.nodetype('jb/layers', {
     inlets: {
-        'bang': { type: 'util/bang' },
         'layer-1': { type: 'jb/drawable' },
         'layer-2': { type: 'jb/drawable' },
         'layer-3': { type: 'jb/drawable' },
         'layer-4': { type: 'jb/drawable' },
         'layer-5': { type: 'jb/drawable' },
-        'layer-6': { type: 'jb/drawable' }
+        'layer-6': { type: 'jb/drawable' },
+        'layer-7': { type: 'jb/drawable' }
     },
     outlets: {
         'layers': { type: 'jb/layers' }
     },
     process: function(inlets) {
         var layers = [];
-        for (var i = 0; i < 6; i++) {
+        //var layersCount = Object.keys(inlets).length;
+        for (var i = 0; i < 8; i++) {
             layers.push(inlets['layer-' + (i + 1)]);
         }
         return {
@@ -322,12 +323,23 @@ Rpd.nodetype('jb/shapes', {
 
 Rpd.nodetype('jb/edges-squares', {
     inlets: {
-        'voronoi': { type: 'jb/voronoi' }
+        'voronoi': { type: 'jb/voronoi' },
+        'pixels': { type: 'jb/pixels' },
+        'palette': { type: 'jb/palette' },
+        'maxSquareSize': { type: 'util/number', default: 15 }
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
     },
-    process: function(inlets) { }
+    process: function(inlets) {
+        if (!inlets.pixels || !inlets.voronoi || !inlets.palette) return;
+        return {
+            'drawable': {
+                'conf': inlets,
+                'func': drawEdgesSquares
+            }
+        }
+    }
 });
 
 Rpd.nodetype('jb/back-edges-squares', {
