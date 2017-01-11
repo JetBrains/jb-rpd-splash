@@ -211,6 +211,7 @@
             var voronoiNode = patch.addNode('jb/voronoi').move(600, 600);
             var edgesSquaresNode = patch.addNode('jb/edges-squares').move(800, 600);
             var curvedEdgesNode = patch.addNode('jb/curved-edges').move(1000, 600);
+            var shapesNode = patch.addNode('jb/shapes').move(1200, 600);
 
             lodNoiseNode.inlets['max'].receive(1);
 
@@ -221,6 +222,7 @@
             voronoiNode.outlets['voronoi'].connect(edgesSquaresNode.inlets['voronoi']);
             rorschachNode.outlets['pixip'].connect(edgesSquaresNode.inlets['pixels']);
             voronoiNode.outlets['voronoi'].connect(curvedEdgesNode.inlets['voronoi']);
+            voronoiNode.outlets['voronoi'].connect(shapesNode.inlets['voronoi']);
 
             collectPointDataNode.outlets['point-data'].connect(voronoiNode.inlets['point-data']);
             rorschachNode.outlets['pixip'].connect(collectPointDataNode.inlets['pixels']);

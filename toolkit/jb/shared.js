@@ -236,8 +236,8 @@ function collectPointData(pixels, config) {
 
     var maxPoints =  dsrcWidth * dsrcHeight * 4;
 
-    console.log('collectPointData', dsrcWidth, 'x', dsrcHeight, 'pixels length', srcPixels.length,
-                'expected length', maxPoints);
+    /* console.log('collectPointData', dsrcWidth, 'x', dsrcHeight, 'pixels length', srcPixels.length,
+                'expected length', maxPoints); */
 
     var idx, pxBrightness, r, g, b, a;
 
@@ -360,7 +360,6 @@ function drawEdgesSquares(p, config) {
 
             p.blendMode(p.SCREEN);
 
-            console.log(gradientLine);
             gradientLine(startX, startY, endX, endY, colcolX, colcolY);
            //     line(startX, startY, endX, endY);
 
@@ -421,6 +420,72 @@ function drawCurvedEdges(p, voronoi) {
 
     }
 }
+
+// jb/shapes
+function drawShapes(p, voronoi) {
+    var edges = voronoi.edges;
+    var cells = voronoi.cells;
+
+    p.smooth();
+
+    p.noStroke();
+
+    //blendMode(SCREEN);
+    var shapes = [];
+
+    var s = 0;
+
+    var minX, minY, maxX, maxY;
+
+    var area;
+
+    var cellEdges;
+    var coords;
+
+    var l;
+
+    for (var j = 0; j < cells.length; j++) {
+        if (!cells[j]) continue;
+        cellEdges = cells[j].halfedges;
+
+        minX = Infinity, minY = Infinity;
+        maxX = 0, maxY = 0;
+
+        coords = [];
+
+        for (l = 0; l < cellEdges.length; ++l) {
+            coords.push(edges[cellEdges[l]][0]);
+            coords.push(edges[cellEdges[l]][1]);
+        }
+
+        for (l = 0; l < coords.length; ++l) {
+            minX = Math.min(maxX, coords[l][0]);
+            minY = Math.min(minY, coords[l][1]);
+            maxX = Math.max(maxX, coords[l][0]);
+            maxY = Math.max(maxY, coords[l][1]);
+        }
+
+        area = (maxX - minX) * (maxY - minY);
+
+        if (area < 2000) {
+            shapes.push(coords);
+            s++;
+        }
+
+    }
+
+    for (j = 0; j < shapes.length; j++) {
+        if (!shapes[j]) continue;
+        p.fill(p.color(255, p.random(2, 20)));
+        p.beginShape();
+        coords = shapes[j];
+        for (var l = 0; l < coords.length; ++l) {
+            p.vertex(coords[l][0], coords[l][1]);
+        }
+        p.endShape(p.CLOSE);
+    }
+}
+
 
 function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {
 

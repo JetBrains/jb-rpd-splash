@@ -326,7 +326,15 @@ Rpd.nodetype('jb/shapes', {
     outlets: {
         'drawable': { type: 'jb/drawable' }
     },
-    process: function(inlets) { }
+    process: function(inlets) {
+        if (!inlets.voronoi) return;
+        return {
+            'drawable': {
+                'conf': inlets.voronoi,
+                'func': drawShapes
+            }
+        }
+    }
 });
 
 Rpd.nodetype('jb/edges-squares', {
