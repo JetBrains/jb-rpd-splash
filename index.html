@@ -257,7 +257,7 @@
             rorschachNode.outlets['pixels'].connect(edgesSquaresNode.inlets['pixels']);
             voronoiNode.outlets['voronoi'].connect(curvedEdgesNode.inlets['voronoi']);
             voronoiNode.outlets['voronoi'].connect(shapesNode.inlets['voronoi']);
-            paletteNode.outlets['product'].connect(backgroundNode.inlets['product']);
+            //paletteNode.outlets['product'].connect(backgroundNode.inlets['product']);
 
             collectPointDataNode.outlets['points'].connect(voronoiNode.inlets['points']);
             collectPointDataNode.outlets['points'].connect(backEdgesSquaresNode.inlets['points']);
