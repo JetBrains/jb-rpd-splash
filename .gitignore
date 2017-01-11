@@ -6,6 +6,7 @@ d3-voronoi.*.min.js
 loaders.min.css
 sample.sketch.java
 *.example.js
+p5.js
 p5.*.js
 *.pyc
 .idea

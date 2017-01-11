@@ -82,8 +82,10 @@ var imagesToLoad = PRODUCTS.map(function(product) {
 
 var readyImgCount = 0;
 var productsImages = {};
-function loadSketchImages(p) {
+var imagesErrors = {};
+function loadSketchImages(p, onComplete) {
     imagesToLoad.forEach(function(imgSpec) {
+        if (productsImages[imgSpec.product] || imagesErrors[imgSpec.product]) return;
         var img = new Image();
         console.log('start loading image for', imgSpec.product);
         img.onload = function() {
@@ -92,16 +94,17 @@ function loadSketchImages(p) {
             readyImgCount++;
             console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             if (readyImgCount == imagesToLoad.length) {
-                hideLoader();
+                if (onComplete) onComplete();
                 console.log('finished loading images');
             }
         };
         img.onerror = function() {
+            imagesErrors[imgSpec.product] = true;
             console.log('image at ' + imgSpec.path + ' failed to load');
             readyImgCount++;
             console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             if (readyImgCount == imagesToLoad.length) {
-                hideLoader();
+                if (onComplete) onComplete();
                 console.log('finished loading images');
             }
         };

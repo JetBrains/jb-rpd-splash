@@ -30,27 +30,23 @@ function loadChangedValuesFrom(newConfig) {
     });
 }
 
-var backImg, grad, my;
-
-var lastPoint;
-
-var pointData = [];
-
 var canvas, ctx;
-
-
 
 var pxDensity;
 
 var lastPixelsTime, lastPointData;
 
+var loadingResources = false;
+
 function preload() {
+    if (loadingResources) return;
   //  console.log('preload');
 
-    showLoader();
-
     pxDensity = pixelDensity();
-    loadSketchImages();
+    loadingResources = true;
+    loadSketchImages(this, function() {
+        loadingResources = false;
+    });
 
 }
 
@@ -73,6 +69,8 @@ function setup() {
 }
 
 function draw() {
+    if (loadingResources) return;
+
     console.log('draw');
 
     //showLoader();
@@ -96,7 +94,7 @@ updateStream.filter(function(value) {
                 //return value.config.srcPixels && value.config.srcPixels.pixels.length && value.config.logo && value.config.logo.product;
                 return value.config.layers && (value.config.layers.length > 0);
             })
-            .throttle(2000, { leading: false })
+            .throttle(1000, { leading: false })
             .onValue(function(value) {
                 loadChangedValuesFrom(value.config);
                 if (!value.noRedraw) redraw();
