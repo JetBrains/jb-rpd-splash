@@ -100,7 +100,11 @@ function draw() {
 
     var layers = sketchConfig.layers;
     for (var i = 0; i < layers.length; i++) {
-        if (layers[i]) layers[i].func(this, layers[i].conf, ctx);
+        if (layers[i]) {
+            console.time(layers[i].name || 'layer-' + i);
+            layers[i].func(this, layers[i].conf, ctx);
+            console.timeEnd(layers[i].name || 'layer-' + i);
+        }
     }
 
 
@@ -224,42 +228,6 @@ function updateSketchConfig(newConfig, noRedraw) {
         config: newConfig,
         noRedraw: noRedraw
     });
-}
-
-function drawBackEdgesSquares(data, config) {
-
-
-    rectMode(CENTER);
-
-
-    noStroke();
-    var point;
-    for (var i = 0; i < data.length; i++) {
-        point = data[i];
-
-        fill(255, 40);
-
-        rect(point[0], point[1], 1, 1);
-
-    }
-    strokeWeight(0.25);
-    stroke(255, 20);
-    blendMode(OVERLAY);
-
-    for (var i = 0; i < data.length; i++) {
-        for (var j = 0; j < data.length; j++) {
-            var point1 = data[i];
-            var point2 = data[j];
-            if (dist(point1[0], point1[1], point2[0], point2[1]) < 50) {
-                line(point1[0], point1[1], point2[0], point2[1]);
-
-            }
-        }
-
-
-    }
-
-
 }
 
 function gradientLine(x1, y1, x2, y2, color1, color2) {

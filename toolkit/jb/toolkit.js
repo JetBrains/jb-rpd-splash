@@ -255,12 +255,12 @@ Rpd.nodetype('jb/collect-point-data', {
         'pixels': { type: 'jb/pixels' }
     },
     outlets: {
-        'point-data': { type: 'jb/point-data' }
+        'points': { type: 'jb/point-data' }
     },
     process: function(inlets) {
         if (!inlets.pixels) return;
         return {
-            'point-data': collectPointData(inlets.pixels, inlets)
+            'points': collectPointData(inlets.pixels, inlets)
         }
     }
 });
@@ -288,15 +288,15 @@ Rpd.nodetype('jb/voronoi', {
     inlets: {
         'width': { type: 'util/number', default: window.innerWidth },
         'height': { type: 'util/number', default: window.innerHeight },
-        'point-data': { type: 'jb/point-data' }
+        'points': { type: 'jb/point-data' }
     },
     outlets: {
         'voronoi': { type: 'jb/voronoi' }
     },
     process: function(inlets) {
-        if (!inlets['point-data'] || !inlets.width || !inlets.height) return;
+        if (!inlets.points || !inlets.width || !inlets.height) return;
         return {
-            'voronoi': d3.voronoi().size([inlets.width, inlets.height])(inlets['point-data'])
+            'voronoi': d3.voronoi().size([inlets.width, inlets.height])(inlets.points)
         }
     }
 });
@@ -360,12 +360,20 @@ Rpd.nodetype('jb/edges-squares', {
 
 Rpd.nodetype('jb/back-edges-squares', {
     inlets: {
-        'points': { type: 'jb/extracted-points' }
+        'points': { type: 'jb/point-data' }
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
     },
-    process: function(inlets) { }
+    process: function(inlets) {
+        if (!inlets.points) return;
+        return {
+            'drawable': {
+                'conf': inlets.points,
+                'func': drawBackEdgesSquares
+            }
+        }
+    }
 });
 
 Rpd.nodetype('jb/draw-logo', {

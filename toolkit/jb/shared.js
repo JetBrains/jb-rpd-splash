@@ -486,6 +486,43 @@ function drawShapes(p, voronoi) {
     }
 }
 
+// jb/back-edges-squares
+function drawBackEdgesSquares(p, data) {
+
+
+    p.rectMode(p.CENTER);
+
+
+    p.noStroke();
+    var point;
+    for (var i = 0; i < data.length; i++) {
+        point = data[i];
+
+        p.fill(255, 40);
+
+        p.rect(point[0], point[1], 1, 1);
+
+    }
+    p.strokeWeight(0.25);
+    p.stroke(255, 20);
+    p.blendMode(p.OVERLAY);
+
+    for (var i = 0; i < data.length; i++) {
+        for (var j = 0; j < data.length; j++) {
+            var point1 = data[i];
+            var point2 = data[j];
+            if (p.dist(point1[0], point1[1], point2[0], point2[1]) < 50) {
+                p.line(point1[0], point1[1], point2[0], point2[1]);
+
+            }
+        }
+
+
+    }
+
+
+}
+
 
 function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {
 
