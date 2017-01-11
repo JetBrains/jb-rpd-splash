@@ -360,7 +360,8 @@ function drawEdgesSquares(p, config) {
 
             p.blendMode(p.SCREEN);
 
-            p.gradientLine(startX, startY, endX, endY, colcolX, colcolY);
+            console.log(gradientLine);
+            gradientLine(startX, startY, endX, endY, colcolX, colcolY);
            //     line(startX, startY, endX, endY);
 
 
