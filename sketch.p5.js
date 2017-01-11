@@ -1,20 +1,9 @@
 var sketchConfig = {
     width: window.innerWidth,
     height: window.innerHeight,
-    srcPixels: null,
     bgcolor: _rgb(24, 24, 24),
-    layers: [],
-    palette: [
-        '#ff0000',
-        '#00ff00',
-        '#0000ff'
-    ],
-    logo: null,
-    maxSquareSize: 15,
-    density: 6,
-    chaos: 0.5,
-    step: 16,
-    backImgSrc: 'http://localhost:8000/experiment_bg.png'
+    layers: []
+    //backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
 
 var loaderShown = false;
@@ -61,17 +50,6 @@ function preload() {
     showLoader();
 
     pxDensity = pixelDensity();
-    // loadImage(sketchConfig.backImgSrc, function (img) {
-    //     img.loadPixels();
-    //     lastBgImage = img;
-    //     pointData = collectPointData(sketchConfig, img.pixels);
-    //     console.log('image loaded');
-    //     redraw();
-    //     var loader = document.getElementById('loader');
-    //     if (loader) {
-    //         loader.style.opacity = 0;
-    //     }
-    // });
     loadSketchImages();
 }
 
@@ -106,94 +84,6 @@ function draw() {
             console.timeEnd(layers[i].name || 'layer-' + i);
         }
     }
-
-
-    // console.timeEnd('apply incoming pixels');
-
-    // console.time('collectPointData');
-    // if (srcPixels.time === lastPixelsTime) {
-    //     pointData === lastPointData;
-    // } else {
-    //     lastPixelsTime = srcPixels.time;
-    //     pointData = collectPointData(sketchConfig,
-    //                                 srcPixels.pixels,
-    //                                 srcPixels.width,
-    //                                 srcPixels.height);
-    //     lastPointData = pointData;
-    // }
-    // console.timeEnd('collectPointData');
-
-    // if (!pointData || !pointData.length) {
-    //     hideLoader();
-    //     return;
-    // }
-
-    // console.time('gradient');
-
-    // var xRect = width / 2;
-    // var yRect = height / 2;
-
-    // var rotation1 = map(50, 0, 100, 0, width);
-    // var rotation2 = map(50, 0, 100, 0, height);
-    // var location = map(0, 50, 100, 0, width);
-
-
-    // var startGrad1 = createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
-    // var endGrad1 = createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
-
-    // //Main gradient
-    // blendMode(OVERLAY);
-    // if (ctx) {
-    //     var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
-    //     gradient.addColorStop(0, sketchConfig.palette[0]);
-    //     gradient.addColorStop(1, sketchConfig.palette[2]);
-    //     ctx.fillStyle = gradient;
-    //     ctx.fillRect(0, 0, width, height);
-    // }
-    // blendMode(BLEND);
-
-    // console.timeEnd('gradient');
-
-    // if (pointData && pointData.length) {
-
-    //     console.time('voronoi');
-
-    //     var voronoi = d3.voronoi()
-    //         .size([width, height])
-    //         (pointData);
-
-    //     console.timeEnd('voronoi');
-
-        // sketchConfig.layers = [
-        //     function() { rect(...); },
-        //     function() { circle(...); },
-        //     function() { circle(...); }
-        // ];
-        //
-        // sketchConfig.layers.forEach(function(layer) {
-        //     layer();
-        //
-        // });
-
-        // console.time('drawCurvedEdges');
-        // drawCurvedEdges(voronoi, sketchConfig);
-        // console.timeEnd('drawCurvedEdges');
-        // console.time('drawShapes');
-        // drawShapes(voronoi, sketchConfig);
-        // console.timeEnd('drawShapes');
-        // console.time('drawEdgesSquares');
-        // drawEdgesSquares(voronoi, srcPixels.pixels, srcPixels.width, srcPixels.height,
-        //                           sketchConfig);
-        // console.timeEnd('drawEdgesSquares');
-        // console.time('drawBackEdgesSquares');
-        // drawBackEdgesSquares(pointData, sketchConfig);
-        // console.timeEnd('drawBackEdgesSquares');
-        // blendMode(NORMAL);
-        // console.time('drawLogo');
-        // drawLogo(sketchConfig.logo);
-        // console.timeEnd('drawLogo');
-
-    // }
 
     // hideLoader();
 }

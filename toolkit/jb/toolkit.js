@@ -44,7 +44,7 @@ Rpd.channeltype('jb/pixels', {
 
 /* Rpd.nodetype('jb/config', {
     inlets: {
-        'bang': { type: 'util/bang' },
+
         'width': { type: 'jb/integer', 'default': window.innerWidth },
         'height': { type: 'jb/integer', 'default': window.innerHeight },
         'srcPixels': { type: 'jb/pixels', 'default': null },
@@ -52,8 +52,8 @@ Rpd.channeltype('jb/pixels', {
         'palette': { type: 'jb/palette' },
         'logo': { type: 'jb/logo' },
         'maxSquareSize': { type: 'jb/integer', 'default': 15, name: 'squareSize' },
-        'density': { type: 'util/number', 'default': 6 },
         'chaos': { type: 'util/number', 'default': 0.5 },
+        'tmp' : {type: 'util/number'},
         'step': { type: 'jb/integer', 'default': 16 }
     },
     outlets: {
@@ -87,7 +87,7 @@ Rpd.nodetype('jb/rorschach', {
         'pixels': { type: 'jb/pixels' }
     },
     outlets: {
-        'pixip': { type: 'jb/pixels' }
+        'pixels': { type: 'jb/pixels' }
     },
     process: function(inlets) {
         if (!inlets.pixels) return; // FIXME: why this condition needed?
@@ -97,18 +97,6 @@ Rpd.nodetype('jb/rorschach', {
         var height = pixels.height;
         var source = pixels.values;
         var target = [];
-
-        //var halfImage = 4 * (img.width/2 * d) * (img.height * d);
-        // for (var i = 0; i < halfImage; i++) {
-        //     pixels[i+halfImage] = pixels[i];
-        // }
-
-        // var pixls = inlets.pixels.pixels;
-        //for (var i = 0; i < height; i+=1) {
-        //     for (var j = 0; j < width/2; j+=1) {
-        //         pixls[(i+1)*width - j - 2] = pixls[i*width + j];
-        //     }
-        //}
 
         var trgIdx, srcIdx;
         for (var x = 0; x < width; x++) {
@@ -126,16 +114,51 @@ Rpd.nodetype('jb/rorschach', {
             }
         }
 
-        // var halfImage = 4 * (width/2 * d) * (height * d);
-        // for (i = 0; i < halfImage; i++) {
-        //     target[i] = source[i];
-        // }
-        // for (var i = halfImage, len = source.length; i < len; i++) {
-        //     target[i] = source[len - (i - halfImage)];
-        // }
+        pixels.values = target;
+        return { 'pixels': pixels };
+    }
+
+
+});
+
+// FIXME: make an option for rorshach node
+Rpd.nodetype('jb/rorschach-vertical', {
+    inlets: {
+        'pixels': { type: 'jb/pixels' }
+    },
+    outlets: {
+        'pixels': { type: 'jb/pixels' }
+    },
+    process: function(inlets) {
+        if (!inlets.pixels) return; // FIXME: why this condition needed?
+        var pixels = inlets.pixels;
+        var d = pixels.density;
+        var width = pixels.width;
+        var height = pixels.height;
+        var source = pixels.values;
+        var target = [];
+
+
+        var trgIdx, srcIdx;
+        for (var x = 0; x < width; x++) {
+            for (var y = 0; y < height; y++) {
+                for (var i = 0; i < d; i++) {
+                    for (var j = 0; j < d; j++) {
+                        trgIdx = 4 * ((y * d + j) * width * d + (x * d + i));
+                        srcIdx = (y < height / 2) ? trgIdx : 4 * (((height - y) * d + j) * width * d + ((x * d + i)));
+                        target[trgIdx] = source[srcIdx];
+                        target[trgIdx+1] = source[srcIdx+1];
+                        target[trgIdx+2] = source[srcIdx+2];
+                        target[trgIdx+3] = source[srcIdx+3];
+                    }
+                }
+            }
+        }
+
+        //console.log(target)
 
         pixels.values = target;
-        return { 'pixip': pixels };
+        return { 'pixels': pixels };
     }
 
 
@@ -193,9 +216,8 @@ Rpd.nodetype('jb/noise', function() {
     return {
         inlets: {
             'bang': { type: 'util/bang' },
-            'lod': { type: 'util/number' },
-            'falloff': { type: 'util/number' },
-            'step': { type: 'util/number', default: 10 }
+            'octave': { type: 'util/wholenumber', 'default': 4 },
+            'falloff': { type: 'util/number', 'default': 0.5 }
         },
         outlets: { 'pixels': { type: 'jb/pixels' } },
         process: function(inlets) {
@@ -214,7 +236,8 @@ Rpd.nodetype('jb/layers', {
         'layer-4': { type: 'jb/drawable' },
         'layer-5': { type: 'jb/drawable' },
         'layer-6': { type: 'jb/drawable' },
-        'layer-7': { type: 'jb/drawable' }
+        'layer-7': { type: 'jb/drawable' },
+        'layer-8': { type: 'jb/drawable' }
     },
     outlets: {
         'layers': { type: 'jb/layers' }
@@ -279,6 +302,25 @@ Rpd.nodetype('jb/apply-gradient', {
             'drawable': {
                 'conf': inlets,
                 'func': applyGradient
+            }
+        }
+    }
+});
+
+Rpd.nodetype('jb/dark-gradients', {
+    inlets: {
+        'width': { type: 'util/number', default: window.innerWidth },
+        'height': { type: 'util/number', default: window.innerHeight },
+        'palette': { type: 'jb/palette' }
+    },
+    outlets: {
+        'drawable': { type: 'jb/drawable' }
+    },
+    process: function(inlets) {
+        return {
+            'drawable': {
+                'conf': inlets,
+                'func': drawDarkGradients
             }
         }
     }

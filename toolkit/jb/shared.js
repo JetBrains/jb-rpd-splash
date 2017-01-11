@@ -40,8 +40,6 @@ var PRODUCTS = [
     { label: 'YT',  id: 'youtrack',      palette: [ '#22b1ef', '#9062f7', '#fc378c' ] },  // youtrack // YT_
     { label: 'MPS', id: 'mps',           palette: [ '#31d68b', '#3188cd', '#f1e969' ] },  // mps // MPS_
     { label: 'KT',  id: 'kotlin',        palette: [ '#1b84f2', '#24dea7', '#ed4baa' ] },   // kotlin // KT_
-    { label: 'N1',   id: 'neon-1',        palette: [ '#ff0000', '#00ff00', '#0000ff' ] }, // neon-1
-    { label: 'N2',   id: 'neon-2',        palette: [ '#ffff00', '#ff00ff', '#00ffff' ] }, // neon-2
     { label: 'JB1',  id: 'jetbrains',   palette: [ '#ec4476', '#fde74a', '#9151e1' ] } // jetbrains-1
 
 ];
@@ -278,8 +276,8 @@ function applyGradient(p, config, ctx) {
     var width = config.width || window.innerWidth;
     var height = config.height || window.innerHeight;
 
-    var xRect = width / 2;
-    var yRect = height / 2;
+    var xRect = 0; // width / 2;
+    var yRect = 0; // height / 2;
 
     var rotation1 = p.map(50, 0, 100, 0, width);
     var rotation2 = p.map(50, 0, 100, 0, height);
@@ -290,10 +288,15 @@ function applyGradient(p, config, ctx) {
 
     //Main gradient
     p.blendMode(p.OVERLAY);
+    // p.blendMode(p.NORMAL);
     if (ctx) {
-        var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
-        gradient.addColorStop(0, palette[0]);
-        gradient.addColorStop(1, palette[2]);
+        //var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
+        // gradient.addColorStop(0, palette[0]);
+        // gradient.addColorStop(1, palette[2]);
+        var gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, palette[2]);
+        gradient.addColorStop(0.3, palette[1]);
+        gradient.addColorStop(1, palette[0]);
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
     }
@@ -523,6 +526,30 @@ function drawBackEdgesSquares(p, data) {
 
 }
 
+// jb/dark-gradients
+function drawDarkGradients(p, config) {
+    var width = config.width || window.innerWidth;
+    var height = config.height || window.innerHeight;
+
+     if (ctx) {
+        p.blendMode(p.OVERLAY);
+        // var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
+        var gradient = ctx.createRadialGradient(width/2, height/2, height/4, width/2, height/2, 0.4*width);
+        gradient.addColorStop(0, p.color(255, 0));
+        gradient.addColorStop(1, p.color(24, 24, 24));
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+        p.blendMode(p.NORMAL);
+
+        p.blendMode(p.MULTIPLY);
+        // var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
+        var gradient = ctx.createRadialGradient(width/2, height/2, height/3, width/2, height/2, 0.53*width);
+        gradient.addColorStop(0, p.color(255, 0));
+        gradient.addColorStop(1, p.color(24, 24, 24));
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+    }
+}
 
 function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {
 

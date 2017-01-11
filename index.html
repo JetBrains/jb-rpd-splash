@@ -156,9 +156,7 @@
                            fullPage: true,
                            linkForm: 'curve' });
 
-            patch.addNode('util/nodelist').move(800, 50);
-
-            //var configNode = patch.addNode('jb/config', 'Sketch Config').move(200, 200);
+            patch.addNode('util/nodelist').move(900, 50);
 
             var layersNode = patch.addNode('jb/layers', 'Layers').move(600, 160);
 
@@ -200,9 +198,16 @@
             var paletteNode = patch.addNode('jb/palette').move(30, 55);
             var drawLogoNode = patch.addNode('jb/draw-logo').move(50, 155);
             var rorschachNode = patch.addNode('jb/rorschach').move(350, 455);
+            var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(250, 555);
 
             var noiseNode = patch.addNode('jb/noise').move(30, 400);
-            var lodNoiseNode = patch.addNode('util/knob').move(30, 600);
+
+            var lodNoiseNode = patch.addNode('util/dial', 'Octaves').move(30, 550);
+            lodNoiseNode.inlets['max'].receive(10);
+            lodNoiseNode.inlets['submit'].receive(0.4);
+
+            var falloffNoiseNode = patch.addNode('util/knob', 'Falloff').move(30, 650);
+            falloffNoiseNode.inlets['max'].receive(1);
 
             var collectPointDataNode = patch.addNode('jb/collect-point-data').move(380, 250);
 
@@ -213,26 +218,29 @@
             var curvedEdgesNode = patch.addNode('jb/curved-edges').move(1000, 600);
             var backEdgesSquaresNode = patch.addNode('jb/back-edges-squares').move(1100, 600);
             var shapesNode = patch.addNode('jb/shapes').move(1200, 600);
-
-            lodNoiseNode.inlets['max'].receive(1);
+            var darkGradientsNode = patch.addNode('jb/dark-gradients').move(250, 655);
 
             paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
+            paletteNode.outlets['palette'].connect(darkGradientsNode.inlets['palette']);
             paletteNode.outlets['product'].connect(drawLogoNode.inlets['product']);
             paletteNode.outlets['palette'].connect(edgesSquaresNode.inlets['palette']);
-            lodNoiseNode.outlets['number'].connect(noiseNode.inlets['lod']);
+            lodNoiseNode.outlets['number'].connect(noiseNode.inlets['octave']);
+            falloffNoiseNode.outlets['number'].connect(noiseNode.inlets['falloff']);
             voronoiNode.outlets['voronoi'].connect(edgesSquaresNode.inlets['voronoi']);
-            rorschachNode.outlets['pixip'].connect(edgesSquaresNode.inlets['pixels']);
+            rorschachNode.outlets['pixels'].connect(edgesSquaresNode.inlets['pixels']);
             voronoiNode.outlets['voronoi'].connect(curvedEdgesNode.inlets['voronoi']);
             voronoiNode.outlets['voronoi'].connect(shapesNode.inlets['voronoi']);
 
             collectPointDataNode.outlets['points'].connect(voronoiNode.inlets['points']);
             collectPointDataNode.outlets['points'].connect(backEdgesSquaresNode.inlets['points']);
-            rorschachNode.outlets['pixip'].connect(collectPointDataNode.inlets['pixels']);
+            rorschachNode.outlets['pixels'].connect(collectPointDataNode.inlets['pixels']);
 
             bangNode.outlets['bang'].connect(noiseNode.inlets['bang']);
-
+//
             noiseNode.outlets['pixels'].connect(rorschachNode.inlets['pixels']);
-            rorschachNode.outlets['pixip'].connect(drawPixelsNode.inlets['pixels']);
+            // noiseNode.outlets['pixels'].connect(rorschachVerticalNode.inlets['pixels']);
+            rorschachNode.outlets['pixels'].connect(drawPixelsNode.inlets['pixels']);
+            //  rorschachVerticalNode.outlets['pixels'].connect(drawPixelsNode.inlets['pixels']);
 
             drawPixelsNode.outlets['drawable'].connect(layersNode.inlets['layer-1']);
             applyGradientNode.outlets['drawable'].connect(layersNode.inlets['layer-2']);
@@ -240,7 +248,8 @@
             shapesNode.outlets['drawable'].connect(layersNode.inlets['layer-4']);
             edgesSquaresNode.outlets['drawable'].connect(layersNode.inlets['layer-5']);
             backEdgesSquaresNode.outlets['drawable'].connect(layersNode.inlets['layer-6']);
-            drawLogoNode.outlets['drawable'].connect(layersNode.inlets['layer-7']);
+            darkGradientsNode.outlets['drawable'].connect(layersNode.inlets['layer-7']);
+            drawLogoNode.outlets['drawable'].connect(layersNode.inlets['layer-8']);
 
             layersNode.outlets['layers'].connect(previewNode.inlets['layers']);
 
