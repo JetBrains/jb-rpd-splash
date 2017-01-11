@@ -254,25 +254,23 @@ Rpd.nodetype('jb/noise', function() {
     };
 });
 
+var MAX_LAYERS = 9;
+
+var LAYERS_INLETS = {};
+for (var i = 0; i < MAX_LAYERS; i++) {
+    LAYERS_INLETS['layer-' + (i + 1)] =  { type: 'jb/drawable' }
+};
+
 Rpd.nodetype('jb/layers', {
     title: 'Layers',
-    inlets: {
-        'layer-1': { type: 'jb/drawable' },
-        'layer-2': { type: 'jb/drawable' },
-        'layer-3': { type: 'jb/drawable' },
-        'layer-4': { type: 'jb/drawable' },
-        'layer-5': { type: 'jb/drawable' },
-        'layer-6': { type: 'jb/drawable' },
-        'layer-7': { type: 'jb/drawable' },
-        'layer-8': { type: 'jb/drawable' }
-    },
+    inlets: LAYERS_INLETS,
     outlets: {
         'layers': { type: 'jb/layers' }
     },
     process: function(inlets) {
         var layers = [];
         //var layersCount = Object.keys(inlets).length;
-        for (var i = 0; i < 8; i++) {
+        for (var i = 0; i < MAX_LAYERS; i++) {
             layers.push(inlets['layer-' + (i + 1)]);
         }
         return {
@@ -457,7 +455,7 @@ Rpd.nodetype('jb/back-edges-squares', {
 Rpd.nodetype('jb/draw-logo', {
     title: 'Draw Logo',
     inlets: {
-        product: { type: 'jb/product', 'default': '' },
+        product: { type: 'jb/product' },
         x: { type: 'util/number', 'default': 0.5 },
         y: { type: 'util/number', 'default': 0.5 }
     },
@@ -469,6 +467,28 @@ Rpd.nodetype('jb/draw-logo', {
             'drawable': {
                 'conf': inlets,
                 'func': drawLogo
+            }
+        }
+    }
+});
+
+Rpd.nodetype('jb/background', function() {
+    var refreshSketch = initBackgroundSketch();
+
+    return {
+        title: 'Background',
+        inlets: {
+            product: { type: 'jb/product' },
+            width: { type: 'util/number', default: window.innerWidth },
+            height: { type: 'util/number', default: window.innerHeight }
+        },
+        outlets: {
+            pixels: { type: 'jb/pixels' }
+        },
+        process: function(inlets) {
+            if (!inlets.product) return;
+            return {
+                pixels: refreshSketch(inlets)
             }
         }
     }

@@ -209,7 +209,75 @@ function initNoiseSketch() {
         };
     };
 
-    var noiseP5 = new p5(noiseSketch);
+    /*var noiseP5 =*/ new p5(noiseSketch);
+
+    return refreshSketch;
+
+}
+
+// jb/background
+function initBackgroundSketch() {
+
+    var refresher;
+    //var values = Kefir.emitter();
+
+    function refreshSketch(inlets) {
+        return refresher ? refresher(inlets) : EMPTY_PIXELS;
+    }
+
+    var backgroundSketch = function(p) {
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+
+        var setupCalled = false;
+
+        var ctx;
+
+        p.setup = function() {
+            var cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
+            //cvs.position(-5000, -5000);
+            cvs.canvas.className = 'background-canvas';
+            cvs.canvas.style.display = 'none';
+         //  console.log(cvs);
+            //cvs.style.display = 'none';
+
+            ctx = cvs.drawingContext;
+            p.noLoop();
+            setupCalled = true;
+        };
+
+        var lastConfig;
+        var lastPixels;
+        refresher = function(inlets) {
+            if (!setupCalled) return;
+            lastConfig = inlets;
+            p.redraw();
+            return lastPixels;
+        };
+
+        p.draw = function() {
+            if (!lastConfig) return;
+
+            p.clear();
+            //lastValues = [];
+
+            drawBackground(p, lastConfig, ctx);
+
+            p.loadPixels();
+            lastPixels = {
+                width: lastConfig.width,
+                height: lastConfig.height,
+                values: p.pixels,
+                //values: lastValues,
+                step: -1,
+                time: new Date(),
+                density: p.pixelDensity(),
+                seed: -1
+            };
+        };
+    };
+
+    /*var backgroundP5 =*/ new p5(backgroundSketch);
 
     return refreshSketch;
 
@@ -328,7 +396,6 @@ function putLogoAt(ctx, image, x, y) {
 function drawLogo(p, logo, ctx) {
     if (!logo || !logo.product) return;
     var productId = logo.product;
-    var imagePath = 'logos/' + productId + '-text-square.svg';
     p.blendMode(p.NORMAL);
     if (cachedImages[productId + '/logo'] && ctx) {
         putLogoAt(ctx, cachedImages[productId + '/logo'] , logo.x * width, logo.y * height);
@@ -399,6 +466,7 @@ function drawEdgesSquares(p, config) {
 
 }
 
+// jb/curved-edges
 function drawCurvedEdges(p, voronoi) {
 
     var myEdges = voronoi.edges;
@@ -565,6 +633,18 @@ function drawDarkGradients(p, config) {
         gradient.addColorStop(1, p.color(24, 24, 24));
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
+    }
+}
+
+function drawBackground(p, config, ctx) {
+    var productId = config.product;
+    if (!productId) return;
+    var width = config.width;
+    var height = config.height;
+    //p.blendMode(p.NORMAL);
+    if (cachedImages[productId + '/bg'] && ctx) {
+        ctx.drawImage(cachedImages[productId + '/bg'], 0, 0, width, height);
+        //putLogoAt(ctx,  , logo.x * width, logo.y * height);
     }
 }
 
