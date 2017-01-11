@@ -234,7 +234,8 @@ Rpd.nodetype('jb/noise', function() {
         inlets: {
             'bang': { type: 'util/bang' },
             'octave': { type: 'util/wholenumber', 'default': 4 },
-            'falloff': { type: 'util/number', 'default': 0.5 }
+            'falloff': { type: 'util/number', 'default': 0.5 },
+            'step': { type: 'util/wholenumber', 'default': 10 }
         },
         outlets: { 'pixels': { type: 'jb/pixels' } },
         process: function(inlets) {

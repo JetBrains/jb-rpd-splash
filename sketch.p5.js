@@ -51,6 +51,7 @@ function preload() {
 
     pxDensity = pixelDensity();
     loadSketchImages();
+
 }
 
 function setup() {
@@ -74,6 +75,8 @@ function setup() {
 function draw() {
     console.log('draw');
 
+    //showLoader();
+
     clear();
 
     var layers = sketchConfig.layers;
@@ -85,7 +88,7 @@ function draw() {
         }
     }
 
-    // hideLoader();
+    //hideLoader();
 }
 
 var updateStream = Kefir.emitter();
@@ -93,7 +96,7 @@ updateStream.filter(function(value) {
                 //return value.config.srcPixels && value.config.srcPixels.pixels.length && value.config.logo && value.config.logo.product;
                 return value.config.layers && (value.config.layers.length > 0);
             })
-            .throttle(5000, { leading: false })
+            .throttle(2000, { leading: false })
             .onValue(function(value) {
                 loadChangedValuesFrom(value.config);
                 if (!value.noRedraw) redraw();

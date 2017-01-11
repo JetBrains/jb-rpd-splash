@@ -151,7 +151,7 @@ function initNoiseSketch() {
         var lastStep;
         refresher = function(inlets) {
             if (!setupCalled) return;
-            p.noiseDetail(inlets.lod, inlets.falloff);
+            p.noiseDetail(inlets.octave, inlets.falloff);
             lastSeed = p.random(1000);
             lastStep = inlets.step;
             p.noiseSeed(lastSeed);
