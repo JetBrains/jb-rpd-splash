@@ -193,6 +193,31 @@ Rpd.noderenderer('jb/palette', 'svg', function() {
     };
 });
 
+Rpd.noderenderer('jb/clear', 'svg', {
+    size: { width: 30, height: 25 },
+    first: function(bodyElm) {
+        var circle = d3.select(svgNode('circle'))
+                       .attr('r', 9).attr('fill', 'black')
+                       .style('cursor', 'pointer')
+                       .style('pointer-events', 'all');
+        bodyElm.appendChild(circle.node());
+        var circleClicks = Kefir.fromEvents(circle.node(), 'click');
+        circleClicks.onValue(function() {
+            circle.classed('rpd-util-bang-fresh', true);
+        });
+        circleClicks.delay(500).onValue(function() {
+            circle.classed('rpd-util-bang-fresh', false);
+        });
+        return { 'trigger':
+            { valueOut: circleClicks.map(function() { return {}; }) }
+        };
+    }
+});
+
+function svgNode(name) {
+    return document.createElementNS(SVG_XMLNS, name);
+}
+
 function prepareCanvas(myP5Canvas) {
     myP5Canvas.className = 'p5-canvas';
 }

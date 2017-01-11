@@ -2,6 +2,8 @@
     show: function(cfg) { return cfg ? '[Config]' : '[No Config]'; }
 }); */
 
+Rpd.channeltype('jb/darkmatter', { show: function(v) { return (v == 'dark') ? 'Dark' : 'Light' } });
+
 Rpd.channeltype('jb/image', {
     show: function(img) { return img ? '[Image]' : '[No Image]'; }
 });
@@ -23,7 +25,10 @@ Rpd.channeltype('jb/logo', { show: function(logo) { return logo.product + ', ' +
 
 Rpd.channeltype('jb/product', { });
 
-Rpd.channeltype('jb/drawable', { show: function(v) { return v ? '<Drawable>' : '<Empty>'; } });
+Rpd.channeltype('jb/drawable', {
+    allow: [ 'jb/darkmatter' ],
+    show: function(v) { return (v && v !== 'dark') ? '<Drawable>' : '<Empty>'; }
+});
 
 Rpd.channeltype('jb/voronoi', { show: function(v) { return v ? '<Voronoi>' : '<Empty>'; } });
 
@@ -65,6 +70,18 @@ Rpd.channeltype('jb/pixels', {
         };
     }
 }); */
+
+Rpd.nodetype('jb/clear', {
+    inlets: {
+        trigger: { type: 'jb/darkmatter', default: 'dark', hidden: true }
+    },
+    outlets: {
+        clear: { type: 'jb/darkmatter' }
+    },
+    process: function() {
+        return { 'clear': 'dark' };
+    }
+});
 
 Rpd.nodetype('jb/preview', {
     inlets: {

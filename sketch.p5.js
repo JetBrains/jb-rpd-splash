@@ -78,7 +78,7 @@ function draw() {
 
     var layers = sketchConfig.layers;
     for (var i = 0; i < layers.length; i++) {
-        if (layers[i]) {
+        if (layers[i] && layers[i] != 'dark') {
             console.time(layers[i].name || 'layer-' + i);
             layers[i].func(this, layers[i].conf, ctx);
             console.timeEnd(layers[i].name || 'layer-' + i);
