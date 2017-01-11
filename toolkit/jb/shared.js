@@ -310,7 +310,7 @@ function collectPointData(pixels, config) {
     if (!step) return [];
 
     var chaos = config.chaos;
-    var d = pxDensity;
+    var d = pixels.density;
     var srcWidth = pixels.width;
     var srcHeight = pixels.height;
 
@@ -409,10 +409,10 @@ function drawEdgesSquares(p, config) {
     var srcWidth = config.pixels.width || window.innerWidth;
     var srcHeight = config.pixels.height || window.innerHeight;
 
-    var dsrcWidth = srcWidth * pxDensity;
-    var dsrcHeight = srcHeight * pxDensity;
+    var d = config.pixels.density;
 
-    var d = pxDensity;
+    var dsrcWidth = srcWidth * d;
+    var dsrcHeight = srcHeight * d;
 
     var palette = config.palette;
 
@@ -518,7 +518,7 @@ function drawShapes(p, voronoi) {
 
     p.noStroke();
 
-    //blendMode(SCREEN);
+    //p.blendMode(p.SCREEN);
     var shapes = [];
 
     var s = 0;
@@ -650,7 +650,8 @@ function drawBackground(p, config, ctx) {
 
 function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {
 
-    var idx = (Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
+    //var idx = (Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;
+    var idx = 4 * ((Math.floor(y) * pxDensity) * width * pxDensity + (Math.floor(x) * pxDensity));
 
     var r = srcPixels[idx];
     var g = srcPixels[idx + 1];
