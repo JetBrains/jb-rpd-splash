@@ -75,23 +75,32 @@ function stopPropagation(event) {
 
 var imagesToLoad = PRODUCTS.map(function(product) {
     return {
-        product: product.id,
+        product: product,
+        id: product.id + '/logo',
         path: 'logos/' + product.id + '-text-square.svg'
     };
 });
 
+imagesToLoad = imagesToLoad.concat(PRODUCTS.map(function(product) {
+    return {
+        product: product,
+        id: product.id + '/bg',
+        path: 'bg/' + product.id + '-bg.png'
+    };
+}));
+
 var readyImgCount = 0;
-var productsImages = {};
+var cachedImages = {};
 var imagesErrors = {};
 function loadSketchImages(p, onComplete) {
     showLoaderAt(0);
     imagesToLoad.forEach(function(imgSpec, index) {
-        if (productsImages[imgSpec.product] || imagesErrors[imgSpec.product]) return;
+        if (cachedImages[imgSpec.id] || imagesErrors[imgSpec.id]) return;
         var img = new Image();
-        console.log('start loading image for', imgSpec.product);
+        console.log('start loading image', imgSpec.id);
         img.onload = function() {
             console.log('received', imgSpec.path);
-            productsImages[imgSpec.product] = img;
+            cachedImages[imgSpec.id] = img;
             readyImgCount++;
             console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             showLoaderAt(readyImgCount / imagesToLoad.length, 'Loading Images');
@@ -102,7 +111,7 @@ function loadSketchImages(p, onComplete) {
             }
         };
         img.onerror = function() {
-            imagesErrors[imgSpec.product] = true;
+            imagesErrors[imgSpec.id] = true;
             console.log('image at ' + imgSpec.path + ' failed to load');
             readyImgCount++;
             console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
@@ -321,8 +330,8 @@ function drawLogo(p, logo, ctx) {
     var productId = logo.product;
     var imagePath = 'logos/' + productId + '-text-square.svg';
     p.blendMode(p.NORMAL);
-    if (productsImages[productId] && ctx) {
-        putLogoAt(ctx, productsImages[productId], logo.x * width, logo.y * height);
+    if (cachedImages[productId + '/logo'] && ctx) {
+        putLogoAt(ctx, cachedImages[productId + '/logo'] , logo.x * width, logo.y * height);
     }
 }
 
