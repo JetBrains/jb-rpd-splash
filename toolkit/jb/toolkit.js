@@ -20,6 +20,15 @@ Rpd.channeltype('jb/integer', {
     adapt: function(val) { return Math.floor(parseFloat(val)); }
 });
 
+Rpd.channeltype('jb/noise-step', {
+    allow: ['util/wholenumber'],
+    adapt : function(val) {
+        if (val < 1) return 1;
+        if (val > 20) return 20;
+        return val;
+    }
+});
+
 Rpd.channeltype('jb/palette', { show: howMuch('color', 'colors') });
 Rpd.channeltype('jb/logo', { show: function(logo) { return logo.product + ', ' + logo.x + ', '+ logo.y; } });
 
@@ -243,7 +252,7 @@ Rpd.nodetype('jb/noise', function() {
             'bang': { type: 'util/bang' },
             'octave': { type: 'util/wholenumber', 'default': 4 },
             'falloff': { type: 'util/number', 'default': 0.5 },
-            'step': { type: 'util/wholenumber', 'default': 10 }
+            'step': { type: 'jb/noise-step', 'default': 10 }
         },
         outlets: { 'pixels': { type: 'jb/pixels' } },
         process: function(inlets) {

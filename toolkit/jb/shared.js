@@ -189,7 +189,7 @@ function initNoiseSketch() {
                     c = 255 * p.noise(0.005 * x, 0.005 * y);
                     //c = (x / width) * 255;
                     p.fill(c);
-                    p.rect(x, y, 10, 10);
+                    p.rect(x, y, lastStep, lastStep);
                     //p.rect(width - x, y, 10, 10);
                     //column.push(c);
                 }
