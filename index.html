@@ -160,7 +160,7 @@
 
             patch.addNode('util/nodelist').move(900, 50);
 
-            var layersNode = patch.addNode('jb/layers', 'Layers').move(600, 160);
+            var layersNode = patch.addNode('jb/layers').move(600, 160);
 
             var commentRemoved = false;
 
@@ -192,8 +192,8 @@
                 }
             });
 
-            var previewNode = patch.addNode('jb/preview', 'Preview').move(800, 400);
-            var saveNode = patch.addNode('jb/save', 'Save Image').move(1000, 400);
+            var previewNode = patch.addNode('jb/preview').move(800, 400);
+            var saveNode = patch.addNode('jb/save').move(1000, 400);
 
             var bangNode = patch.addNode('util/bang').move(50, 300);
 
@@ -220,10 +220,10 @@
             var curvedEdgesNode = patch.addNode('jb/curved-edges').move(1000, 600);
             var backEdgesSquaresNode = patch.addNode('jb/back-edges-squares').move(1100, 600);
             var shapesNode = patch.addNode('jb/shapes').move(1200, 600);
-            var darkGradientsNode = patch.addNode('jb/dark-gradients').move(250, 655);
+            var vignetteNode = patch.addNode('jb/vignette').move(250, 655);
 
             paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
-            paletteNode.outlets['palette'].connect(darkGradientsNode.inlets['palette']);
+            paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
             paletteNode.outlets['product'].connect(drawLogoNode.inlets['product']);
             paletteNode.outlets['palette'].connect(edgesSquaresNode.inlets['palette']);
             lodNoiseNode.outlets['number'].connect(noiseNode.inlets['octave']);
@@ -250,7 +250,7 @@
             shapesNode.outlets['drawable'].connect(layersNode.inlets['layer-4']);
             edgesSquaresNode.outlets['drawable'].connect(layersNode.inlets['layer-5']);
             backEdgesSquaresNode.outlets['drawable'].connect(layersNode.inlets['layer-6']);
-            darkGradientsNode.outlets['drawable'].connect(layersNode.inlets['layer-7']);
+            vignetteNode.outlets['drawable'].connect(layersNode.inlets['layer-7']);
             drawLogoNode.outlets['drawable'].connect(layersNode.inlets['layer-8']);
 
             layersNode.outlets['layers'].connect(previewNode.inlets['layers']);

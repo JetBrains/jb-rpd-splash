@@ -3,7 +3,7 @@ var SVG_XMLNS = "http://www.w3.org/2000/svg";
 Rpd.noderenderer('jb/preview', 'svg', function() {
     //var myP5;
     return {
-        size: { width: 30, height: 30 },
+        size: { width: 55, height: 30 },
         pivot: { x: 0, y: 0 },
         first: function(bodyElm) {
             /* var targetDiv = document.getElementById('rpd-jb-preview-target');

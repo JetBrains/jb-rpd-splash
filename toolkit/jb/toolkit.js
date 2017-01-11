@@ -2,7 +2,7 @@
     show: function(cfg) { return cfg ? '[Config]' : '[No Config]'; }
 }); */
 
-Rpd.channeltype('jb/darkmatter', { show: function(v) { return (v == 'dark') ? 'Dark' : 'Light' } });
+Rpd.channeltype('jb/darkmatter', { show: function(v) { return (v == 'dark') ? 'Dark Matter' : 'Light Matter' } });
 
 Rpd.channeltype('jb/image', {
     show: function(img) { return img ? '[Image]' : '[No Image]'; }
@@ -72,6 +72,8 @@ Rpd.channeltype('jb/pixels', {
 }); */
 
 Rpd.nodetype('jb/clear', {
+    // title: 'Dark Matter',
+    title: 'Clear',
     inlets: {
         trigger: { type: 'jb/darkmatter', default: 'dark', hidden: true }
     },
@@ -84,6 +86,7 @@ Rpd.nodetype('jb/clear', {
 });
 
 Rpd.nodetype('jb/preview', {
+    title: 'Preview',
     inlets: {
         layers: { type: 'jb/layers', 'default': [] }
     },
@@ -100,6 +103,7 @@ Rpd.nodetype('jb/preview', {
 
 
 Rpd.nodetype('jb/rorschach', {
+    title: 'Rorschach',
     inlets: {
         'pixels': { type: 'jb/pixels' }
     },
@@ -140,6 +144,7 @@ Rpd.nodetype('jb/rorschach', {
 
 // FIXME: make an option for rorshach node
 Rpd.nodetype('jb/rorschach-vertical', {
+    title: 'V-Rorschach',
     inlets: {
         'pixels': { type: 'jb/pixels' }
     },
@@ -205,11 +210,13 @@ Rpd.nodetype('jb/rorschach-vertical', {
  */
 
  Rpd.nodetype('jb/save', {
+    title: 'Save Image',
     inlets: { 'image': { type: 'jb/image' } },
     process: function() {}
 });
 
 Rpd.nodetype('jb/palette', {
+    title: 'Palette',
     inlets: {
         'palette': { type: 'jb/palette', default: PRODUCTS[0].palette, label: 'selection', hidden: true },
         'product': { type: 'jb/product', default: PRODUCTS[0].id, label: 'product', hidden: true },
@@ -231,6 +238,7 @@ Rpd.nodetype('jb/noise', function() {
     var refreshSketch = initNoiseSketch();
 
     return {
+        title: 'Noise',
         inlets: {
             'bang': { type: 'util/bang' },
             'octave': { type: 'util/wholenumber', 'default': 4 },
@@ -247,6 +255,7 @@ Rpd.nodetype('jb/noise', function() {
 });
 
 Rpd.nodetype('jb/layers', {
+    title: 'Layers',
     inlets: {
         'layer-1': { type: 'jb/drawable' },
         'layer-2': { type: 'jb/drawable' },
@@ -273,6 +282,7 @@ Rpd.nodetype('jb/layers', {
 });
 
 Rpd.nodetype('jb/draw-pixels', {
+    title: 'Draw Pixels',
     inlets: {
         'pixels': { type: 'jb/pixels' },
     },
@@ -290,6 +300,7 @@ Rpd.nodetype('jb/draw-pixels', {
 });
 
 Rpd.nodetype('jb/collect-point-data', {
+    title: 'Collect Points',
     inlets: {
         'chaos': { type: 'util/number', default: 0.5 },
         'step': { type: 'util/number', default: 16 },
@@ -307,6 +318,7 @@ Rpd.nodetype('jb/collect-point-data', {
 });
 
 Rpd.nodetype('jb/apply-gradient', {
+    title: 'Make Gradient',
     inlets: {
         'width': { type: 'util/number', default: window.innerWidth },
         'height': { type: 'util/number', default: window.innerHeight },
@@ -325,7 +337,8 @@ Rpd.nodetype('jb/apply-gradient', {
     }
 });
 
-Rpd.nodetype('jb/dark-gradients', {
+Rpd.nodetype('jb/vignette', {
+    title: 'Vignette',
     inlets: {
         'width': { type: 'util/number', default: window.innerWidth },
         'height': { type: 'util/number', default: window.innerHeight },
@@ -345,6 +358,7 @@ Rpd.nodetype('jb/dark-gradients', {
 });
 
 Rpd.nodetype('jb/voronoi', {
+    title: 'Voronoi',
     inlets: {
         'width': { type: 'util/number', default: window.innerWidth },
         'height': { type: 'util/number', default: window.innerHeight },
@@ -362,6 +376,7 @@ Rpd.nodetype('jb/voronoi', {
 });
 
 Rpd.nodetype('jb/curved-edges', {
+    title: 'Curves',
     inlets: {
         'voronoi': { type: 'jb/voronoi' }
     },
@@ -380,6 +395,7 @@ Rpd.nodetype('jb/curved-edges', {
 });
 
 Rpd.nodetype('jb/shapes', {
+    title: 'Shapes',
     inlets: {
         'voronoi': { type: 'jb/voronoi' }
     },
@@ -398,6 +414,7 @@ Rpd.nodetype('jb/shapes', {
 });
 
 Rpd.nodetype('jb/edges-squares', {
+    title: 'Edges & Squares',
     inlets: {
         'voronoi': { type: 'jb/voronoi' },
         'pixels': { type: 'jb/pixels' },
@@ -419,6 +436,7 @@ Rpd.nodetype('jb/edges-squares', {
 });
 
 Rpd.nodetype('jb/back-edges-squares', {
+    title: 'Back Edges & Squares',
     inlets: {
         'points': { type: 'jb/point-data' }
     },
@@ -437,6 +455,7 @@ Rpd.nodetype('jb/back-edges-squares', {
 });
 
 Rpd.nodetype('jb/draw-logo', {
+    title: 'Draw Logo',
     inlets: {
         product: { type: 'jb/product', 'default': '' },
         x: { type: 'util/number', 'default': 0.5 },
