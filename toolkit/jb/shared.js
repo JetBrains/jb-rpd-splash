@@ -379,6 +379,48 @@ function drawEdgesSquares(p, config) {
 
 }
 
+function drawCurvedEdges(p, voronoi) {
+
+    var myEdges = voronoi.edges;
+
+    var startX, startY, endX, endY;
+
+    var randomEdge, randomX, randomY, myDist;
+
+    for (var n = 0; n < myEdges.length; n++) {
+        if (!myEdges[n]) continue;
+        startX = myEdges[n][0][0];
+        startY = myEdges[n][0][1];
+        endX = myEdges[n][1][0];
+        endY = myEdges[n][1][1];
+
+
+        randomEdge = Math.floor(p.random(0, myEdges.length));
+        if (!myEdges[randomEdge]) continue;
+        randomX = myEdges[randomEdge][0][0];
+        randomY = myEdges[randomEdge][0][1];
+
+        myDist = p.dist(startX, startY, randomX, randomY)
+
+        if (p.random(0, 1) < 0.3 && (myDist < 500) && (myDist > 400)) {
+            p.noFill();
+            p.stroke(p.random(100, 255));
+            p.strokeWeight(0.3);
+            p.blendMode(p.OVERLAY);
+
+            p.bezier(
+                startX, startY,
+                startX, startY + 500,
+                randomX, randomY - 500,
+                randomX, randomY
+            );
+            p.blendMode(p.BLEND);
+
+        }
+
+    }
+}
+
 function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {
 
     var idx = (Math.floor(x) + Math.floor(y) * width) * 4 * pxDensity;

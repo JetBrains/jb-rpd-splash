@@ -210,6 +210,7 @@
             var applyGradientNode = patch.addNode('jb/apply-gradient').move(600, 400);
             var voronoiNode = patch.addNode('jb/voronoi').move(600, 600);
             var edgesSquaresNode = patch.addNode('jb/edges-squares').move(800, 600);
+            var curvedEdgesNode = patch.addNode('jb/curved-edges').move(1000, 600);
 
             lodNoiseNode.inlets['max'].receive(1);
 
@@ -219,6 +220,7 @@
             lodNoiseNode.outlets['number'].connect(noiseNode.inlets['lod']);
             voronoiNode.outlets['voronoi'].connect(edgesSquaresNode.inlets['voronoi']);
             rorschachNode.outlets['pixip'].connect(edgesSquaresNode.inlets['pixels']);
+            voronoiNode.outlets['voronoi'].connect(curvedEdgesNode.inlets['voronoi']);
 
             collectPointDataNode.outlets['point-data'].connect(voronoiNode.inlets['point-data']);
             rorschachNode.outlets['pixip'].connect(collectPointDataNode.inlets['pixels']);
@@ -230,7 +232,7 @@
 
             drawPixelsNode.outlets['drawable'].connect(layersNode.inlets['layer-1']);
             applyGradientNode.outlets['drawable'].connect(layersNode.inlets['layer-2']);
-            //curvedEdgesNode.outlets['drawable'].connect(layersNode.inlets['layer-3']);
+            curvedEdgesNode.outlets['drawable'].connect(layersNode.inlets['layer-3']);
             //shapesNode.outlets['drawable'].connect(layersNode.inlets['layer-4']);
             edgesSquaresNode.outlets['drawable'].connect(layersNode.inlets['layer-5']);
             //backEdgesNode.outlets['drawable'].connect(layersNode.inlets['layer-4']);

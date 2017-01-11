@@ -308,7 +308,15 @@ Rpd.nodetype('jb/curved-edges', {
     outlets: {
         'drawable': { type: 'jb/drawable' }
     },
-    process: function(inlets) { }
+    process: function(inlets) {
+        if (!inlets.voronoi) return;
+        return {
+            'drawable': {
+                'conf': inlets.voronoi,
+                'func': drawCurvedEdges
+            }
+        }
+    }
 });
 
 Rpd.nodetype('jb/shapes', {
