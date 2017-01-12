@@ -180,15 +180,18 @@
                            fullPage: true,
                            linkForm: 'curve' });
 
-            patch.addNode('jb/clear').move(500, 50);
+            var topMargin = window.innerHeight/2 - 300;
+            var leftMargin = window.innerWidth/2 - 725;
 
-            patch.addNode('util/nodelist').move(900, 50);
+            patch.addNode('jb/clear').move(leftMargin + 1061,topMargin +  412);
 
-            var layersNode = patch.addNode('jb/layers').move(600, 120);
+            patch.addNode('util/nodelist').move(leftMargin + 1179,topMargin +  471);
+
+            var layersNode = patch.addNode('jb/layers').move(leftMargin + 1058,topMargin +  474);
 
             var commentRemoved = false;
 
-            var commentNode = patch.addNode('util/comment').move(500, -60);
+            var commentNode = patch.addNode('util/comment').move(leftMargin + 500, -60);
             commentNode.inlets['text'].receive('Press SPACE to hide nodes and show background');
 
             var previewTarget = document.getElementById('rpd-jb-preview-target');
@@ -216,43 +219,52 @@
                 }
             });
 
-            var previewNode = patch.addNode('jb/preview').move(800, 400);
-            var saveNode = patch.addNode('jb/save').move(1000, 400);
 
-            var bangNode = patch.addNode('util/bang').move(50, 300);
 
-            var paletteNode = patch.addNode('jb/palette').move(30, 55);
-            var drawLogoNode = patch.addNode('jb/draw-logo').move(50, 155);
-            var rorschachNode = patch.addNode('jb/rorschach').move(350, 455);
-            var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(250, 555);
+            var previewNode = patch.addNode('jb/preview').move(leftMargin + 1172,topMargin + 389);
+            var saveNode = patch.addNode('jb/save').move(leftMargin + 1303,topMargin + 294);
 
-            var noiseNode = patch.addNode('jb/noise').move(30, 400);
-            var backgroundNode = patch.addNode('jb/background').move(800, 20);
+            var bangNode = patch.addNode('util/bang').move(leftMargin + 28,topMargin + 0);
 
-            var lodNoiseNode = patch.addNode('util/dial', 'Octaves').move(30, 550);
-            lodNoiseNode.inlets['max'].receive(10);
-            lodNoiseNode.inlets['submit'].receive(0.4);
+            var paletteNode = patch.addNode('jb/palette').move(leftMargin + 129,topMargin +  694);
+            var drawLogoNode = patch.addNode('jb/draw-logo').move(leftMargin + 944,topMargin +  676);
+            var rorschachNode = patch.addNode('jb/rorschach').move(leftMargin + 252,topMargin +  585);
+            var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(leftMargin + 253,topMargin +  505);
 
-            var falloffNoiseNode = patch.addNode('util/knob', 'Falloff').move(30, 650);
+            var noiseNode = patch.addNode('jb/noise').move(leftMargin + 127,topMargin +  558);
+            var backgroundNode = patch.addNode('jb/background').move(leftMargin + 130,topMargin +  447);
+
+            var octaveNoiseNode = patch.addNode('util/dial', 'Octaves').move(leftMargin + 29,topMargin +  610);
+            octaveNoiseNode.inlets['max'].receive(10);
+            octaveNoiseNode.inlets['submit'].receive(0.4);
+
+            var falloffNoiseNode = patch.addNode('util/knob', 'Falloff').move(leftMargin + 33,topMargin +  708);
             falloffNoiseNode.inlets['max'].receive(1);
 
-            var collectPointDataNode = patch.addNode('jb/collect-point-data').move(380, 250);
 
-            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(360, 600);
-            var applyGradientNode = patch.addNode('jb/apply-gradient').move(600, 400);
-            var voronoiNode = patch.addNode('jb/voronoi').move(600, 600);
-            var edgesSquaresNode = patch.addNode('jb/edges-squares').move(800, 600);
-            var curvedEdgesNode = patch.addNode('jb/curved-edges').move(1000, 600);
-            var backEdgesSquaresNode = patch.addNode('jb/back-edges-squares').move(1100, 600);
-            var shapesNode = patch.addNode('jb/shapes').move(1200, 600);
-            var vignetteNode = patch.addNode('jb/vignette').move(250, 655);
+            var noiseStep = patch.addNode('util/dial', 'Step').move(leftMargin + 31,topMargin +  514);
+            noiseStep.inlets['max'].receive(100);
+            noiseStep.inlets['min'].receive(1);
+            noiseStep.inlets['submit'].receive(1/10);
+
+            var collectPointDataNode = patch.addNode('jb/collect-point-data').move(leftMargin + 370,topMargin +  487);
+
+            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(leftMargin + 383,topMargin +  625);
+            var applyGradientNode = patch.addNode('jb/apply-gradient').move(leftMargin + 749,topMargin +  733);
+            var voronoiNode = patch.addNode('jb/voronoi').move(leftMargin + 496,topMargin +  427);
+            var edgesSquaresNode = patch.addNode('jb/edges-squares').move(leftMargin + 625,topMargin +  485);
+            var curvedEdgesNode = patch.addNode('jb/curved-edges').move(leftMargin + 891,topMargin +  414);
+            var backEdgesSquaresNode = patch.addNode('jb/back-edges-squares').move(leftMargin + 783,topMargin +  586);
+            var shapesNode = patch.addNode('jb/shapes').move(leftMargin + 779,topMargin +  471);
+            var vignetteNode = patch.addNode('jb/vignette').move(leftMargin + 571,topMargin +  665);
 
             paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
             paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
             paletteNode.outlets['product'].connect(drawLogoNode.inlets['product']);
             paletteNode.outlets['palette'].connect(edgesSquaresNode.inlets['palette']);
-            lodNoiseNode.outlets['number'].connect(noiseNode.inlets['octave']);
+            octaveNoiseNode.outlets['number'].connect(noiseNode.inlets['octave']);
             falloffNoiseNode.outlets['number'].connect(noiseNode.inlets['falloff']);
+            noiseStep.outlets['number'].connect(noiseNode.inlets['step']);
             voronoiNode.outlets['voronoi'].connect(edgesSquaresNode.inlets['voronoi']);
             rorschachNode.outlets['pixels'].connect(edgesSquaresNode.inlets['pixels']);
             voronoiNode.outlets['voronoi'].connect(curvedEdgesNode.inlets['voronoi']);

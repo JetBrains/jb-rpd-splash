@@ -22,11 +22,7 @@ Rpd.channeltype('jb/integer', {
 
 Rpd.channeltype('jb/noise-step', {
     allow: ['util/wholenumber'],
-    adapt : function(val) {
-        if (val < 1) return 1;
-        if (val > 20) return 20;
-        return val;
-    }
+    adapt : function(val) { return val < 1 ? 1 : val; }
 });
 
 Rpd.channeltype('jb/palette', { show: howMuch('color', 'colors') });
@@ -112,7 +108,7 @@ Rpd.nodetype('jb/preview', {
 
 
 Rpd.nodetype('jb/rorschach', {
-    title: 'Rorschach',
+    title: 'H-Rorschach',
     inlets: {
         'pixels': { type: 'jb/pixels' }
     },
@@ -250,9 +246,9 @@ Rpd.nodetype('jb/noise', function() {
         title: 'Noise',
         inlets: {
             'bang': { type: 'util/bang' },
+            'step': { type: 'jb/noise-step', 'default': 10 },
             'octave': { type: 'util/wholenumber', 'default': 4 },
-            'falloff': { type: 'util/number', 'default': 0.5 },
-            'step': { type: 'jb/noise-step', 'default': 10 }
+            'falloff': { type: 'util/number', 'default': 0.5 }
         },
         outlets: { 'pixels': { type: 'jb/pixels' } },
         process: function(inlets) {
@@ -327,8 +323,8 @@ Rpd.nodetype('jb/collect-point-data', {
 Rpd.nodetype('jb/apply-gradient', {
     title: 'Make Gradient',
     inlets: {
-        'width': { type: 'util/number', default: window.innerWidth },
-        'height': { type: 'util/number', default: window.innerHeight },
+        'width': { type: 'util/number', default: window.innerWidth, hidden: true },
+        'height': { type: 'util/number', default: window.innerHeight, hidden: true },
         'palette': { type: 'jb/palette' }
     },
     outlets: {
@@ -347,8 +343,8 @@ Rpd.nodetype('jb/apply-gradient', {
 Rpd.nodetype('jb/vignette', {
     title: 'Vignette',
     inlets: {
-        'width': { type: 'util/number', default: window.innerWidth },
-        'height': { type: 'util/number', default: window.innerHeight },
+        'width': { type: 'util/number', default: window.innerWidth, hidden: true },
+        'height': { type: 'util/number', default: window.innerHeight, hidden: true },
         'palette': { type: 'jb/palette' }
     },
     outlets: {
@@ -367,8 +363,8 @@ Rpd.nodetype('jb/vignette', {
 Rpd.nodetype('jb/voronoi', {
     title: 'Voronoi',
     inlets: {
-        'width': { type: 'util/number', default: window.innerWidth },
-        'height': { type: 'util/number', default: window.innerHeight },
+        'width': { type: 'util/number', default: window.innerWidth, hidden: true },
+        'height': { type: 'util/number', default: window.innerHeight, hidden: true },
         'points': { type: 'jb/point-data' }
     },
     outlets: {
@@ -488,8 +484,8 @@ Rpd.nodetype('jb/background', function() {
         title: 'Background',
         inlets: {
             product: { type: 'jb/product' },
-            width: { type: 'util/number', default: window.innerWidth },
-            height: { type: 'util/number', default: window.innerHeight }
+            width: { type: 'util/number', default: window.innerWidth, hidden: true },
+            height: { type: 'util/number', default: window.innerHeight, hidden: true }
         },
         outlets: {
             pixels: { type: 'jb/pixels' }
