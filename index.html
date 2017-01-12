@@ -180,11 +180,11 @@
                            fullPage: true,
                            linkForm: 'curve' });
 
-            patch.addNode('jb/clear').move(500, 50);
+            patch.addNode('jb/clear').move(1061,412);
 
-            patch.addNode('util/nodelist').move(900, 50);
+            patch.addNode('util/nodelist').move(1179,471);
 
-            var layersNode = patch.addNode('jb/layers').move(600, 120);
+            var layersNode = patch.addNode('jb/layers').move(1058,474);
 
             var commentRemoved = false;
 
@@ -216,43 +216,50 @@
                 }
             });
 
-            var previewNode = patch.addNode('jb/preview').move(800, 400);
-            var saveNode = patch.addNode('jb/save').move(1000, 400);
+            var previewNode = patch.addNode('jb/preview').move(1172,389);
+            var saveNode = patch.addNode('jb/save').move(1303,294);
 
-            var bangNode = patch.addNode('util/bang').move(50, 300);
+            var bangNode = patch.addNode('util/bang').move(28,336);
 
-            var paletteNode = patch.addNode('jb/palette').move(30, 55);
-            var drawLogoNode = patch.addNode('jb/draw-logo').move(50, 155);
-            var rorschachNode = patch.addNode('jb/rorschach').move(350, 455);
-            var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(250, 555);
+            var paletteNode = patch.addNode('jb/palette').move(129,694);
+            var drawLogoNode = patch.addNode('jb/draw-logo').move(944,676);
+            var rorschachNode = patch.addNode('jb/rorschach').move(252,585);
+            var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(253,505);
 
-            var noiseNode = patch.addNode('jb/noise').move(30, 400);
-            var backgroundNode = patch.addNode('jb/background').move(800, 20);
+            var noiseNode = patch.addNode('jb/noise').move(127,558);
+            var backgroundNode = patch.addNode('jb/background').move(130,447);
 
-            var lodNoiseNode = patch.addNode('util/dial', 'Octaves').move(30, 550);
-            lodNoiseNode.inlets['max'].receive(10);
-            lodNoiseNode.inlets['submit'].receive(0.4);
+            var octaveNoiseNode = patch.addNode('util/dial', 'Octaves').move(29,610);
+            octaveNoiseNode.inlets['max'].receive(10);
+            octaveNoiseNode.inlets['submit'].receive(0.4);
 
-            var falloffNoiseNode = patch.addNode('util/knob', 'Falloff').move(30, 650);
+            var falloffNoiseNode = patch.addNode('util/knob', 'Falloff').move(33,708);
             falloffNoiseNode.inlets['max'].receive(1);
 
-            var collectPointDataNode = patch.addNode('jb/collect-point-data').move(380, 250);
 
-            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(360, 600);
-            var applyGradientNode = patch.addNode('jb/apply-gradient').move(600, 400);
-            var voronoiNode = patch.addNode('jb/voronoi').move(600, 600);
-            var edgesSquaresNode = patch.addNode('jb/edges-squares').move(800, 600);
-            var curvedEdgesNode = patch.addNode('jb/curved-edges').move(1000, 600);
-            var backEdgesSquaresNode = patch.addNode('jb/back-edges-squares').move(1100, 600);
-            var shapesNode = patch.addNode('jb/shapes').move(1200, 600);
-            var vignetteNode = patch.addNode('jb/vignette').move(250, 655);
+            var noiseStep = patch.addNode('util/dial', 'Step').move(31,514);
+            noiseStep.inlets['max'].receive(100);
+            noiseStep.inlets['min'].receive(1);
+            noiseStep.inlets['submit'].receive(1/10);
+
+            var collectPointDataNode = patch.addNode('jb/collect-point-data').move(370,487);
+
+            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(383,625);
+            var applyGradientNode = patch.addNode('jb/apply-gradient').move(749,733);
+            var voronoiNode = patch.addNode('jb/voronoi').move(496,427);
+            var edgesSquaresNode = patch.addNode('jb/edges-squares').move(625,485);
+            var curvedEdgesNode = patch.addNode('jb/curved-edges').move(891,414);
+            var backEdgesSquaresNode = patch.addNode('jb/back-edges-squares').move(783,586);
+            var shapesNode = patch.addNode('jb/shapes').move(779,471);
+            var vignetteNode = patch.addNode('jb/vignette').move(571,665);
 
             paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
             paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
             paletteNode.outlets['product'].connect(drawLogoNode.inlets['product']);
             paletteNode.outlets['palette'].connect(edgesSquaresNode.inlets['palette']);
-            lodNoiseNode.outlets['number'].connect(noiseNode.inlets['octave']);
+            octaveNoiseNode.outlets['number'].connect(noiseNode.inlets['octave']);
             falloffNoiseNode.outlets['number'].connect(noiseNode.inlets['falloff']);
+            noiseStep.outlets['number'].connect(noiseNode.inlets['step']);
             voronoiNode.outlets['voronoi'].connect(edgesSquaresNode.inlets['voronoi']);
             rorschachNode.outlets['pixels'].connect(edgesSquaresNode.inlets['pixels']);
             voronoiNode.outlets['voronoi'].connect(curvedEdgesNode.inlets['voronoi']);
