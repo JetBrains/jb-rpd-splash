@@ -13,25 +13,25 @@ if [ -d ../rpd ]; then
 fi
 
 if [ ! -f ./kefir.min.js ]; then
-    wget http://rawgit.com/rpominov/kefir/gh-pages/dist/kefir.min.js
+    wget https://rawgit.com/rpominov/kefir/gh-pages/dist/kefir.min.js --no-check-certificate
 fi
 
 if [ ! -f ./p5.min.js ]; then
-    wget https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.19/p5.min.js
+    wget https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.19/p5.min.js --no-check-certificate
 fi
 
 if [ ! -f ./p5.dom.js ]; then
-    wget https://raw.githubusercontent.com/lmccart/p5.js/master/lib/addons/p5.dom.js
+    wget https://raw.githubusercontent.com/lmccart/p5.js/master/lib/addons/p5.dom.js --no-check-certificate
 fi
 
 if [ ! -f ./d3.v4.min.js ]; then
-    wget https://d3js.org/d3.v4.min.js
+    wget https://d3js.org/d3.v4.min.js --no-check-certificate
 fi
 
 if [ ! -f ./d3-voronoi.v1.min.js ]; then
-    wget https://d3js.org/d3-voronoi.v1.min.js
+    wget https://d3js.org/d3-voronoi.v1.min.js --no-check-certificate
 fi
 
 if [ ! -f ./loaders.min.css ]; then
-    wget https://raw.githubusercontent.com/ConnorAtherton/loaders.css/master/loaders.min.css
+    wget https://raw.githubusercontent.com/ConnorAtherton/loaders.css/master/loaders.min.css --no-check-certificate
 fi

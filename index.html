@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>JetBrains artwork creator</title>
         <meta charset="utf-8" />
 
         <!-- RPD: css -->
@@ -107,6 +108,11 @@
                 stroke: white;
             }
 
+            .rpd-node.rpd-util-comment {
+                text-anchor: middle;
+                /* alignment-baseline: hanging; */
+            }
+
             #p5_loading {
                 position: absolute;
                 top: 0;
@@ -137,13 +143,14 @@
                 top: 30px;
                 font-family: sans-serif;
                 color: white;
-                margin-left: -50px;
+                margin-left: -120px;
                 /* transition: opacity 500ms ease-out; */
             }
 
             #loader-wrapper p {
                 position: relative;
                 left: 80px;
+                /* text-align: center; */
                 font-size: 1.5em;
             }
 
@@ -189,18 +196,21 @@
                            valuesOnHover: true
                          });
 
-            var topMargin = window.innerHeight/2 - 300;
-            var leftMargin = window.innerWidth/2 - 725;
+            var bangX = 50;
+            var bangY = 50;
 
-            patch.addNode('jb/clear').move(leftMargin + 1061,topMargin +  412);
+            var topMargin = window.innerHeight - 500;
+            var leftMargin = window.innerWidth/2 - 700;
 
-            patch.addNode('util/nodelist').move(leftMargin + 1179,topMargin +  471);
+            patch.addNode('jb/clear').move(leftMargin + 1061,topMargin + 112);
 
-            var layersNode = patch.addNode('jb/layers').move(leftMargin + 1058,topMargin +  474);
+            patch.addNode('util/nodelist').move(leftMargin + 1179,topMargin +  171);
+
+            var layersNode = patch.addNode('jb/layers').move(leftMargin + 1058,topMargin + 174);
 
             var commentRemoved = false;
 
-            var commentNode = patch.addNode('util/comment').move(leftMargin + 500, -60);
+            var commentNode = patch.addNode('util/comment').move(window.innerWidth/2 - 50, -60);
             commentNode.inlets['text'].receive('Press SPACE to hide nodes and show background');
 
             var previewTarget = document.getElementById('rpd-jb-preview-target');
@@ -230,42 +240,42 @@
 
 
 
-            var previewNode = patch.addNode('jb/preview').move(leftMargin + 1172,topMargin + 389);
-            var saveNode = patch.addNode('jb/save').move(leftMargin + 1303,topMargin + 294);
+            var previewNode = patch.addNode('jb/preview').move(leftMargin + 1172, topMargin + 89);
+            var saveNode = patch.addNode('jb/save').move(leftMargin + 1303, topMargin - 6);
 
-            var bangNode = patch.addNode('util/bang').move(leftMargin + 28,topMargin + 0);
+            var bangNode = patch.addNode('util/bang').move(bangX, bangY);
 
-            var paletteNode = patch.addNode('jb/palette').move(leftMargin + 129,topMargin +  694);
-            var drawLogoNode = patch.addNode('jb/draw-logo').move(leftMargin + 944,topMargin +  676);
-            var rorschachNode = patch.addNode('jb/rorschach').move(leftMargin + 252,topMargin +  585);
-            var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(leftMargin + 253,topMargin +  505);
+            var paletteNode = patch.addNode('jb/palette').move(leftMargin + 129, topMargin + 394);
+            var drawLogoNode = patch.addNode('jb/draw-logo').move(leftMargin + 944, topMargin + 376);
+            var rorschachNode = patch.addNode('jb/rorschach').move(leftMargin + 252, topMargin + 285);
+            var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(leftMargin + 253, topMargin + 205);
 
-            var noiseNode = patch.addNode('jb/noise').move(leftMargin + 127,topMargin +  558);
-            var backgroundNode = patch.addNode('jb/background').move(leftMargin + 130,topMargin +  447);
+            var noiseNode = patch.addNode('jb/noise').move(leftMargin + 127, topMargin + 258);
+            var backgroundNode = patch.addNode('jb/background').move(leftMargin + 130, topMargin + 147);
 
-            var octaveNoiseNode = patch.addNode('util/dial', 'Octaves').move(leftMargin + 29,topMargin +  610);
+            var octaveNoiseNode = patch.addNode('util/dial', 'Octaves').move(leftMargin + 29, topMargin + 310);
             octaveNoiseNode.inlets['max'].receive(10);
             octaveNoiseNode.inlets['submit'].receive(0.4);
 
-            var falloffNoiseNode = patch.addNode('util/knob', 'Falloff').move(leftMargin + 33,topMargin +  708);
+            var falloffNoiseNode = patch.addNode('util/knob', 'Falloff').move(leftMargin + 33, topMargin + 408);
             falloffNoiseNode.inlets['max'].receive(1);
 
 
-            var noiseStep = patch.addNode('util/dial', 'Step').move(leftMargin + 31,topMargin +  514);
+            var noiseStep = patch.addNode('util/dial', 'Step').move(leftMargin + 31, topMargin + 214);
             noiseStep.inlets['max'].receive(100);
             noiseStep.inlets['min'].receive(1);
             noiseStep.inlets['submit'].receive(1/10);
 
-            var collectPointDataNode = patch.addNode('jb/collect-point-data').move(leftMargin + 370,topMargin +  487);
+            var collectPointDataNode = patch.addNode('jb/collect-point-data').move(leftMargin + 370,topMargin + 187);
 
-            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(leftMargin + 383,topMargin +  625);
-            var applyGradientNode = patch.addNode('jb/apply-gradient').move(leftMargin + 749,topMargin +  733);
-            var voronoiNode = patch.addNode('jb/voronoi').move(leftMargin + 496,topMargin +  427);
-            var edgesSquaresNode = patch.addNode('jb/edges-squares').move(leftMargin + 625,topMargin +  485);
-            var curvedEdgesNode = patch.addNode('jb/curved-edges').move(leftMargin + 891,topMargin +  414);
-            var backEdgesSquaresNode = patch.addNode('jb/back-edges-squares').move(leftMargin + 783,topMargin +  586);
-            var shapesNode = patch.addNode('jb/shapes').move(leftMargin + 779,topMargin +  471);
-            var vignetteNode = patch.addNode('jb/vignette').move(leftMargin + 571,topMargin +  665);
+            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(leftMargin + 383, topMargin + 325);
+            var applyGradientNode = patch.addNode('jb/apply-gradient').move(leftMargin + 749, topMargin + 433);
+            var voronoiNode = patch.addNode('jb/voronoi').move(leftMargin + 496, topMargin + 127);
+            var edgesSquaresNode = patch.addNode('jb/edges-squares').move(leftMargin + 625, topMargin + 185);
+            var curvedEdgesNode = patch.addNode('jb/curved-edges').move(leftMargin + 891, topMargin + 114);
+            var backEdgesSquaresNode = patch.addNode('jb/back-edges-squares').move(leftMargin + 783, topMargin + 286);
+            var shapesNode = patch.addNode('jb/shapes').move(leftMargin + 779, topMargin + 171);
+            var vignetteNode = patch.addNode('jb/vignette').move(leftMargin + 571, topMargin + 365);
 
             paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
             paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
