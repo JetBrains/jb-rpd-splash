@@ -221,3 +221,132 @@ function svgNode(name) {
 function prepareCanvas(myP5Canvas) {
     myP5Canvas.className = 'p5-canvas';
 }
+
+// FIXME: almost the complete copy of util/knobs
+
+var defaultKnobConf = {
+    speed: 1.5,
+    radius: 13,
+    width: 40, // radius * 2 + margin
+    height: 40,
+    //showIntTicks: false,
+    //stickToInts: false,
+    showGhost: true,
+    adaptAngle: null,
+    adaptValue: null
+};
+
+function createKnob(state, conf) {
+    var lastValue = 0;
+    var state = { min: 0, max: 1 };
+
+    var adaptAngle = conf.adaptAngle || function(s, v) { return v * 360; };
+
+    return {
+        init: function(parent) {
+            var hand, handGhost, face, text;
+            var submit = Kefir.emitter();
+            d3.select(parent)
+              .call(function(bodyGroup) {
+                  face = bodyGroup.append('circle').attr('r', conf.radius)
+                                  .style('fill', 'rgba(200, 200, 200, .2)')
+                                  .style('stroke-width', 2)
+                                  .style('stroke', '#000');
+                  handGhost = bodyGroup.append('line')
+                                  .style('visibility', 'hidden')
+                                  .attr('x1', 0).attr('y1', 0)
+                                  .attr('x2', 0).attr('y2', conf.radius - 1)
+                                  .style('stroke-width', 2)
+                                  .style('stroke', 'rgba(255,255,255,0.1)');
+                  hand = bodyGroup.append('line')
+                                  .attr('x1', 0).attr('y1', 0)
+                                  .attr('x2', 0).attr('y2', conf.radius)
+                                  .style('stroke-width', 2)
+                                  .style('stroke', '#000');
+                  text = bodyGroup.append('text')
+                                  .style('text-anchor', 'middle')
+                                  .style('fill', '#fff')
+                                  .text(0);
+              });
+            Kefir.fromEvents(parent, 'mousedown')
+                 .map(stopPropagation)
+                 .flatMap(function() {
+                     if (conf.showGhost) handGhost.style('visibility', 'visible');
+                     var values =
+                        Kefir.fromEvents(document.body, 'mousemove')
+                             //.throttle(16)
+                             .takeUntilBy(Kefir.fromEvents(document.body, 'mouseup'))
+                             .map(stopPropagation)
+                             .map(function(event) {
+                                 var faceRect = face.node().getBoundingClientRect();
+                                 return { x: event.clientX - (faceRect.left + conf.radius),
+                                          y: event.clientY - (faceRect.top + conf.radius) };
+                             })
+                             .map(function(coords) {
+                                 var value = ((coords.y * conf.speed * -1) + 180) / 360;
+                                 if (value < 0) {
+                                     value = 0;
+                                 } else if (value > 1) {
+                                     value = 1;
+                                 }
+                                 return value;
+                            });
+                     values.last().onValue(function(val) {
+                         lastValue = val;
+                         handGhost.attr('transform', 'rotate(' + adaptAngle(state, lastValue) + ')')
+                                  .style('visibility', 'hidden');
+                         submit.emit(lastValue);
+                     });
+                     return values;
+                 }).onValue(function(value) {
+                     var valueText = value;
+                     text.text(conf.adaptValue ? conf.adaptValue(valueText) : valueText);
+                     hand.attr('transform', 'rotate(' + adaptAngle(state, value) + ')');
+                 });
+            return submit;
+        }
+    }
+}
+
+function initKnobInGroup(knob, nodeRoot, id, count, width) {
+    var submit;
+    d3.select(nodeRoot).append('g')
+      .attr('transform', 'translate(' + ((id * width) + (width / 2) - (count * width / 2)) + ',0)')
+      .call(function(knobRoot) {
+          knob.root = knobRoot;
+          submit = knob.init(knobRoot.node());
+      });
+    return submit;
+}
+
+var LAYERS_COUNT = 9;
+Rpd.noderenderer('jb/layers', 'svg', function() {
+    var count = LAYERS_COUNT;
+    var state = { min: 0, max: 1 };
+    var knobs = [];
+    for (var i = 0; i < count; i++) {
+        knobs.push(createKnob(state, defaultKnobConf));
+    }
+    var nodeRoot;
+
+    return {
+        size: { width: count * defaultKnobConf.width, height: defaultKnobConf.height },
+        //pivot: { x: 0, y: 0.5 },
+        first: function(bodyElm) {
+            var valueOut = Kefir.pool();
+            nodeRoot = bodyElm;
+            valueOut = Kefir.combine(
+                knobs.map(function(knob, i) {
+                    return initKnobInGroup(knob, nodeRoot, i, count, defaultKnobConf.width)
+                           .merge(Kefir.constant(0));
+                           // knob.init() returns stream of updates,
+                           // so Kefir.combine will send every change
+                })
+            );
+            return {
+                'config': { valueOut: valueOut }
+            };
+        }
+    };
+});
+

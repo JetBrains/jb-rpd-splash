@@ -266,18 +266,32 @@ for (var i = 0; i < MAX_LAYERS; i++) {
     LAYERS_INLETS['layer-' + (i + 1)] =  { type: 'jb/drawable' }
 };
 
+var DEFAULT_LAYER_OPTIONS = {
+    blendMode: 'N',
+    opacity: 1
+};
+
+var lastLayersConfig;
 Rpd.nodetype('jb/layers', {
     title: 'Layers',
     inlets: LAYERS_INLETS,
     outlets: {
-        'layers': { type: 'jb/layers' }
+        'layers': { type: 'jb/layers' },
+        'renderOptions': { type: 'core/any', hidden: true }
     },
     process: function(inlets) {
+        //if (!inlets.renderOptions) return;
+        var renderOptions = inlets.renderOptions;
         var layers = [];
-        //var layersCount = Object.keys(inlets).length;
+        var layer;
         for (var i = 0; i < MAX_LAYERS; i++) {
-            layers.push(inlets['layer-' + (i + 1)]);
+            layer = inlets['layer-' + (i + 1)];
+            if (layer && layer != 'dark') {
+                layers.push([ inlets['layer-' + (i + 1)],
+                              renderOptions ? renderOptions[i] : DEFAULT_LAYER_OPTIONS ]);
+            }
         }
+        if (!layers.length) return;
         return {
             'layers': layers
         }
