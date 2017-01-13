@@ -289,13 +289,15 @@ function drawPixels(p, pixels) {
 
     var src = pixels.values;
     var pixels = p.pixels;
+    tint(0, 255, 0, 100);
 
     // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
     for (var i = 0; i < src.length; i++) {
         pixels[i] = src[i];
     }
-
     p.updatePixels();
+
+
 }
 
 // jb/collect-point-data
@@ -615,11 +617,13 @@ function drawBackEdgesSquares(p, data) {
 function drawDarkGradients(p, config) {
     var width = config.width || window.innerWidth;
     var height = config.height || window.innerHeight;
+    var startCircleRadius = height/4;
+    var endCircleRadius = 0.4*width;
 
      if (ctx) {
         p.blendMode(p.OVERLAY);
         // var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
-        var gradient = ctx.createRadialGradient(width/2, height/2, height/4, width/2, height/2, 0.4*width);
+        var gradient = ctx.createRadialGradient(width/2, height/2, startCircleRadius, width/2, height/2, endCircleRadius);
         gradient.addColorStop(0, p.color(255, 0));
         gradient.addColorStop(1, p.color(24, 24, 24));
         ctx.fillStyle = gradient;
@@ -633,6 +637,7 @@ function drawDarkGradients(p, config) {
         gradient.addColorStop(1, p.color(24, 24, 24));
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
+         p.blendMode(p.NORMAL);
     }
 }
 

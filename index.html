@@ -185,7 +185,9 @@
             patch.render('svg', document.getElementById('patch-target'),
                          { style: 'ableton-out',
                            fullPage: true,
-                           linkForm: 'curve' });
+                           linkForm: 'curve',
+                           valuesOnHover: true
+                         });
 
             var topMargin = window.innerHeight/2 - 300;
             var leftMargin = window.innerWidth/2 - 725;

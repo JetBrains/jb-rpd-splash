@@ -345,6 +345,8 @@ Rpd.nodetype('jb/vignette', {
     inlets: {
         'width': { type: 'util/number', default: window.innerWidth, hidden: true },
         'height': { type: 'util/number', default: window.innerHeight, hidden: true },
+        'pupil': { type: 'util/number', default: 0.25 * window.innerHeight },
+        'iris': { type: 'util/number', default: 0.4 * window.innerWidth },
         'palette': { type: 'jb/palette' }
     },
     outlets: {
