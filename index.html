@@ -82,9 +82,11 @@
                 cursor: pointer;
             }
 
+
+
             .rpd-node.rpd-util-comment .rpd-process text {
                 fill: white;
-                font-size: 13px;
+                font-size: 1.5em;
             }
 
             .rpd-node.rpd-jb-palette .rpd-process .rpd-jb-palette-variant * {
@@ -120,6 +122,7 @@
                 width: 0%;
                 height: 20px;
                 background-color: navajowhite;
+                display: none;
                 /* background-color: rgba(255, 0, 0, 0.7); */
             }
 
@@ -130,19 +133,23 @@
         <style>
             #loader-wrapper {
                 position: absolute;
+                left: 50%;
+                top: 30px;
                 font-family: sans-serif;
                 color: white;
+                margin-left: -50px;
                 /* transition: opacity 500ms ease-out; */
             }
 
             #loader-wrapper p {
                 position: relative;
                 left: 80px;
+                font-size: 1.5em;
             }
 
             #loader-wrapper .ball-rotate {
                 left: 30px;
-                top: 30px;
+                top: 45px;
             }
         </style>
 
@@ -241,7 +248,6 @@
             var falloffNoiseNode = patch.addNode('util/knob', 'Falloff').move(leftMargin + 33,topMargin +  708);
             falloffNoiseNode.inlets['max'].receive(1);
 
-            var collectPointDataNode = patch.addNode('jb/collect-point-data').move(380, 250);
 
             var noiseStep = patch.addNode('util/dial', 'Step').move(leftMargin + 31,topMargin +  514);
             noiseStep.inlets['max'].receive(100);
