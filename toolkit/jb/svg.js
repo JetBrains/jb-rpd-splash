@@ -299,7 +299,7 @@ function createKnob(state, conf) {
                      });
                      return values;
                  }).onValue(function(value) {
-                     var valueText = value;
+                     var valueText = Math.floor(value * 100) / 100;
                      text.text(conf.adaptValue ? conf.adaptValue(valueText) : valueText);
                      hand.attr('transform', 'rotate(' + adaptAngle(state, value) + ')');
                  });
@@ -308,10 +308,10 @@ function createKnob(state, conf) {
     }
 }
 
-function initKnobInGroup(knob, nodeRoot, id, count, width) {
+function initKnobInGroup(knob, nodeRoot, id, count, height) {
     var submit;
     d3.select(nodeRoot).append('g')
-      .attr('transform', 'translate(' + ((id * width) + (width / 2) - (count * width / 2)) + ',0)')
+      .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
       .call(function(knobRoot) {
           knob.root = knobRoot;
           submit = knob.init(knobRoot.node());
@@ -330,14 +330,14 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
     var nodeRoot;
 
     return {
-        size: { width: count * defaultKnobConf.width, height: defaultKnobConf.height },
+        size: { width: defaultKnobConf.width, height: count * defaultKnobConf.height },
         //pivot: { x: 0, y: 0.5 },
         first: function(bodyElm) {
             var valueOut = Kefir.pool();
             nodeRoot = bodyElm;
             valueOut = Kefir.combine(
                 knobs.map(function(knob, i) {
-                    return initKnobInGroup(knob, nodeRoot, i, count, defaultKnobConf.width)
+                    return initKnobInGroup(knob, nodeRoot, i, count, defaultKnobConf.height)
                            .merge(Kefir.constant(0));
                            // knob.init() returns stream of updates,
                            // so Kefir.combine will send every change
