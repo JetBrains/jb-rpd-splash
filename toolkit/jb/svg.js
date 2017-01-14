@@ -308,13 +308,26 @@ function createKnob(state, conf) {
     }
 }
 
-function initKnobInGroup(knob, nodeRoot, id, count, height) {
+function initKnobInGroup(knob, target, id, count, width, height) {
     var submit;
-    d3.select(nodeRoot).append('g')
+    d3.select(target).append('g')
       .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
       .call(function(knobRoot) {
           knob.root = knobRoot;
           submit = knob.init(knobRoot.node());
+      });
+    return submit;
+}
+
+function initBlendSwitchInGroup(target, id, count, width, height) {
+    var submit;
+    d3.select(target).append('g')
+      .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
+      .call(function(switchRoot) {
+          var textElm = switchRoot.append('text').text('A B C D');
+          Kefir.fromEvents(textElm.node(), 'click').onValue(function() {
+
+          });
       });
     return submit;
 }
@@ -327,22 +340,27 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
     for (var i = 0; i < count; i++) {
         knobs.push(createKnob(state, defaultKnobConf));
     }
-    var nodeRoot;
 
     return {
         size: { width: defaultKnobConf.width, height: count * defaultKnobConf.height },
         //pivot: { x: 0, y: 0.5 },
         first: function(bodyElm) {
             var valueOut = Kefir.pool();
-            nodeRoot = bodyElm;
-            valueOut = Kefir.combine(
+            var nodeRoot = bodyElm;
+            var knobsRoot = d3.select(nodeRoot).append('g').node();
+            knobsOut = Kefir.combine(
                 knobs.map(function(knob, i) {
-                    return initKnobInGroup(knob, nodeRoot, i, count, defaultKnobConf.height)
+                    return initKnobInGroup(knob, knobsRoot, i, count, defaultKnobConf.width, defaultKnobConf.height)
                            .merge(Kefir.constant(1));
                            // knob.init() returns stream of updates,
                            // so Kefir.combine will send every change
                 })
             );
+            var switchersRoot = d3.select(nodeRoot).append('g').node();
+            for (var i = 0; i < count; i++) {
+                initBlendSwitchInGroup(switchersRoot, i, count, 50, defaultKnobConf.height);
+            }
+            valueOut = knobsOut;
             valueOut.log('valueOut');
             return {
                 'renderOptions': { valueOut: valueOut }
