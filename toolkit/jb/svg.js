@@ -325,8 +325,8 @@ function initBlendSwitchInGroup(target, id, count, width, height) {
       .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
       .call(function(switchRoot) {
           var textElm = switchRoot.append('text').text('A B C D');
-          Kefir.fromEvents(textElm.node(), 'click').onValue(function() {
-
+          submit = Kefir.fromEvents(textElm.node(), 'click').map(function() {
+              return 'A';
           });
       });
     return submit;
@@ -342,13 +342,15 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
     }
 
     return {
-        size: { width: defaultKnobConf.width, height: count * defaultKnobConf.height },
+        size: { width: 60 + defaultKnobConf.width, height: count * defaultKnobConf.height },
         //pivot: { x: 0, y: 0.5 },
         first: function(bodyElm) {
             var valueOut = Kefir.pool();
             var nodeRoot = bodyElm;
-            var knobsRoot = d3.select(nodeRoot).append('g').node();
-            knobsOut = Kefir.combine(
+            var knobsRoot = d3.select(nodeRoot).append('g')
+                              .attr('transform', 'translate(25,0)')
+                              .node();
+            var knobsOut = Kefir.combine(
                 knobs.map(function(knob, i) {
                     return initKnobInGroup(knob, knobsRoot, i, count, defaultKnobConf.width, defaultKnobConf.height)
                            .merge(Kefir.constant(1));
@@ -356,11 +358,16 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
                            // so Kefir.combine will send every change
                 })
             );
-            var switchersRoot = d3.select(nodeRoot).append('g').node();
+            var switchersRoot = d3.select(nodeRoot).append('g')
+                                  .attr('transform', 'translate(-35,0)')
+                                  .node();
+            var blendsChanges = [];
             for (var i = 0; i < count; i++) {
-                initBlendSwitchInGroup(switchersRoot, i, count, 50, defaultKnobConf.height);
+                blendsChanges.push(initBlendSwitchInGroup(switchersRoot, i, count, 50, defaultKnobConf.height)
+                                   .merge(Kefir.constant('B')));
             }
-            valueOut = knobsOut;
+            var blendsOut = Kefir.combine(blendsChanges);
+            valueOut = knobsOut.combine(blendsOut);
             valueOut.log('valueOut');
             return {
                 'renderOptions': { valueOut: valueOut }
