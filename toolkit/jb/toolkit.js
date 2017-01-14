@@ -266,6 +266,8 @@ for (var i = 0; i < MAX_LAYERS; i++) {
     LAYERS_INLETS['layer-' + (i + 1)] =  { type: 'jb/drawable' }
 };
 
+LAYERS_INLETS['renderOptions'] = { type: 'core/any', hidden: true };
+
 var DEFAULT_LAYER_OPTIONS = {
     blendMode: 'N',
     opacity: 1
@@ -276,8 +278,7 @@ Rpd.nodetype('jb/layers', {
     title: 'Layers',
     inlets: LAYERS_INLETS,
     outlets: {
-        'layers': { type: 'jb/layers' },
-        'renderOptions': { type: 'core/any', hidden: true }
+        'layers': { type: 'jb/layers' }
     },
     process: function(inlets) {
         //if (!inlets.renderOptions) return;

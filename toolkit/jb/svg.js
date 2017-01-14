@@ -226,9 +226,9 @@ function prepareCanvas(myP5Canvas) {
 
 var defaultKnobConf = {
     speed: 1.5,
-    radius: 13,
-    width: 40, // radius * 2 + margin
-    height: 40,
+    radius: 10,
+    width: 30, // radius * 2 + margin
+    height: 30,
     //showIntTicks: false,
     //stickToInts: false,
     showGhost: true,
@@ -237,7 +237,7 @@ var defaultKnobConf = {
 };
 
 function createKnob(state, conf) {
-    var lastValue = 0;
+    var lastValue = 1;
     var state = { min: 0, max: 1 };
 
     var adaptAngle = conf.adaptAngle || function(s, v) { return v * 360; };
@@ -266,7 +266,7 @@ function createKnob(state, conf) {
                   text = bodyGroup.append('text')
                                   .style('text-anchor', 'middle')
                                   .style('fill', '#fff')
-                                  .text(0);
+                                  .text(1);
               });
             Kefir.fromEvents(parent, 'mousedown')
                  .map(stopPropagation)
@@ -338,13 +338,14 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
             valueOut = Kefir.combine(
                 knobs.map(function(knob, i) {
                     return initKnobInGroup(knob, nodeRoot, i, count, defaultKnobConf.height)
-                           .merge(Kefir.constant(0));
+                           .merge(Kefir.constant(1));
                            // knob.init() returns stream of updates,
                            // so Kefir.combine will send every change
                 })
             );
+            valueOut.log('valueOut');
             return {
-                'config': { valueOut: valueOut }
+                'renderOptions': { valueOut: valueOut }
             };
         }
     };
