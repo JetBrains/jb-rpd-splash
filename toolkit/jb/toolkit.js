@@ -45,10 +45,13 @@ var PIXELS_COUNT_FACTOR = 4; // one pixel is four elements in the array
 Rpd.channeltype('jb/pixels', {
     show: function(pixels) {
         if (!pixels) return '<None>';
-        return pixels.width + 'x' + pixels.height + ', ' +
+        return pixels.values && pixels.values.length
+             ? (Math.floor(pixels.values.length / PIXELS_COUNT_FACTOR / 100) / 10) + 'kpx'
+             : '0px';
+        /* return pixels.width + 'x' + pixels.height + ', ' +
             ((pixels.values && pixels.values.length)
              ? (Math.floor(pixels.values.length / PIXELS_COUNT_FACTOR / 100) / 10) + 'kpx'
-             : '0px');
+             : '0px'); */
     }
 });
 
@@ -282,7 +285,6 @@ Rpd.nodetype('jb/layers', {
     },
     process: function(inlets) {
         //if (!inlets.renderOptions) return;
-        console.log('process', inlets);
         var renderOptions = inlets.renderOptions;
         var layers = [];
         var layer;

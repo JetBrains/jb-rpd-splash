@@ -97,29 +97,29 @@ function loadSketchImages(p, onComplete) {
     imagesToLoad.forEach(function(imgSpec, index) {
         if (cachedImages[imgSpec.id] || imagesErrors[imgSpec.id]) return;
         var img = new Image();
-        console.log('start loading image', imgSpec.id);
+        //console.log('start loading image', imgSpec.id);
         img.onload = function() {
-            console.log('received', imgSpec.path);
+            //console.log('received', imgSpec.path);
             cachedImages[imgSpec.id] = img;
             readyImgCount++;
-            console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
+            //console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             showLoaderAt(readyImgCount / imagesToLoad.length, 'Loading Images');
             if (readyImgCount == imagesToLoad.length) {
                 if (onComplete) onComplete();
                 hideLoader();
-                console.log('finished loading images');
+                //console.log('finished loading images');
             }
         };
         img.onerror = function() {
             imagesErrors[imgSpec.id] = true;
-            console.log('image at ' + imgSpec.path + ' failed to load');
+            //console.log('image at ' + imgSpec.path + ' failed to load');
             readyImgCount++;
-            console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
+            //console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             showLoaderAt(readyImgCount / imagesToLoad.length, 'Loading Images');
             if (readyImgCount == imagesToLoad.length) {
                 if (onComplete) onComplete();
                 hideLoader();
-                console.log('finished loading images');
+                //console.log('finished loading images');
             }
         };
         img.src = imgSpec.path;

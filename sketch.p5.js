@@ -7,7 +7,7 @@ var sketchConfig = {
 };
 
 function showLoaderAt(pos) {
-    console.log('+++++ showLoaderAt ', pos);
+    //console.log('+++++ showLoaderAt ', pos);
     //setTimeout(function() {
         d3.select('#loader-wrapper').style('opacity', 1);
         d3.select('#loader-wrapper p').text('Rendering... ' + Math.floor(pos * 100) + '%');
@@ -16,7 +16,7 @@ function showLoaderAt(pos) {
 }
 
 function hideLoader() {
-    console.log('+++++ hideLoader');
+    //console.log('+++++ hideLoader');
     //setTimeout(function() {
         d3.select('#loader-wrapper').style('opacity', 0);
         d3.select('#loading-bar').style('width', '0%');
@@ -52,7 +52,7 @@ function preload() {
 }
 
 function setup() {
-    console.log('setup');
+    //console.log('setup');
 
 
     var bgcolor = sketchConfig.bgcolor;
@@ -72,7 +72,7 @@ function setup() {
 function draw() {
     if (loadingResources) return;
 
-    console.log('draw');
+    //console.log('draw');
 
     showLoaderAt(0, 'Rendering');
 
@@ -131,12 +131,11 @@ function draw() {
     drawLayer.delay(10).onValue(function(v) {
         showLoaderAt((v.index + 1) / layersToRender.length, 'Rendering');
         var layer = v.layer;
-        console.time(layer.name || 'layer-' + v.index);
-        console.log('renderOptions', v.index, v.renderOptions);
+        //console.time(layer.name || 'layer-' + v.index);
         applyRenderOptions(p5, v.renderOptions);
         layer.func(p5, layer.conf, ctx);
         resetRenderOptions(p5);
-        console.timeEnd(layer.name || 'layer-' + v.index);
+        //console.timeEnd(layer.name || 'layer-' + v.index);
         if (v.index == (layersToRender.length - 1)) hideLoader();
     });
 

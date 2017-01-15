@@ -418,7 +418,6 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
                     }
                 });
             });
-            valueOut.log('valueOut');
             return {
                 'renderOptions': { valueOut: valueOut }
             };
