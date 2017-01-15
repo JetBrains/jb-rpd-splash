@@ -269,7 +269,7 @@ for (var i = 0; i < MAX_LAYERS; i++) {
 LAYERS_INLETS['renderOptions'] = { type: 'core/any', hidden: true };
 
 var DEFAULT_LAYER_OPTIONS = {
-    blendMode: 'N',
+    blendMode: '',
     opacity: 1
 };
 

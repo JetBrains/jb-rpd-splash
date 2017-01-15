@@ -324,7 +324,7 @@ var BLENDS = [
     //{ label: 'N', name: 'NORMAL' },
     { label: 'B', name: 'BLEND' },
     //{ label: 'A', name: 'ADD' },
-    //{ label: 'D', name: 'DARKEST' },
+    //{ label: 'K', name: 'DARKEST' },
     //{ label: 'L', name: 'LIGHTEST' },
     { label: 'D', name: 'DIFFERENCE' },
     //{ label: 'X', name: 'EXCLUSION' },
@@ -334,9 +334,10 @@ var BLENDS = [
     { label: 'O', name: 'OVERLAY' }
     //{ label: 'H', name: 'HARD_LIGHT' },
     //{ label: 'S', name: 'SOFT_LIGHT' },
-    //{ label: 'D', name: 'DODGE' },
-    //{ label: 'B', name: 'BURN' }
+    //{ label: 'G', name: 'DODGE' },
+    //{ label: 'U', name: 'BURN' }
 ];
+var DEFAULT_MODE = '';
 function initBlendSwitchInGroup(target, id, count, width, height) {
     var submit, text, clicks;
     var lastSelected;
@@ -353,11 +354,13 @@ function initBlendSwitchInGroup(target, id, count, width, height) {
                   clicks.scan(function(prev) {
                             return !prev;
                         }, false)
-                        .onValue((function(text) { return function(selected) {
-                            if (lastSelected) lastSelected.attr('fill', 'black');
-                            text.attr('fill', selected ? 'white' : 'black');
-                            lastSelected = text;
-                        }})(text));
+                        .onValue((function(text) {
+                            return function(selected) {
+                                if (lastSelected) lastSelected.attr('fill', 'black');
+                                text.attr('fill', selected ? 'white' : 'black');
+                                lastSelected = text;
+                            }
+                        })(text));
                   return clicks;
               })
           );
@@ -404,7 +407,7 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
             var blendsChanges = [];
             for (var i = 0; i < count; i++) {
                 blendsChanges.push(initBlendSwitchInGroup(switchersRoot, i, count, 50, defaultKnobConf.height)
-                                   .merge(Kefir.constant('B')));
+                                   .merge(Kefir.constant(DEFAULT_MODE)));
             }
             var blendsOut = Kefir.combine(blendsChanges);
             valueOut = knobsOut.combine(blendsOut);

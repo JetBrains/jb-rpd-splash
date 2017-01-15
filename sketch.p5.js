@@ -37,6 +37,8 @@ var lastPixelsTime, lastPointData;
 
 var loadingResources = false;
 
+var BLEND_TO_P5;
+
 function preload() {
     if (loadingResources) return;
   //  console.log('preload');
@@ -73,6 +75,24 @@ function draw() {
     console.log('draw');
 
     showLoaderAt(0, 'Rendering');
+
+    BLEND_TO_P5 = {
+        N: NORMAL,
+        B: BLEND,
+        A: ADD,
+        K: DARKEST,
+        L: LIGHTEST,
+        D: DIFFERENCE,
+        X: EXCLUSION,
+        M: MULTIPLY,
+        S: SCREEN,
+        R: REPLACE,
+        O: OVERLAY,
+        H: HARD_LIGHT,
+        S: SOFT_LIGHT,
+        G: DODGE,
+        U: BURN
+    };
 
     var p5 = this;
 
@@ -112,7 +132,10 @@ function draw() {
         showLoaderAt((v.index + 1) / layersToRender.length, 'Rendering');
         var layer = v.layer;
         console.time(layer.name || 'layer-' + v.index);
+        console.log('renderOptions', v.index, v.renderOptions);
+        applyRenderOptions(p5, v.renderOptions);
         layer.func(p5, layer.conf, ctx);
+        resetRenderOptions(p5);
         console.timeEnd(layer.name || 'layer-' + v.index);
         if (v.index == (layersToRender.length - 1)) hideLoader();
     });
@@ -124,6 +147,21 @@ function draw() {
             renderOptions: layersToRender[i][1]
         });
     }
+}
+
+function applyRenderOptions(p, options) {
+    var layerBlendMode = options.blendMode;
+    if (layerBlendMode) {
+        p.blendMode(BLEND_TO_P5[layerBlendMode]);
+    }
+    //p.opacity(options.opacity);
+    ctx.globalAlpha = options.opacity;
+}
+
+function resetRenderOptions(p) {
+    //p.blendMode(p.NORMAL);
+    //p.opacity(1);
+    ctx.globalAlpha = 1;
 }
 
 var updateStream = Kefir.emitter();
