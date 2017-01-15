@@ -436,3 +436,13 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
     };
 });
 
+Rpd.noderenderer('jb/switch', 'svg', {
+    first: function(bodyElm) {
+        var valueOut = Kefir.emitter();
+        var optionsCount = 2;
+        var text;
+        for (var i = 0; i < optionsCount; i++) {
+            text = d3.select(bodyElm).append('text').text(i + 1);
+        }
+    }
+});

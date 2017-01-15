@@ -518,3 +518,17 @@ Rpd.nodetype('jb/background', function() {
         }
     }
 });
+
+Rpd.nodetype('jb/switch', {
+    inlets: {
+        value: { type: 'util/wholenumber', hidden: true }
+    },
+    outlets: {
+        'way-one': { type: 'util/bang' },
+        'way-two': { type: 'util/bang' }
+    },
+    process: function(inlets) {
+        if (inlets.value == 1) return { 'way-one': {} };
+        if (inlets.value == 2) return { 'way-two': {} };
+    }
+});
