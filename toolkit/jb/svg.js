@@ -321,12 +321,12 @@ function initKnobInGroup(knob, target, id, count, width, height) {
 
 var LETTER_WIDTH = 15;
 var BLENDS = [
-    { label: 'N', name: 'NORMAL' },
+    //{ label: 'N', name: 'NORMAL' },
     { label: 'B', name: 'BLEND' },
     //{ label: 'A', name: 'ADD' },
     //{ label: 'D', name: 'DARKEST' },
     //{ label: 'L', name: 'LIGHTEST' },
-    //{ label: 'F', name: 'DIFFERENCE' },
+    { label: 'D', name: 'DIFFERENCE' },
     //{ label: 'X', name: 'EXCLUSION' },
     { label: 'M', name: 'MULTIPLY' },
     { label: 'S', name: 'SCREEN' },
@@ -334,18 +334,31 @@ var BLENDS = [
     { label: 'O', name: 'OVERLAY' }
     //{ label: 'H', name: 'HARD_LIGHT' },
     //{ label: 'S', name: 'SOFT_LIGHT' },
-    //{ label: 'G', name: 'DODGE' },
+    //{ label: 'D', name: 'DODGE' },
     //{ label: 'B', name: 'BURN' }
 ];
 function initBlendSwitchInGroup(target, id, count, width, height) {
-    var submit, text;
+    var submit, text, clicks;
+    var lastSelected;
     d3.select(target).append('g')
       .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
       .call(function(target) {
           submit = Kefir.merge(
               BLENDS.map(function(blend, i) {
-                  text = target.append('text').text(blend.label).attr('transform', 'translate(' + (i * LETTER_WIDTH) + ',0)');
-                  return Kefir.fromEvents(text.node(), 'click').map(function() { return blend.label; });
+                  text = target.append('text').style('cursor', 'pointer')
+                               .text(blend.label)
+                               .attr('transform', 'translate(' + (i * LETTER_WIDTH) + ',0)');
+                  clicks = Kefir.fromEvents(text.node(), 'click')
+                                .map(function() { return blend.label; });
+                  clicks.scan(function(prev) {
+                            return !prev;
+                        }, false)
+                        .onValue((function(text) { return function(selected) {
+                            if (lastSelected) lastSelected.attr('fill', 'black');
+                            text.attr('fill', selected ? 'white' : 'black');
+                            lastSelected = text;
+                        }})(text));
+                  return clicks;
               })
           );
       });
@@ -364,8 +377,8 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
     var width = (BLENDS.length * LETTER_WIDTH) + 15 + defaultKnobConf.width;
     var height = count * defaultKnobConf.height;
 
-    var modesX = /* (width / 2) -*/ -1 * (BLENDS.length * LETTER_WIDTH);
-    var knobsX = (width - defaultKnobConf.width - 5) - (width / 2);
+    var modesX = (BLENDS.length * LETTER_WIDTH) - width - 3;
+    var knobsX = 10 + (width - defaultKnobConf.width) - (width / 2);
 
     return {
         size: { width: width,
