@@ -282,6 +282,7 @@ Rpd.nodetype('jb/layers', {
     },
     process: function(inlets) {
         //if (!inlets.renderOptions) return;
+        console.log('process', inlets);
         var renderOptions = inlets.renderOptions;
         var layers = [];
         var layer;

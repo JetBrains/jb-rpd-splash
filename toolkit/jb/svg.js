@@ -410,7 +410,14 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
                                    .merge(Kefir.constant(DEFAULT_MODE)));
             }
             var blendsOut = Kefir.combine(blendsChanges);
-            valueOut = knobsOut.combine(blendsOut);
+            valueOut = knobsOut.combine(blendsOut).map(function(combined) {
+                return combined[0].map(function(opacity, index) {
+                    return {
+                        opacity: opacity,
+                        blendMode: combined[1][index]
+                    }
+                });
+            });
             valueOut.log('valueOut');
             return {
                 'renderOptions': { valueOut: valueOut }
