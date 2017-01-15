@@ -202,7 +202,7 @@
 
             patch.addNode('jb/clear').move(leftMargin + 1061,topMargin + 112);
 
-            patch.addNode('util/nodelist').move(leftMargin + 1179,topMargin +  171);
+            patch.addNode('util/nodelist').move(leftMargin + 1210,topMargin + 171);
 
             var layersNode = patch.addNode('jb/layers').move(leftMargin + 1058,topMargin + 174);
 
@@ -238,7 +238,7 @@
 
 
 
-            var previewNode = patch.addNode('jb/preview').move(leftMargin + 1172, topMargin + 89);
+            var previewNode = patch.addNode('jb/preview').move(leftMargin + 1210, topMargin + 89);
             var saveNode = patch.addNode('jb/save').move(leftMargin + 1303, topMargin - 6);
 
             var bangNode = patch.addNode('util/bang').move(bangX, bangY);
@@ -311,8 +311,6 @@
             layersNode.outlets['layers'].connect(previewNode.inlets['layers']);
 
             previewNode.outlets['image'].connect(saveNode.inlets['image']);
-
-
 
             //randomNode.inlets['min'].receive(12);
             //randomNode.inlets['max'].receive(40);

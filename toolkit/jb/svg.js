@@ -378,7 +378,7 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
     }
 
     var width = (BLENDS.length * LETTER_WIDTH) + 15 + defaultKnobConf.width;
-    var height = count * defaultKnobConf.height;
+    var height = count * (defaultKnobConf.height - 5);
 
     var modesX = (BLENDS.length * LETTER_WIDTH) - width - 3;
     var knobsX = 10 + (width - defaultKnobConf.width) - (width / 2);
@@ -395,7 +395,7 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
                               .node();
             var knobsOut = Kefir.combine(
                 knobs.map(function(knob, i) {
-                    return initKnobInGroup(knob, knobsRoot, i, count, defaultKnobConf.width, defaultKnobConf.height)
+                    return initKnobInGroup(knob, knobsRoot, i, count, defaultKnobConf.width, defaultKnobConf.height - 5)
                            .merge(Kefir.constant(1));
                            // knob.init() returns stream of updates,
                            // so Kefir.combine will send every change
@@ -406,7 +406,7 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
                                   .node();
             var blendsChanges = [];
             for (var i = 0; i < count; i++) {
-                blendsChanges.push(initBlendSwitchInGroup(switchersRoot, i, count, 50, defaultKnobConf.height)
+                blendsChanges.push(initBlendSwitchInGroup(switchersRoot, i, count, 50, defaultKnobConf.height - 5)
                                    .merge(Kefir.constant(DEFAULT_MODE)));
             }
             var blendsOut = Kefir.combine(blendsChanges);
