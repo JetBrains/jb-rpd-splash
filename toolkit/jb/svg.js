@@ -321,26 +321,28 @@ function initKnobInGroup(knob, target, id, count, width, height) {
 
 var LETTER_WIDTH = 15;
 var BLENDS = [
-    //{ label: 'N', name: 'NORMAL' },
-    { label: 'B', name: 'BLEND' },
-    //{ label: 'A', name: 'ADD' },
-    //{ label: 'K', name: 'DARKEST' },
-    //{ label: 'L', name: 'LIGHTEST' },
-    { label: 'D', name: 'DIFFERENCE' },
-    //{ label: 'X', name: 'EXCLUSION' },
-    { label: 'M', name: 'MULTIPLY' },
-    { label: 'S', name: 'SCREEN' },
-    //{ label: 'R', name: 'REPLACE' },
-    { label: 'O', name: 'OVERLAY' }
-    //{ label: 'H', name: 'HARD_LIGHT' },
-    //{ label: 'S', name: 'SOFT_LIGHT' },
-    //{ label: 'G', name: 'DODGE' },
-    //{ label: 'U', name: 'BURN' }
+    //{ label: 'N', name: 'NORMAL', value: 'N' },
+    { label: 'B', name: 'BLEND', value: 'B' },
+    //{ label: 'A', name: 'ADD', value: 'A' },
+    //{ label: 'K', name: 'DARKEST', value: 'K' },
+    //{ label: 'L', name: 'LIGHTEST', value: 'L' },
+    { label: 'D', name: 'DIFFERENCE', value: 'D' },
+    //{ label: 'X', name: 'EXCLUSION', value: 'X' },
+    { label: 'M', name: 'MULTIPLY', value: 'M' },
+    { label: 'S', name: 'SCREEN', value: 'S' },
+    //{ label: 'R', name: 'REPLACE', value: 'R' },
+    { label: 'O', name: 'OVERLAY', value: 'O' }
+    //{ label: 'H', name: 'HARD_LIGHT', value: 'H' },
+    //{ label: 'F', name: 'SOFT_LIGHT', value: 'F' },
+    //{ label: 'G', name: 'DODGE', value: 'G' },
+    //{ label: 'U', name: 'BURN', value: 'U' }
 ];
 var DEFAULT_MODE = '';
 function initBlendSwitchInGroup(target, id, count, width, height) {
     var submit, text, clicks;
     var lastSelected;
+    var lastSelectedText;
+    var switchStates = {};
     d3.select(target).append('g')
       .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
       .call(function(target) {
@@ -350,17 +352,26 @@ function initBlendSwitchInGroup(target, id, count, width, height) {
                                .text(blend.label)
                                .attr('transform', 'translate(' + (i * LETTER_WIDTH) + ',0)');
                   clicks = Kefir.fromEvents(text.node(), 'click')
-                                .map(function() { return blend.label; });
-                  clicks.scan(function(prev) {
-                            return !prev;
-                        }, false)
-                        .onValue((function(text) {
-                            return function(selected) {
-                                if (lastSelected) lastSelected.attr('fill', 'black');
-                                text.attr('fill', selected ? 'white' : 'black');
-                                lastSelected = text;
-                            }
-                        })(text));
+                                .map((function(text, blend) {
+                                    return function() {
+                                        if (lastSelected && (lastSelected !== blend.value) && lastSelectedText) {
+                                            switchStates[lastSelected] = false;
+                                            lastSelectedText.attr('fill', 'black');
+                                        }
+                                        var selected = switchStates[blend.value] ? false : true;
+                                        switchStates[blend.value] = selected;
+                                        text.attr('fill', selected ? 'white' : 'black');
+                                        if (selected) {
+                                            lastSelected = blend.value;
+                                            lastSelectedText = text;
+                                            return blend.value;
+                                        } else {
+                                            lastSelected = '';
+                                            lastSelectedText = text;
+                                            return '';
+                                        }
+                                    };
+                                })(text, blend));
                   return clicks;
               })
           );
