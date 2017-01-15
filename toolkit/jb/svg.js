@@ -321,22 +321,25 @@ function initKnobInGroup(knob, target, id, count, width, height) {
 
 var LETTER_WIDTH = 15;
 var BLENDS = [
-    //{ label: 'N', name: 'NORMAL', value: 'N' },
-    { label: 'B', name: 'BLEND', value: 'B' },
-    //{ label: 'A', name: 'ADD', value: 'A' },
-    //{ label: 'K', name: 'DARKEST', value: 'K' },
-    //{ label: 'L', name: 'LIGHTEST', value: 'L' },
-    { label: 'D', name: 'DIFFERENCE', value: 'D' },
-    //{ label: 'X', name: 'EXCLUSION', value: 'X' },
-    { label: 'M', name: 'MULTIPLY', value: 'M' },
-    { label: 'S', name: 'SCREEN', value: 'S' },
-    //{ label: 'R', name: 'REPLACE', value: 'R' },
-    { label: 'O', name: 'OVERLAY', value: 'O' }
-    //{ label: 'H', name: 'HARD_LIGHT', value: 'H' },
-    //{ label: 'F', name: 'SOFT_LIGHT', value: 'F' },
-    //{ label: 'G', name: 'DODGE', value: 'G' },
-    //{ label: 'U', name: 'BURN', value: 'U' }
+    //{ label: '●', name: 'NORMAL', value: 'N' },
+    { label: '●', name: 'BLEND', value: 'B' },
+    //{ label: '●', name: 'ADD', value: 'A' },
+    //{ label: '●', name: 'DARKEST', value: 'K' },
+    //{ label: '●', name: 'LIGHTEST', value: 'L' },
+    { label: '●', name: 'DIFFERENCE', value: 'D' },
+    //{ label: '●', name: 'EXCLUSION', value: 'X' },
+    { label: '●', name: 'MULTIPLY', value: 'M' },
+    { label: '●', name: 'SCREEN', value: 'S' },
+    //{ label: '●', name: 'REPLACE', value: 'R' },
+    { label: '●', name: 'OVERLAY', value: 'O' }
+    //{ label: '●', name: 'HARD_LIGHT', value: 'H' },
+    //{ label: '●', name: 'SOFT_LIGHT', value: 'F' },
+    //{ label: '●', name: 'DODGE', value: 'G' },
+    //{ label: '●', name: 'BURN', value: 'U' }
 ];
+BLENDS.forEach(function(blend) {
+    blend.color = 'rgb(' + Math.floor(Math.random() * 200) + ',' + Math.floor(Math.random() * 200) + ',' + Math.floor(Math.random() * 200) + ')';
+});
 var DEFAULT_MODE = '';
 function initBlendSwitchInGroup(target, id, count, width, height) {
     var submit, text, clicks;
@@ -350,23 +353,24 @@ function initBlendSwitchInGroup(target, id, count, width, height) {
               BLENDS.map(function(blend, i) {
                   text = target.append('text').style('cursor', 'pointer')
                                .text(blend.label)
+                               .attr('fill', blend.color)
                                .attr('transform', 'translate(' + (i * LETTER_WIDTH) + ',0)');
                   clicks = Kefir.fromEvents(text.node(), 'click')
                                 .map((function(text, blend) {
                                     return function() {
-                                        if (lastSelected && (lastSelected !== blend.value) && lastSelectedText) {
-                                            switchStates[lastSelected] = false;
-                                            lastSelectedText.attr('fill', 'black');
+                                        if (lastSelected && (lastSelected.value !== blend.value) && lastSelectedText) {
+                                            switchStates[lastSelected.value] = false;
+                                            lastSelectedText.attr('fill', lastSelected.color);
                                         }
                                         var selected = switchStates[blend.value] ? false : true;
                                         switchStates[blend.value] = selected;
-                                        text.attr('fill', selected ? 'white' : 'black');
+                                        text.attr('fill', selected ? 'white' : blend.color);
                                         if (selected) {
-                                            lastSelected = blend.value;
+                                            lastSelected = blend;
                                             lastSelectedText = text;
                                             return blend.value;
                                         } else {
-                                            lastSelected = '';
+                                            lastSelected = null;
                                             lastSelectedText = text;
                                             return '';
                                         }
