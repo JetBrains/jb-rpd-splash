@@ -319,15 +319,35 @@ function initKnobInGroup(knob, target, id, count, width, height) {
     return submit;
 }
 
+var LETTER_WIDTH = 15;
+var BLENDS = [
+    { label: 'N', name: 'NORMAL' },
+    { label: 'B', name: 'BLEND' },
+    //{ label: 'A', name: 'ADD' },
+    //{ label: 'D', name: 'DARKEST' },
+    //{ label: 'L', name: 'LIGHTEST' },
+    //{ label: 'F', name: 'DIFFERENCE' },
+    //{ label: 'X', name: 'EXCLUSION' },
+    { label: 'M', name: 'MULTIPLY' },
+    { label: 'S', name: 'SCREEN' },
+    //{ label: 'R', name: 'REPLACE' },
+    { label: 'O', name: 'OVERLAY' }
+    //{ label: 'H', name: 'HARD_LIGHT' },
+    //{ label: 'S', name: 'SOFT_LIGHT' },
+    //{ label: 'G', name: 'DODGE' },
+    //{ label: 'B', name: 'BURN' }
+];
 function initBlendSwitchInGroup(target, id, count, width, height) {
-    var submit;
+    var submit, text;
     d3.select(target).append('g')
       .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
-      .call(function(switchRoot) {
-          var textElm = switchRoot.append('text').text('A B C D');
-          submit = Kefir.fromEvents(textElm.node(), 'click').map(function() {
-              return 'A';
-          });
+      .call(function(target) {
+          submit = Kefir.merge(
+              BLENDS.map(function(blend, i) {
+                  text = target.append('text').text(blend.label).attr('transform', 'translate(' + (i * LETTER_WIDTH) + ',0)');
+                  return Kefir.fromEvents(text.node(), 'click').map(function() { return blend.label; });
+              })
+          );
       });
     return submit;
 }
@@ -341,14 +361,21 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
         knobs.push(createKnob(state, defaultKnobConf));
     }
 
+    var width = (BLENDS.length * LETTER_WIDTH) + 15 + defaultKnobConf.width;
+    var height = count * defaultKnobConf.height;
+
+    var modesX = /* (width / 2) -*/ -1 * (BLENDS.length * LETTER_WIDTH);
+    var knobsX = (width - defaultKnobConf.width - 5) - (width / 2);
+
     return {
-        size: { width: 60 + defaultKnobConf.width, height: count * defaultKnobConf.height },
+        size: { width: width,
+                height: height },
         //pivot: { x: 0, y: 0.5 },
         first: function(bodyElm) {
             var valueOut = Kefir.pool();
             var nodeRoot = bodyElm;
             var knobsRoot = d3.select(nodeRoot).append('g')
-                              .attr('transform', 'translate(25,0)')
+                              .attr('transform', 'translate(' + knobsX + ',0)')
                               .node();
             var knobsOut = Kefir.combine(
                 knobs.map(function(knob, i) {
@@ -359,7 +386,7 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
                 })
             );
             var switchersRoot = d3.select(nodeRoot).append('g')
-                                  .attr('transform', 'translate(-35,0)')
+                                  .attr('transform', 'translate(' + modesX + ',0)')
                                   .node();
             var blendsChanges = [];
             for (var i = 0; i < count; i++) {
