@@ -152,6 +152,8 @@ function applyRenderOptions(p, options) {
     var layerBlendMode = options.blendMode;
     if (layerBlendMode) {
         p.blendMode(BLEND_TO_P5[layerBlendMode]);
+    } else {
+        p.blendMode(p.NORMAL);
     }
     //p.opacity(options.opacity);
     ctx.globalAlpha = options.opacity;

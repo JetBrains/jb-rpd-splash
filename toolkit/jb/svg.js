@@ -337,45 +337,82 @@ var BLENDS = [
     //{ label: '•', name: 'DODGE', value: 'G' },
     //{ label: '•', name: 'BURN', value: 'U' }
 ];
-var DEFAULT_MODE = '';
+
+var DEFAULT_LAYERS_BLENDS = [
+    /* layer-1: draw-pixels */ '', // normal
+    /* layer-2: apply-gradient */ 'O', //overlay, after: blend
+    /* layer-3: curves */ 'O', //overlay, after each: blend?
+    /* layer-4: shapes */ 'S', // screen
+    /* layer-5: edges & squares */ 'S', //screen
+    /* layer-6: back edges */ 'O', // overlay
+    /* layer-7: vignette */ 'O', // before: overlay, between: multiply, then: normal
+    /* layer-8: logo */ 'N' // normal
+];
+
+var DEFAULT_BLEND = '';
+
+var blendToIndex = {};
+BLENDS.forEach(function(blend, i) {
+    blendToIndex[blend.value] = i;
+});
+
 function initBlendSwitchInGroup(target, id, count, width, height) {
-    var submit, text, clicks;
     var lastSelected;
     var lastSelectedText;
     var switchStates = {};
+
+    function switchBlend(blend, text) {
+        return function() {
+            if (lastSelected && (lastSelected.value !== blend.value) && lastSelectedText) {
+                switchStates[lastSelected.value] = false;
+                lastSelectedText.attr('fill', 'black');
+            }
+            if (!blend) return;
+            var selected = switchStates[blend.value] ? false : true;
+            switchStates[blend.value] = selected;
+            text.attr('fill', selected ? 'white' : 'black');
+            if (selected) {
+                lastSelected = blend;
+                lastSelectedText = text;
+                return blend.value;
+            } else {
+                lastSelected = null;
+                lastSelectedText = text;
+                return '';
+            }
+        };
+    }
+
+    var submit, text, clicks;
+
+    var texts;
+
     d3.select(target).append('g')
       .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
       .call(function(target) {
+          texts = BLENDS.map(function(blend, i) {
+              return target.append('text').style('cursor', 'pointer')
+                           .text(blend.label)
+                           .attr('transform', 'translate(' + (i * LETTER_WIDTH) + ',0)');
+          })
+
+          texts.forEach(function(text, i) {
+              text.append('title').text(BLENDS[i].name);
+          });
+
           submit = Kefir.merge(
               BLENDS.map(function(blend, i) {
-                  text = target.append('text').style('cursor', 'pointer')
-                               .text(blend.label)
-                               .attr('transform', 'translate(' + (i * LETTER_WIDTH) + ',0)');
-                  clicks = Kefir.fromEvents(text.node(), 'click')
-                                .map((function(text, blend) {
-                                    return function() {
-                                        if (lastSelected && (lastSelected.value !== blend.value) && lastSelectedText) {
-                                            switchStates[lastSelected.value] = false;
-                                            lastSelectedText.attr('fill', 'black');
-                                        }
-                                        var selected = switchStates[blend.value] ? false : true;
-                                        switchStates[blend.value] = selected;
-                                        text.attr('fill', selected ? 'white' : 'black');
-                                        if (selected) {
-                                            lastSelected = blend;
-                                            lastSelectedText = text;
-                                            return blend.value;
-                                        } else {
-                                            lastSelected = null;
-                                            lastSelectedText = text;
-                                            return '';
-                                        }
-                                    };
-                                })(text, blend));
-                  return clicks;
+                  return Kefir.fromEvents(texts[i].node(), 'click')
+                              .map(switchBlend(blend, texts[i]));
               })
           );
       });
+
+    if (DEFAULT_LAYERS_BLENDS[id]) {
+        var blendIdx = blendToIndex[DEFAULT_LAYERS_BLENDS[id]];
+        switchBlend(BLENDS[blendIdx], texts[blendIdx])();
+    }
+
     return submit;
 }
 
@@ -418,7 +455,7 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
             var blendsChanges = [];
             for (var i = 0; i < count; i++) {
                 blendsChanges.push(initBlendSwitchInGroup(switchersRoot, i, count, 50, defaultKnobConf.height - 5)
-                                   .merge(Kefir.constant(DEFAULT_MODE)));
+                                   .merge(Kefir.constant(DEFAULT_BLEND)));
             }
             var blendsOut = Kefir.combine(blendsChanges);
             valueOut = knobsOut.combine(blendsOut).map(function(combined) {

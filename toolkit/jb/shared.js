@@ -374,7 +374,7 @@ function applyGradient(p, config, ctx) {
     var endGrad1 = p.createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
 
     //Main gradient
-    p.blendMode(p.OVERLAY);
+    // --> p.blendMode(p.OVERLAY);
     // p.blendMode(p.NORMAL);
     if (ctx) {
         //var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
@@ -387,7 +387,7 @@ function applyGradient(p, config, ctx) {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
     }
-    p.blendMode(p.BLEND);
+    // --> p.blendMode(p.BLEND);
 }
 
 // jb/draw-logo
@@ -398,7 +398,7 @@ function putLogoAt(ctx, image, x, y) {
 function drawLogo(p, logo, ctx) {
     if (!logo || !logo.product) return;
     var productId = logo.product;
-    p.blendMode(p.NORMAL);
+    // --> p.blendMode(p.NORMAL);
     if (cachedImages[productId + '/logo'] && ctx) {
         putLogoAt(ctx, cachedImages[productId + '/logo'] , logo.x * width, logo.y * height);
     }
@@ -447,7 +447,7 @@ function drawEdgesSquares(p, config) {
             p.strokeWeight(0.8);
             p.stroke(255);
 
-            p.blendMode(p.SCREEN);
+            // --> p.blendMode(p.SCREEN);
 
             gradientLine(startX, startY, endX, endY, colcolX, colcolY);
            //     line(startX, startY, endX, endY);
@@ -496,7 +496,7 @@ function drawCurvedEdges(p, voronoi) {
             p.noFill();
             p.stroke(p.random(100, 255));
             p.strokeWeight(0.3);
-            p.blendMode(p.OVERLAY);
+            // --> p.blendMode(p.OVERLAY);
 
             p.bezier(
                 startX, startY,
@@ -504,7 +504,7 @@ function drawCurvedEdges(p, voronoi) {
                 randomX, randomY - 500,
                 randomX, randomY
             );
-            p.blendMode(p.BLEND);
+            // --> p.blendMode(p.BLEND);
 
         }
 
@@ -595,7 +595,7 @@ function drawBackEdgesSquares(p, data) {
     }
     p.strokeWeight(0.25);
     p.stroke(255, 20);
-    p.blendMode(p.OVERLAY);
+    // --> p.blendMode(p.OVERLAY);
 
     for (var i = 0; i < data.length; i++) {
         for (var j = 0; j < data.length; j++) {
@@ -621,14 +621,14 @@ function drawDarkGradients(p, config) {
     var endCircleRadius = 0.4*width;
 
      if (ctx) {
-        p.blendMode(p.OVERLAY);
+        // --> p.blendMode(p.OVERLAY);
         // var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
         var gradient = ctx.createRadialGradient(width/2, height/2, startCircleRadius, width/2, height/2, endCircleRadius);
         gradient.addColorStop(0, p.color(255, 0));
         gradient.addColorStop(1, p.color(24, 24, 24));
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
-        p.blendMode(p.NORMAL);
+        // --> p.blendMode(p.NORMAL);
 
         p.blendMode(p.MULTIPLY);
         // var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
@@ -637,7 +637,7 @@ function drawDarkGradients(p, config) {
         gradient.addColorStop(1, p.color(24, 24, 24));
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
-         p.blendMode(p.NORMAL);
+        // --> p.blendMode(p.NORMAL);
     }
 }
 
