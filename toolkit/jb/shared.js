@@ -648,7 +648,11 @@ function drawBackground(p, config, ctx) {
     var height = config.height;
     //p.blendMode(p.NORMAL);
     if (cachedImages[productId + '/bg'] && ctx) {
-        ctx.drawImage(cachedImages[productId + '/bg'], 0, 0, width, height);
+        ctx.save();
+        ctx.rotate(config.angle);
+        ctx.scale(config.scale, config.scale);
+        ctx.drawImage(cachedImages[productId + '/bg'], config.x || 0, config.y || 0, width, height);
+        ctx.restore();
         //putLogoAt(ctx,  , logo.x * width, logo.y * height);
     }
 }

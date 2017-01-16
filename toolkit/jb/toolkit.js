@@ -41,6 +41,11 @@ Rpd.channeltype('jb/point-data', { show: howMuch('point', 'points') });
 
 Rpd.channeltype('jb/layers', { show: howMuch('layer', 'layers') });
 
+Rpd.channeltype('jb/angle', {
+    allow: [ 'util/number' ],
+    show: function(v) { return Math.floor(v * (180 / Math.PI)) + '°'; }
+});
+
 var PIXELS_COUNT_FACTOR = 4; // one pixel is four elements in the array
 Rpd.channeltype('jb/pixels', {
     show: function(pixels) {
@@ -506,7 +511,11 @@ Rpd.nodetype('jb/background', function() {
             bang: { type: 'util/bang' },
             product: { type: 'jb/product' },
             width: { type: 'util/number', default: window.innerWidth, hidden: true },
-            height: { type: 'util/number', default: window.innerHeight, hidden: true }
+            height: { type: 'util/number', default: window.innerHeight, hidden: true },
+            angle: { type: 'jb/angle', default: 0 },
+            scale: { type: 'util/number', default: 1 },
+            x: { type: 'util/number', default: 0 },
+            y: { type: 'util/number', default: 0 }
         },
         outlets: {
             pixels: { type: 'jb/pixels' }
