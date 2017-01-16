@@ -19,7 +19,7 @@ function initP5(w, h) {
 
 var PRODUCTS = [
 
-
+    { label: 'JB',  id: 'jetbrains',     palette: [ '#ec4476', '#fde74a', '#9151e1' ] },  // jetbrains-1
     { label: 'IJ',  id: 'intellij-idea', palette: [ '#1a7ff6', '#fb3560', '#f77a29' ] },  // idea // IJ_
     { label: 'PS',  id: 'phpstorm',      palette: [ '#b24eee', '#7660f4', '#fc378c' ] },  // phpstorm // PS_
     { label: 'PC',  id: 'pycharm',       palette: [ '#31d68b', '#fcf65a', '#24c4f0' ] },  // pycharm // PC_
@@ -28,19 +28,18 @@ var PRODUCTS = [
     { label: 'CL',  id: 'clion',         palette: [ '#32d791', '#1a9edd', '#ea3a8c' ] },  // clion // CL_
     { label: 'DG',  id: 'datagrip',      palette: [ '#32d791', '#9779f5', '#fd5fe4' ] },  // // DG_
     { label: 'AC',  id: 'appcode',       palette: [ '#2b7fe3', '#25daee', '#30de95' ] },  // appcode // AC_
-    { label: 'R++',  id: 'resharper-cpp', palette: [ '#fdbc2c', '#e14ce3', '#c21456' ] },  // // R++_
+    { label: 'R++', id: 'resharper-cpp', palette: [ '#fdbc2c', '#e14ce3', '#c21456' ] },  // // R++_
     { label: 'DC',  id: 'dotcover',      palette: [ '#fd7522', '#786bfb', '#e14ce3' ] },  // dotcover // DC_
     { label: 'DM',  id: 'dotmemory',     palette: [ '#fdbc2c', '#786bfb', '#e14ce3' ] },  // // DM_
-    { label: 'DP',  id: 'dotpeek',    palette: [ '#23cbfc', '#786bfb', '#e14ce3' ] },  // // DP_
+    { label: 'DP',  id: 'dotpeek',       palette: [ '#23cbfc', '#786bfb', '#e14ce3' ] },  // // DP_
     { label: 'DT',  id: 'dottrace',      palette: [ '#fc1681', '#786bfb', '#e14ce3' ] },  // dottrace // DT_
     { label: 'R#',  id: 'resharper',     palette: [ '#c21456', '#e14ce3', '#fdbc2c' ] },  // resharper // R#_
     { label: 'UP',  id: 'upsource',      palette: [ '#22b1ef', '#9062f7', '#fd8224' ] },  // upsource // UP_
     { label: 'TC',  id: 'teamcity',      palette: [ '#22b1ef', '#9062f7', '#46e869' ] },  // teamcity // TC_
     { label: 'HB',  id: 'hub',           palette: [ '#1fb9ee', '#965ff7', '#feec56' ] },  // hub // HB_
     { label: 'YT',  id: 'youtrack',      palette: [ '#22b1ef', '#9062f7', '#fc378c' ] },  // youtrack // YT_
-    { label: 'MPS', id: 'mps',           palette: [ '#31d68b', '#3188cd', '#f1e969' ] },  // mps // MPS_
     { label: 'KT',  id: 'kotlin',        palette: [ '#1b84f2', '#24dea7', '#ed4baa' ] },   // kotlin // KT_
-    { label: 'JB1',  id: 'jetbrains',   palette: [ '#ec4476', '#fde74a', '#9151e1' ] } // jetbrains-1
+    { label: 'MPS', id: 'mps',           palette: [ '#31d68b', '#3188cd', '#f1e969' ] }  // mps // MPS_
 
 ];
 
@@ -97,29 +96,29 @@ function loadSketchImages(p, onComplete) {
     imagesToLoad.forEach(function(imgSpec, index) {
         if (cachedImages[imgSpec.id] || imagesErrors[imgSpec.id]) return;
         var img = new Image();
-        console.log('start loading image', imgSpec.id);
+        //console.log('start loading image', imgSpec.id);
         img.onload = function() {
-            console.log('received', imgSpec.path);
+            //console.log('received', imgSpec.path);
             cachedImages[imgSpec.id] = img;
             readyImgCount++;
-            console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
+            //console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             showLoaderAt(readyImgCount / imagesToLoad.length, 'Loading Images');
             if (readyImgCount == imagesToLoad.length) {
                 if (onComplete) onComplete();
                 hideLoader();
-                console.log('finished loading images');
+                //console.log('finished loading images');
             }
         };
         img.onerror = function() {
             imagesErrors[imgSpec.id] = true;
-            console.log('image at ' + imgSpec.path + ' failed to load');
+            //console.log('image at ' + imgSpec.path + ' failed to load');
             readyImgCount++;
-            console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
+            //console.log('images ready:', readyImgCount + '/' + imagesToLoad.length);
             showLoaderAt(readyImgCount / imagesToLoad.length, 'Loading Images');
             if (readyImgCount == imagesToLoad.length) {
                 if (onComplete) onComplete();
                 hideLoader();
-                console.log('finished loading images');
+                //console.log('finished loading images');
             }
         };
         img.src = imgSpec.path;
@@ -374,7 +373,7 @@ function applyGradient(p, config, ctx) {
     var endGrad1 = p.createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
 
     //Main gradient
-    p.blendMode(p.OVERLAY);
+    // --> p.blendMode(p.OVERLAY);
     // p.blendMode(p.NORMAL);
     if (ctx) {
         //var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
@@ -387,7 +386,7 @@ function applyGradient(p, config, ctx) {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
     }
-    p.blendMode(p.BLEND);
+    // --> p.blendMode(p.BLEND);
 }
 
 // jb/draw-logo
@@ -398,7 +397,7 @@ function putLogoAt(ctx, image, x, y) {
 function drawLogo(p, logo, ctx) {
     if (!logo || !logo.product) return;
     var productId = logo.product;
-    p.blendMode(p.NORMAL);
+    // --> p.blendMode(p.NORMAL);
     if (cachedImages[productId + '/logo'] && ctx) {
         putLogoAt(ctx, cachedImages[productId + '/logo'] , logo.x * width, logo.y * height);
     }
@@ -447,7 +446,7 @@ function drawEdgesSquares(p, config) {
             p.strokeWeight(0.8);
             p.stroke(255);
 
-            p.blendMode(p.SCREEN);
+            // --> p.blendMode(p.SCREEN);
 
             gradientLine(startX, startY, endX, endY, colcolX, colcolY);
            //     line(startX, startY, endX, endY);
@@ -496,7 +495,7 @@ function drawCurvedEdges(p, voronoi) {
             p.noFill();
             p.stroke(p.random(100, 255));
             p.strokeWeight(0.3);
-            p.blendMode(p.OVERLAY);
+            // --> p.blendMode(p.OVERLAY);
 
             p.bezier(
                 startX, startY,
@@ -504,7 +503,7 @@ function drawCurvedEdges(p, voronoi) {
                 randomX, randomY - 500,
                 randomX, randomY
             );
-            p.blendMode(p.BLEND);
+            // --> p.blendMode(p.BLEND);
 
         }
 
@@ -595,7 +594,7 @@ function drawBackEdgesSquares(p, data) {
     }
     p.strokeWeight(0.25);
     p.stroke(255, 20);
-    p.blendMode(p.OVERLAY);
+    // --> p.blendMode(p.OVERLAY);
 
     for (var i = 0; i < data.length; i++) {
         for (var j = 0; j < data.length; j++) {
@@ -651,7 +650,11 @@ function drawBackground(p, config, ctx) {
     var height = config.height;
     //p.blendMode(p.NORMAL);
     if (cachedImages[productId + '/bg'] && ctx) {
-        ctx.drawImage(cachedImages[productId + '/bg'], 0, 0, width, height);
+        ctx.save();
+        ctx.rotate(config.angle);
+        ctx.scale(config.scale, config.scale);
+        ctx.drawImage(cachedImages[productId + '/bg'], config.x || 0, config.y || 0, width, height);
+        ctx.restore();
         //putLogoAt(ctx,  , logo.x * width, logo.y * height);
     }
 }

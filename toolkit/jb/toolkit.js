@@ -41,14 +41,22 @@ Rpd.channeltype('jb/point-data', { show: howMuch('point', 'points') });
 
 Rpd.channeltype('jb/layers', { show: howMuch('layer', 'layers') });
 
+Rpd.channeltype('jb/angle', {
+    allow: [ 'util/number' ],
+    show: function(v) { return Math.floor(v * (180 / Math.PI)) + '°'; }
+});
+
 var PIXELS_COUNT_FACTOR = 4; // one pixel is four elements in the array
 Rpd.channeltype('jb/pixels', {
     show: function(pixels) {
         if (!pixels) return '<None>';
-        return pixels.width + 'x' + pixels.height + ', ' +
+        return pixels.values && pixels.values.length
+             ? (Math.floor(pixels.values.length / PIXELS_COUNT_FACTOR / 100) / 10) + 'kpx'
+             : '0px';
+        /* return pixels.width + 'x' + pixels.height + ', ' +
             ((pixels.values && pixels.values.length)
              ? (Math.floor(pixels.values.length / PIXELS_COUNT_FACTOR / 100) / 10) + 'kpx'
-             : '0px');
+             : '0px'); */
     }
 });
 
@@ -266,6 +274,14 @@ for (var i = 0; i < MAX_LAYERS; i++) {
     LAYERS_INLETS['layer-' + (i + 1)] =  { type: 'jb/drawable' }
 };
 
+LAYERS_INLETS['renderOptions'] = { type: 'core/any', hidden: true };
+
+var DEFAULT_LAYER_OPTIONS = {
+    blendMode: '',
+    opacity: 1
+};
+
+var lastLayersConfig;
 Rpd.nodetype('jb/layers', {
     title: 'Layers',
     inlets: LAYERS_INLETS,
@@ -273,11 +289,18 @@ Rpd.nodetype('jb/layers', {
         'layers': { type: 'jb/layers' }
     },
     process: function(inlets) {
+        //if (!inlets.renderOptions) return;
+        var renderOptions = inlets.renderOptions;
         var layers = [];
-        //var layersCount = Object.keys(inlets).length;
+        var layer;
         for (var i = 0; i < MAX_LAYERS; i++) {
-            layers.push(inlets['layer-' + (i + 1)]);
+            layer = inlets['layer-' + (i + 1)];
+            if (layer && layer != 'dark') {
+                layers.push([ inlets['layer-' + (i + 1)],
+                              renderOptions ? renderOptions[i] : DEFAULT_LAYER_OPTIONS ]);
+            }
         }
+        if (!layers.length) return;
         return {
             'layers': layers
         }
@@ -485,18 +508,37 @@ Rpd.nodetype('jb/background', function() {
     return {
         title: 'Background',
         inlets: {
+            bang: { type: 'util/bang' },
             product: { type: 'jb/product' },
             width: { type: 'util/number', default: window.innerWidth, hidden: true },
-            height: { type: 'util/number', default: window.innerHeight, hidden: true }
+            height: { type: 'util/number', default: window.innerHeight, hidden: true },
+            angle: { type: 'jb/angle', default: 0 },
+            scale: { type: 'util/number', default: 1 },
+            x: { type: 'util/number', default: 0 },
+            y: { type: 'util/number', default: 0 }
         },
         outlets: {
             pixels: { type: 'jb/pixels' }
         },
         process: function(inlets) {
-            if (!inlets.product) return;
+            if (!inlets.bang || !inlets.product) return;
             return {
                 pixels: refreshSketch(inlets)
             }
         }
+    }
+});
+
+Rpd.nodetype('jb/switch', {
+    inlets: {
+        value: { type: 'util/wholenumber', hidden: true }
+    },
+    outlets: {
+        'way-one': { type: 'util/bang' },
+        'way-two': { type: 'util/bang' }
+    },
+    process: function(inlets) {
+        if (inlets.value == 1) return { 'way-one': {} };
+        if (inlets.value == 2) return { 'way-two': {} };
     }
 });

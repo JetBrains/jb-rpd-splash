@@ -24,10 +24,10 @@ Rpd.noderenderer('jb/preview', 'svg', function() {
 });
 
 Rpd.noderenderer('jb/save', 'svg', {
-    size: { width: 40, height: 40 },
+    size: { width: 80, height: 40 },
     first: function(bodyElm) {
         var hiddenLink = d3.select(document.createElement('a'))
-                           .attr('download', 'jb-sketch.png');
+                           .attr('download', 'jetbrains-art.png');
 
         var saveButton =
             d3.select(bodyElm).append('text')
@@ -221,3 +221,282 @@ function svgNode(name) {
 function prepareCanvas(myP5Canvas) {
     myP5Canvas.className = 'p5-canvas';
 }
+
+// FIXME: almost the complete copy of util/knobs
+
+var defaultKnobConf = {
+    speed: 1.5,
+    radius: 10,
+    width: 30, // radius * 2 + margin
+    height: 30,
+    //showIntTicks: false,
+    //stickToInts: false,
+    showGhost: true,
+    adaptAngle: null,
+    adaptValue: null
+};
+
+function createKnob(state, conf) {
+    var lastValue = 1;
+    var state = { min: 0, max: 1 };
+
+    var adaptAngle = conf.adaptAngle || function(s, v) { return v * 360; };
+
+    return {
+        init: function(parent) {
+            var hand, handGhost, face, text;
+            var submit = Kefir.emitter();
+            d3.select(parent)
+              .call(function(bodyGroup) {
+                  face = bodyGroup.append('circle').attr('r', conf.radius)
+                                  .style('fill', 'rgba(200, 200, 200, .2)')
+                                  .style('stroke-width', 2)
+                                  .style('stroke', '#000');
+                  handGhost = bodyGroup.append('line')
+                                  .style('visibility', 'hidden')
+                                  .attr('x1', 0).attr('y1', 0)
+                                  .attr('x2', 0).attr('y2', conf.radius - 1)
+                                  .style('stroke-width', 2)
+                                  .style('stroke', 'rgba(255,255,255,0.1)');
+                  hand = bodyGroup.append('line')
+                                  .attr('x1', 0).attr('y1', 0)
+                                  .attr('x2', 0).attr('y2', conf.radius)
+                                  .style('stroke-width', 2)
+                                  .style('stroke', '#000');
+                  text = bodyGroup.append('text')
+                                  .style('text-anchor', 'middle')
+                                  .style('fill', '#fff')
+                                  .text(1);
+              });
+            Kefir.fromEvents(parent, 'mousedown')
+                 .map(stopPropagation)
+                 .flatMap(function() {
+                     if (conf.showGhost) handGhost.style('visibility', 'visible');
+                     var values =
+                        Kefir.fromEvents(document.body, 'mousemove')
+                             //.throttle(16)
+                             .takeUntilBy(Kefir.fromEvents(document.body, 'mouseup'))
+                             .map(stopPropagation)
+                             .map(function(event) {
+                                 var faceRect = face.node().getBoundingClientRect();
+                                 return { x: event.clientX - (faceRect.left + conf.radius),
+                                          y: event.clientY - (faceRect.top + conf.radius) };
+                             })
+                             .map(function(coords) {
+                                 var value = ((coords.y * conf.speed * -1) + 180) / 360;
+                                 if (value < 0) {
+                                     value = 0;
+                                 } else if (value > 1) {
+                                     value = 1;
+                                 }
+                                 return value;
+                            });
+                     values.last().onValue(function(val) {
+                         lastValue = val;
+                         handGhost.attr('transform', 'rotate(' + adaptAngle(state, lastValue) + ')')
+                                  .style('visibility', 'hidden');
+                         submit.emit(lastValue);
+                     });
+                     return values;
+                 }).onValue(function(value) {
+                     var valueText = Math.floor(value * 100) / 100;
+                     text.text(conf.adaptValue ? conf.adaptValue(valueText) : valueText);
+                     hand.attr('transform', 'rotate(' + adaptAngle(state, value) + ')');
+                 });
+            return submit;
+        }
+    }
+}
+
+function initKnobInGroup(knob, target, id, count, width, height) {
+    var submit;
+    d3.select(target).append('g')
+      .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
+      .call(function(knobRoot) {
+          knob.root = knobRoot;
+          submit = knob.init(knobRoot.node());
+      });
+    return submit;
+}
+
+var LETTER_WIDTH = 15;
+var BLENDS = [
+    //{ label: '•', name: 'NORMAL', value: 'N' },
+    { label: '•', name: 'BLEND', value: 'B' },
+    //{ label: '•', name: 'ADD', value: 'A' },
+    //{ label: '•', name: 'DARKEST', value: 'K' },
+    //{ label: '•', name: 'LIGHTEST', value: 'L' },
+    { label: '•', name: 'DIFFERENCE', value: 'D' },
+    //{ label: '•', name: 'EXCLUSION', value: 'X' },
+    { label: '•', name: 'MULTIPLY', value: 'M' },
+    { label: '•', name: 'SCREEN', value: 'S' },
+    //{ label: '•', name: 'REPLACE', value: 'R' },
+    { label: '•', name: 'OVERLAY', value: 'O' }
+    //{ label: '•', name: 'HARD_LIGHT', value: 'H' },
+    //{ label: '•', name: 'SOFT_LIGHT', value: 'F' },
+    //{ label: '•', name: 'DODGE', value: 'G' },
+    //{ label: '•', name: 'BURN', value: 'U' }
+];
+
+var DEFAULT_LAYERS_BLENDS = [
+    /* layer-1: draw-pixels */ '', // normal
+    /* layer-2: apply-gradient */ 'O', //overlay, after: blend
+    /* layer-3: curves */ 'O', //overlay, after each: blend?
+    /* layer-4: shapes */ 'S', // screen
+    /* layer-5: edges & squares */ 'S', //screen
+    /* layer-6: back edges */ 'O', // overlay
+    /* layer-7: vignette */ 'O', // before: overlay, between: multiply, then: normal
+    /* layer-8: logo */ 'N' // normal
+];
+
+var DEFAULT_BLEND = '';
+
+var blendToIndex = {};
+BLENDS.forEach(function(blend, i) {
+    blendToIndex[blend.value] = i;
+});
+
+function initBlendSwitchInGroup(target, id, count, width, height) {
+    var lastSelected;
+    var lastSelectedText;
+    var switchStates = {};
+
+    function switchBlend(blend, text) {
+        return function() {
+            if (lastSelected && (lastSelected.value !== blend.value) && lastSelectedText) {
+                switchStates[lastSelected.value] = false;
+                lastSelectedText.attr('fill', 'black');
+            }
+            if (!blend) return;
+            var selected = switchStates[blend.value] ? false : true;
+            switchStates[blend.value] = selected;
+            text.attr('fill', selected ? 'white' : 'black');
+            if (selected) {
+                lastSelected = blend;
+                lastSelectedText = text;
+                return blend.value;
+            } else {
+                lastSelected = null;
+                lastSelectedText = text;
+                return '';
+            }
+        };
+    }
+
+    var submit, text, clicks;
+
+    var texts;
+
+    d3.select(target).append('g')
+      .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
+      .call(function(target) {
+          texts = BLENDS.map(function(blend, i) {
+              return target.append('text').style('cursor', 'pointer')
+                           .text(blend.label)
+                           .attr('transform', 'translate(' + (i * LETTER_WIDTH) + ',0)');
+          })
+
+          texts.forEach(function(text, i) {
+              text.append('title').text(BLENDS[i].name);
+          });
+
+          submit = Kefir.merge(
+              BLENDS.map(function(blend, i) {
+                  return Kefir.fromEvents(texts[i].node(), 'click')
+                              .map(switchBlend(blend, texts[i]));
+              })
+          );
+      });
+
+    if (DEFAULT_LAYERS_BLENDS[id]) {
+        var blendIdx = blendToIndex[DEFAULT_LAYERS_BLENDS[id]];
+        switchBlend(BLENDS[blendIdx], texts[blendIdx])();
+    }
+
+    return submit;
+}
+
+var LAYERS_COUNT = 9;
+Rpd.noderenderer('jb/layers', 'svg', function() {
+    var count = LAYERS_COUNT;
+    var state = { min: 0, max: 1 };
+    var knobs = [];
+    for (var i = 0; i < count; i++) {
+        knobs.push(createKnob(state, defaultKnobConf));
+    }
+
+    var width = (BLENDS.length * LETTER_WIDTH) + 15 + defaultKnobConf.width;
+    var height = count * (defaultKnobConf.height - 5);
+
+    var modesX = (BLENDS.length * LETTER_WIDTH) - width - 3;
+    var knobsX = 10 + (width - defaultKnobConf.width) - (width / 2);
+
+    return {
+        size: { width: width,
+                height: height },
+        //pivot: { x: 0, y: 0.5 },
+        first: function(bodyElm) {
+            var valueOut = Kefir.pool();
+            var nodeRoot = bodyElm;
+            var knobsRoot = d3.select(nodeRoot).append('g')
+                              .attr('transform', 'translate(' + knobsX + ',0)')
+                              .node();
+            var knobsOut = Kefir.combine(
+                knobs.map(function(knob, i) {
+                    return initKnobInGroup(knob, knobsRoot, i, count, defaultKnobConf.width, defaultKnobConf.height - 5)
+                           .merge(Kefir.constant(1));
+                           // knob.init() returns stream of updates,
+                           // so Kefir.combine will send every change
+                })
+            );
+            var switchersRoot = d3.select(nodeRoot).append('g')
+                                  .attr('transform', 'translate(' + modesX + ',0)')
+                                  .node();
+            var blendsChanges = [];
+            for (var i = 0; i < count; i++) {
+                blendsChanges.push(initBlendSwitchInGroup(switchersRoot, i, count, 50, defaultKnobConf.height - 5)
+                                   .merge(Kefir.constant(DEFAULT_LAYERS_BLENDS[i] || DEFAULT_BLEND)));
+            }
+            var blendsOut = Kefir.combine(blendsChanges);
+            valueOut = knobsOut.combine(blendsOut).map(function(combined) {
+                return combined[0].map(function(opacity, index) {
+                    return {
+                        opacity: opacity,
+                        blendMode: combined[1][index]
+                    }
+                });
+            });
+            return {
+                'renderOptions': { valueOut: valueOut }
+            };
+        }
+    };
+});
+
+Rpd.noderenderer('jb/switch', 'svg', {
+    size: { width: 30, height: 40 },
+    first: function(bodyElm) {
+        var valueOut = Kefir.emitter();
+        var optionsCount = 2;
+        var text, textClicks;
+        var allClicks = [];
+        for (var i = 0; i < optionsCount; i++) {
+            text = d3.select(bodyElm).append('text')
+                     .text(i + 1).attr('transform', 'translate(-5,' + ((i * 20) - 10) + ')')
+                     .style('cursor', 'pointer');
+            textClicks = Kefir.fromEvents(text.node(), 'click');
+            textClicks.onValue((function(text) {
+                return function() {
+                    text.classed('highlighted', true);
+                    setTimeout(function() {
+                        text.classed('highlighted', false);
+                    }, 1000);
+                }
+            })(text));
+            allClicks.push(textClicks.map((function(i) { return function() { return i + 1; } })(i)));
+        }
+        return {
+            'value': { valueOut: Kefir.merge(allClicks) }
+        };
+    }
+});

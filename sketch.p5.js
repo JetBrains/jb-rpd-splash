@@ -7,7 +7,7 @@ var sketchConfig = {
 };
 
 function showLoaderAt(pos) {
-    console.log('+++++ showLoaderAt ', pos);
+    //console.log('+++++ showLoaderAt ', pos);
     //setTimeout(function() {
         d3.select('#loader-wrapper').style('opacity', 1);
         d3.select('#loader-wrapper p').text('Rendering... ' + Math.floor(pos * 100) + '%');
@@ -16,7 +16,7 @@ function showLoaderAt(pos) {
 }
 
 function hideLoader() {
-    console.log('+++++ hideLoader');
+    //console.log('+++++ hideLoader');
     //setTimeout(function() {
         d3.select('#loader-wrapper').style('opacity', 0);
         d3.select('#loading-bar').style('width', '0%');
@@ -37,6 +37,8 @@ var lastPixelsTime, lastPointData;
 
 var loadingResources = false;
 
+var BLEND_TO_P5;
+
 function preload() {
     if (loadingResources) return;
   //  console.log('preload');
@@ -50,7 +52,7 @@ function preload() {
 }
 
 function setup() {
-    console.log('setup');
+    //console.log('setup');
 
 
     var bgcolor = sketchConfig.bgcolor;
@@ -70,9 +72,27 @@ function setup() {
 function draw() {
     if (loadingResources) return;
 
-    console.log('draw');
+    //console.log('draw');
 
     showLoaderAt(0, 'Rendering');
+
+    BLEND_TO_P5 = {
+        N: 'NORMAL',
+        B: 'BLEND',
+        A: 'ADD',
+        K: 'DARKEST',
+        L: 'LIGHTEST',
+        D: 'DIFFERENCE',
+        X: 'EXCLUSION',
+        M: 'MULTIPLY',
+        S: 'SCREEN',
+        R: 'REPLACE',
+        O: 'OVERLAY',
+        H: 'HARD_LIGHT',
+        F: 'SOFT_LIGHT',
+        G: 'DODGE',
+        U: 'BURN'
+    };
 
     var p5 = this;
 
@@ -101,9 +121,7 @@ function draw() {
     // a tiny bit slower version, ensures to show loading bar for every step by waiting 10msec
     // between calls to free up GPU
 
-    var layersToRender = sketchConfig.layers.filter(function(v) {
-        return (v && v != 'dark');
-    });
+    var layersToRender = sketchConfig.layers;
 
     var drawLayer = Kefir.emitter();
 
@@ -113,18 +131,40 @@ function draw() {
     drawLayer.delay(10).onValue(function(v) {
         showLoaderAt((v.index + 1) / layersToRender.length, 'Rendering');
         var layer = v.layer;
-        console.time(layer.name || 'layer-' + v.index);
+        //console.time(layer.name || 'layer-' + v.index);
+        applyRenderOptions(p5, v.renderOptions, v.index);
         layer.func(p5, layer.conf, ctx);
-        console.timeEnd(layer.name || 'layer-' + v.index);
+        resetRenderOptions(p5);
+        //console.timeEnd(layer.name || 'layer-' + v.index);
         if (v.index == (layersToRender.length - 1)) hideLoader();
     });
 
     for (var i = 0; i < layersToRender.length; i++) {
         drawLayer.emit({
             index: i,
-            layer: layersToRender[i]
+            layer: layersToRender[i][0],
+            renderOptions: layersToRender[i][1]
         });
     }
+}
+
+function applyRenderOptions(p, options, index) {
+    var layerBlendMode = options.blendMode;
+    if (layerBlendMode) {
+        //console.log('apply blend mode', index, layerBlendMode, BLEND_TO_P5[layerBlendMode]);
+        p.blendMode(p[BLEND_TO_P5[layerBlendMode]]);
+    } else {
+        //console.log('apply blend mode', index, '', 'NORMAL');
+        p.blendMode(p.NORMAL);
+    }
+    //p.opacity(options.opacity);
+    ctx.globalAlpha = options.opacity;
+}
+
+function resetRenderOptions(p) {
+    //p.blendMode(p.NORMAL);
+    //p.opacity(1);
+    ctx.globalAlpha = 1;
 }
 
 var updateStream = Kefir.emitter();

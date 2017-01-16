@@ -108,6 +108,11 @@
                 stroke: white;
             }
 
+            .rpd-jb-switch .rpd-process text.highlighted {
+                fill: yellow;
+                transition: fill 200ms ease-in;
+            }
+
             .rpd-node.rpd-util-comment {
                 text-anchor: middle;
                 /* alignment-baseline: hanging; */
@@ -187,12 +192,13 @@
 
             d3.select('#loader-wrapper').style('opacity', '0');
 
-            var patch = Rpd.addPatch('jb-sketch');
+            var patch = Rpd.addPatch('jetbrains-art');
 
             patch.render('svg', document.getElementById('patch-target'),
                          { style: 'ableton-out',
                            fullPage: true,
-                           linkForm: 'curve' });
+                           linkForm: 'curve',
+                           inletAcceptsMultipleLinks: true });
 
             var bangX = 50;
             var bangY = 50;
@@ -202,14 +208,14 @@
 
             patch.addNode('jb/clear').move(leftMargin + 1061,topMargin + 112);
 
-            patch.addNode('util/nodelist').move(leftMargin + 1179,topMargin +  171);
+            patch.addNode('util/nodelist').move(leftMargin + 1210,topMargin + 171);
 
             var layersNode = patch.addNode('jb/layers').move(leftMargin + 1058,topMargin + 174);
 
             var commentRemoved = false;
 
             var commentNode = patch.addNode('util/comment').move(window.innerWidth/2 - 50, -60);
-            commentNode.inlets['text'].receive('Press SPACE to hide nodes and show background');
+            commentNode.inlets['text'].receive('Press SPACE to toggle the UI');
 
             var previewTarget = document.getElementById('rpd-jb-preview-target');
             previewTarget.style.width = window.innerWidth + 'px';
@@ -238,10 +244,11 @@
 
 
 
-            var previewNode = patch.addNode('jb/preview').move(leftMargin + 1172, topMargin + 89);
+            var previewNode = patch.addNode('jb/preview').move(leftMargin + 1210, topMargin + 89);
             var saveNode = patch.addNode('jb/save').move(leftMargin + 1303, topMargin - 6);
 
             var bangNode = patch.addNode('util/bang').move(bangX, bangY);
+            var bang2Node = patch.addNode('util/bang').move(bangX + 100, bangY);
 
             var paletteNode = patch.addNode('jb/palette').move(leftMargin + 129, topMargin + 394);
             var drawLogoNode = patch.addNode('jb/draw-logo').move(leftMargin + 944, topMargin + 376);
@@ -249,7 +256,7 @@
             var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(leftMargin + 253, topMargin + 205);
 
             var noiseNode = patch.addNode('jb/noise').move(leftMargin + 127, topMargin + 258);
-            var backgroundNode = patch.addNode('jb/background').move(leftMargin + 130, topMargin + 147);
+            var backgroundNode = patch.addNode('jb/background').move(leftMargin + 130, topMargin + 40);
 
             var octaveNoiseNode = patch.addNode('util/dial', 'Octaves').move(leftMargin + 29, topMargin + 310);
             octaveNoiseNode.inlets['max'].receive(10);
@@ -275,6 +282,10 @@
             var shapesNode = patch.addNode('jb/shapes').move(leftMargin + 779, topMargin + 171);
             var vignetteNode = patch.addNode('jb/vignette').move(leftMargin + 571, topMargin + 365);
 
+            backgroundNode.outlets['pixels'].connect(rorschachVerticalNode.inlets['pixels']);
+            rorschachVerticalNode.outlets['pixels'].connect(collectPointDataNode.inlets['pixels']);
+            rorschachVerticalNode.outlets['pixels'].connect(drawPixelsNode.inlets['pixels']);
+
             paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
           //  paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
             paletteNode.outlets['product'].connect(drawLogoNode.inlets['product']);
@@ -291,8 +302,10 @@
             collectPointDataNode.outlets['points'].connect(voronoiNode.inlets['points']);
             collectPointDataNode.outlets['points'].connect(backEdgesSquaresNode.inlets['points']);
             rorschachNode.outlets['pixels'].connect(collectPointDataNode.inlets['pixels']);
+            paletteNode.outlets['product'].connect(backgroundNode.inlets['product']);
 
             bangNode.outlets['bang'].connect(noiseNode.inlets['bang']);
+            bang2Node.outlets['bang'].connect(backgroundNode.inlets['bang']);
 //
             noiseNode.outlets['pixels'].connect(rorschachNode.inlets['pixels']);
             // noiseNode.outlets['pixels'].connect(rorschachVerticalNode.inlets['pixels']);
@@ -311,8 +324,6 @@
             layersNode.outlets['layers'].connect(previewNode.inlets['layers']);
 
             previewNode.outlets['image'].connect(saveNode.inlets['image']);
-
-
 
             //randomNode.inlets['min'].receive(12);
             //randomNode.inlets['max'].receive(40);
