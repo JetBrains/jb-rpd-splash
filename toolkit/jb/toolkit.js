@@ -503,6 +503,7 @@ Rpd.nodetype('jb/background', function() {
     return {
         title: 'Background',
         inlets: {
+            bang: { type: 'jb/bang' },
             product: { type: 'jb/product' },
             width: { type: 'util/number', default: window.innerWidth, hidden: true },
             height: { type: 'util/number', default: window.innerHeight, hidden: true }
@@ -511,7 +512,7 @@ Rpd.nodetype('jb/background', function() {
             pixels: { type: 'jb/pixels' }
         },
         process: function(inlets) {
-            if (!inlets.product) return;
+            if (!inlets.bang || !inlets.product) return;
             return {
                 pixels: refreshSketch(inlets)
             }

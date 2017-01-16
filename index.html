@@ -197,7 +197,8 @@
             patch.render('svg', document.getElementById('patch-target'),
                          { style: 'ableton-out',
                            fullPage: true,
-                           linkForm: 'curve' });
+                           linkForm: 'curve',
+                           inletAcceptsMultipleLinks: true });
 
             var bangX = 50;
             var bangY = 50;
@@ -208,8 +209,6 @@
             patch.addNode('jb/clear').move(leftMargin + 1061,topMargin + 112);
 
             patch.addNode('util/nodelist').move(leftMargin + 1210,topMargin + 171);
-
-            patch.addNode('jb/switch').move(200, 40);
 
             var layersNode = patch.addNode('jb/layers').move(leftMargin + 1058,topMargin + 174);
 
@@ -249,6 +248,7 @@
             var saveNode = patch.addNode('jb/save').move(leftMargin + 1303, topMargin - 6);
 
             var bangNode = patch.addNode('util/bang').move(bangX, bangY);
+            var bang2Node = patch.addNode('util/bang').move(bangX + 100, bangY);
 
             var paletteNode = patch.addNode('jb/palette').move(leftMargin + 129, topMargin + 394);
             var drawLogoNode = patch.addNode('jb/draw-logo').move(leftMargin + 944, topMargin + 376);
@@ -282,6 +282,10 @@
             var shapesNode = patch.addNode('jb/shapes').move(leftMargin + 779, topMargin + 171);
             var vignetteNode = patch.addNode('jb/vignette').move(leftMargin + 571, topMargin + 365);
 
+            backgroundNode.outlets['pixels'].connect(rorschachVerticalNode.inlets['pixels']);
+            rorschachVerticalNode.outlets['pixels'].connect(collectPointDataNode.inlets['pixels']);
+            rorschachVerticalNode.outlets['pixels'].connect(drawPixelsNode.inlets['pixels']);
+
             paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
             paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
             paletteNode.outlets['product'].connect(drawLogoNode.inlets['product']);
@@ -298,8 +302,10 @@
             collectPointDataNode.outlets['points'].connect(voronoiNode.inlets['points']);
             collectPointDataNode.outlets['points'].connect(backEdgesSquaresNode.inlets['points']);
             rorschachNode.outlets['pixels'].connect(collectPointDataNode.inlets['pixels']);
+            paletteNode.outlets['product'].connect(backgroundNode.inlets['product']);
 
             bangNode.outlets['bang'].connect(noiseNode.inlets['bang']);
+            bang2Node.outlets['bang'].connect(backgroundNode.inlets['bang']);
 //
             noiseNode.outlets['pixels'].connect(rorschachNode.inlets['pixels']);
             // noiseNode.outlets['pixels'].connect(rorschachVerticalNode.inlets['pixels']);
