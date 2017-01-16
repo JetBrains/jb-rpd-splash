@@ -617,23 +617,26 @@ function drawBackEdgesSquares(p, data) {
 function drawDarkGradients(p, config) {
     var width = config.width || window.innerWidth;
     var height = config.height || window.innerHeight;
-    var startCircleRadius = height/4;
-    var endCircleRadius = 0.4*width;
+    var pupil = config.pupil;
+    var iris = config.iris;
+    var pupilOpacity = config.pupilOpacity;
+    var pupilColor = config.pupilColor;
 
      if (ctx) {
         p.blendMode(p.OVERLAY);
-        // var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
-        var gradient = ctx.createRadialGradient(width/2, height/2, startCircleRadius, width/2, height/2, endCircleRadius);
-        gradient.addColorStop(0, p.color(255, 0));
-        gradient.addColorStop(1, p.color(24, 24, 24));
+
+
+        var gradient = ctx.createRadialGradient(width/2, height/2, height/2 * iris / 100, width/2, height/2, width/2 * iris / 100);
+        gradient.addColorStop(0, p.color(pupilColor.r, pupilColor.g, pupilColor.b, pupilOpacity));
+        gradient.addColorStop(1, p.color(0));
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
-        p.blendMode(p.NORMAL);
+
+
 
         p.blendMode(p.MULTIPLY);
-        // var gradient = ctx.createLinearGradient(startGrad1.x, startGrad1.y, endGrad1.x, endGrad1.y);
-        var gradient = ctx.createRadialGradient(width/2, height/2, height/3, width/2, height/2, 0.53*width);
-        gradient.addColorStop(0, p.color(255, 0));
+        var gradient = ctx.createRadialGradient(width/2, height/2, height/3 * iris / 100, width/2, height/2, 0.7 * width * iris / 100);
+        gradient.addColorStop(0, p.color(pupilColor.r, pupilColor.g, pupilColor.b, pupilOpacity));
         gradient.addColorStop(1, p.color(24, 24, 24));
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);

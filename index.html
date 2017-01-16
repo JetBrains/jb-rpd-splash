@@ -276,7 +276,7 @@
             var vignetteNode = patch.addNode('jb/vignette').move(leftMargin + 571, topMargin + 365);
 
             paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
-            paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
+          //  paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
             paletteNode.outlets['product'].connect(drawLogoNode.inlets['product']);
             paletteNode.outlets['palette'].connect(edgesSquaresNode.inlets['palette']);
             octaveNoiseNode.outlets['number'].connect(noiseNode.inlets['octave']);

@@ -343,11 +343,11 @@ Rpd.nodetype('jb/apply-gradient', {
 Rpd.nodetype('jb/vignette', {
     title: 'Vignette',
     inlets: {
-        'width': { type: 'util/number', default: window.innerWidth, hidden: true },
-        'height': { type: 'util/number', default: window.innerHeight, hidden: true },
-        'pupil': { type: 'util/number', default: 0.25 * window.innerHeight },
-        'iris': { type: 'util/number', default: 0.4 * window.innerWidth },
-        'palette': { type: 'jb/palette' }
+        'width': { type: 'util/number', 'default': window.innerWidth, hidden: true },
+        'height': { type: 'util/number', 'default': window.innerHeight, hidden: true },
+        'iris': { type: 'util/number', 'default': 100 },
+        'pupilOpacity': { type: 'util/number', 'default': 0 },
+        'pupilColor': { type: 'util/color', 'default': _rgb(255, 255, 255) }
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
