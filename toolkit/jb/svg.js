@@ -455,7 +455,7 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
             var blendsChanges = [];
             for (var i = 0; i < count; i++) {
                 blendsChanges.push(initBlendSwitchInGroup(switchersRoot, i, count, 50, defaultKnobConf.height - 5)
-                                   .merge(Kefir.constant(DEFAULT_BLEND)));
+                                   .merge(Kefir.constant(DEFAULT_LAYERS_BLENDS[i] || DEFAULT_BLEND)));
             }
             var blendsOut = Kefir.combine(blendsChanges);
             valueOut = knobsOut.combine(blendsOut).map(function(combined) {

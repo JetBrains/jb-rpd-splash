@@ -77,21 +77,21 @@ function draw() {
     showLoaderAt(0, 'Rendering');
 
     BLEND_TO_P5 = {
-        N: NORMAL,
-        B: BLEND,
-        A: ADD,
-        K: DARKEST,
-        L: LIGHTEST,
-        D: DIFFERENCE,
-        X: EXCLUSION,
-        M: MULTIPLY,
-        S: SCREEN,
-        R: REPLACE,
-        O: OVERLAY,
-        H: HARD_LIGHT,
-        S: SOFT_LIGHT,
-        G: DODGE,
-        U: BURN
+        N: 'NORMAL',
+        B: 'BLEND',
+        A: 'ADD',
+        K: 'DARKEST',
+        L: 'LIGHTEST',
+        D: 'DIFFERENCE',
+        X: 'EXCLUSION',
+        M: 'MULTIPLY',
+        S: 'SCREEN',
+        R: 'REPLACE',
+        O: 'OVERLAY',
+        H: 'HARD_LIGHT',
+        F: 'SOFT_LIGHT',
+        G: 'DODGE',
+        U: 'BURN'
     };
 
     var p5 = this;
@@ -132,7 +132,7 @@ function draw() {
         showLoaderAt((v.index + 1) / layersToRender.length, 'Rendering');
         var layer = v.layer;
         //console.time(layer.name || 'layer-' + v.index);
-        applyRenderOptions(p5, v.renderOptions);
+        applyRenderOptions(p5, v.renderOptions, v.index);
         layer.func(p5, layer.conf, ctx);
         resetRenderOptions(p5);
         //console.timeEnd(layer.name || 'layer-' + v.index);
@@ -148,11 +148,13 @@ function draw() {
     }
 }
 
-function applyRenderOptions(p, options) {
+function applyRenderOptions(p, options, index) {
     var layerBlendMode = options.blendMode;
     if (layerBlendMode) {
-        p.blendMode(BLEND_TO_P5[layerBlendMode]);
+        console.log('apply blend mode', index, layerBlendMode, BLEND_TO_P5[layerBlendMode]);
+        p.blendMode(p[BLEND_TO_P5[layerBlendMode]]);
     } else {
+        console.log('apply blend mode', index, '', 'NORMAL');
         p.blendMode(p.NORMAL);
     }
     //p.opacity(options.opacity);
