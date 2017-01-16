@@ -503,7 +503,7 @@ Rpd.nodetype('jb/background', function() {
     return {
         title: 'Background',
         inlets: {
-            bang: { type: 'jb/bang' },
+            bang: { type: 'util/bang' },
             product: { type: 'jb/product' },
             width: { type: 'util/number', default: window.innerWidth, hidden: true },
             height: { type: 'util/number', default: window.innerHeight, hidden: true }
