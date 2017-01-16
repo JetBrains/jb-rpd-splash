@@ -437,12 +437,29 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
 });
 
 Rpd.noderenderer('jb/switch', 'svg', {
+    size: { width: 30, height: 40 },
     first: function(bodyElm) {
         var valueOut = Kefir.emitter();
         var optionsCount = 2;
-        var text;
+        var text, textClicks;
+        var allClicks = [];
         for (var i = 0; i < optionsCount; i++) {
-            text = d3.select(bodyElm).append('text').text(i + 1);
+            text = d3.select(bodyElm).append('text')
+                     .text(i + 1).attr('transform', 'translate(-5,' + ((i * 20) - 10) + ')')
+                     .style('cursor', 'pointer');
+            textClicks = Kefir.fromEvents(text.node(), 'click');
+            textClicks.onValue((function(text) {
+                return function() {
+                    text.classed('highlighted', true);
+                    setTimeout(function() {
+                        text.classed('highlighted', false);
+                    }, 1000);
+                }
+            })(text));
+            allClicks.push(textClicks.map((function(i) { return function() { return i + 1; } })(i)));
         }
+        return {
+            'value': { valueOut: Kefir.merge(allClicks) }
+        };
     }
 });

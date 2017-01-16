@@ -108,6 +108,11 @@
                 stroke: white;
             }
 
+            .rpd-jb-switch .rpd-process text.highlighted {
+                fill: yellow;
+                transition: fill 200ms ease-in;
+            }
+
             .rpd-node.rpd-util-comment {
                 text-anchor: middle;
                 /* alignment-baseline: hanging; */
@@ -203,6 +208,8 @@
             patch.addNode('jb/clear').move(leftMargin + 1061,topMargin + 112);
 
             patch.addNode('util/nodelist').move(leftMargin + 1210,topMargin + 171);
+
+            patch.addNode('jb/switch').move(200, 40);
 
             var layersNode = patch.addNode('jb/layers').move(leftMargin + 1058,topMargin + 174);
 
