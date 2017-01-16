@@ -192,7 +192,7 @@
 
             d3.select('#loader-wrapper').style('opacity', '0');
 
-            var patch = Rpd.addPatch('jb-sketch');
+            var patch = Rpd.addPatch('jetbrains-art');
 
             patch.render('svg', document.getElementById('patch-target'),
                          { style: 'ableton-out',
@@ -215,7 +215,7 @@
             var commentRemoved = false;
 
             var commentNode = patch.addNode('util/comment').move(window.innerWidth/2 - 50, -60);
-            commentNode.inlets['text'].receive('Press SPACE to hide nodes and show background');
+            commentNode.inlets['text'].receive('Press SPACE to toggle the UI');
 
             var previewTarget = document.getElementById('rpd-jb-preview-target');
             previewTarget.style.width = window.innerWidth + 'px';

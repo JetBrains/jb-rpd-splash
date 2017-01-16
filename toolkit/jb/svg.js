@@ -24,10 +24,10 @@ Rpd.noderenderer('jb/preview', 'svg', function() {
 });
 
 Rpd.noderenderer('jb/save', 'svg', {
-    size: { width: 40, height: 40 },
+    size: { width: 80, height: 40 },
     first: function(bodyElm) {
         var hiddenLink = d3.select(document.createElement('a'))
-                           .attr('download', 'jb-sketch.png');
+                           .attr('download', 'jetbrains-art.png');
 
         var saveButton =
             d3.select(bodyElm).append('text')
