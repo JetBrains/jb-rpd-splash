@@ -151,10 +151,10 @@ function draw() {
 function applyRenderOptions(p, options, index) {
     var layerBlendMode = options.blendMode;
     if (layerBlendMode) {
-        console.log('apply blend mode', index, layerBlendMode, BLEND_TO_P5[layerBlendMode]);
+        //console.log('apply blend mode', index, layerBlendMode, BLEND_TO_P5[layerBlendMode]);
         p.blendMode(p[BLEND_TO_P5[layerBlendMode]]);
     } else {
-        console.log('apply blend mode', index, '', 'NORMAL');
+        //console.log('apply blend mode', index, '', 'NORMAL');
         p.blendMode(p.NORMAL);
     }
     //p.opacity(options.opacity);
