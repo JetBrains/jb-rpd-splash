@@ -19,11 +19,11 @@ function initP5(w, h) {
 
 var PRODUCTS = [
 
-    { label: 'JB',  id: 'jetbrains',     palette: [ '#ec4476', '#fde74a', '#9151e1' ] },  // jetbrains-1
+    { label: 'JB',  id: 'jetbrains',     palette: [ '#9151e1', '#fde74a', '#ec4476'] },  // jetbrains-1
     { label: ' ',   id: 'empty0',        palette: [ ] },  // separator
-    { label: 'IJ',  id: 'intellij-idea', palette: [ '#1a7ff6', '#fb3560', '#f77a29' ] },  // idea // IJ_
+    { label: 'IJ',  id: 'intellij-idea', palette: [ '#087cfa', '#fe315d', '#f97a12' ] },  // idea // IJ_
     { label: 'PS',  id: 'phpstorm',      palette: [ '#b24eee', '#7660f4', '#fc378c' ] },  // phpstorm // PS_
-    { label: 'PC',  id: 'pycharm',       palette: [ '#31d68b', '#fcf65a', '#24c4f0' ] },  // pycharm // PC_
+    { label: 'PC',  id: 'pycharm',       palette: [ '#21d789', '#fcf84a', '#07c3f2' ] },  // pycharm // PC_
     { label: 'RM',  id: 'rubymine',      palette: [ '#fc2555', '#fd8638', '#8f41cd' ] },  // rubymine // RM_
     { label: 'WS',  id: 'webstorm',      palette: [ '#22cdd6', '#2888d4', '#feee56' ] },  // webstorm // WS_
     { label: 'CL',  id: 'clion',         palette: [ '#32d791', '#1a9edd', '#ea3a8c' ] },  // clion // CL_
@@ -173,7 +173,7 @@ function initNoiseSketch() {
             if (!setupCalled) return;
             p.noiseDetail(inlets.octave, inlets.falloff);
             lastSeed = p.random(1000);
-            lastStep = inlets.step;
+            lastStep = inlets.grain;
             p.noiseSeed(lastSeed);
             p.redraw();
             return lastPixels;
@@ -366,16 +366,6 @@ function applyGradient(p, config, ctx) {
     var width = config.width || window.innerWidth;
     var height = config.height || window.innerHeight;
 
-    var xRect = 0; // width / 2;
-    var yRect = 0; // height / 2;
-
-    var rotation1 = p.map(50, 0, 100, 0, width);
-    var rotation2 = p.map(50, 0, 100, 0, height);
-    var location = p.map(0, 50, 100, 0, width);
-
-    var startGrad1 = p.createVector(xRect + rotation1 + location, yRect + height - rotation2 - location);
-    var endGrad1 = p.createVector(xRect + width - rotation1 - location, yRect + rotation2 + location);
-
     //Main gradient
     // --> p.blendMode(p.OVERLAY);
     // p.blendMode(p.NORMAL);
@@ -384,9 +374,9 @@ function applyGradient(p, config, ctx) {
         // gradient.addColorStop(0, palette[0]);
         // gradient.addColorStop(1, palette[2]);
         var gradient = ctx.createLinearGradient(0, 0, width, height);
-        gradient.addColorStop(0, palette[2]);
-        gradient.addColorStop(0.3, palette[1]);
-        gradient.addColorStop(1, palette[0]);
+        gradient.addColorStop(0.1, palette[2]);
+        gradient.addColorStop(0.5, palette[1]);
+        gradient.addColorStop(0.9, palette[0]);
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
     }
@@ -396,6 +386,7 @@ function applyGradient(p, config, ctx) {
 // jb/draw-logo
 function putLogoAt(ctx, image, x, y) {
     ctx.drawImage(image, x - 870 / 2, y - 55, 870, 110);
+
 }
 
 function drawLogo(p, logo, ctx) {
@@ -620,14 +611,12 @@ function drawBackEdgesSquares(p, data) {
 function drawDarkGradients(p, config) {
     var width = config.width || window.innerWidth;
     var height = config.height || window.innerHeight;
-    var pupil = config.pupil;
     var iris = config.iris;
     var pupilOpacity = config.pupilOpacity;
     var pupilColor = config.pupilColor;
 
      if (ctx) {
-        p.blendMode(p.OVERLAY);
-
+      //   p.blendMode(p.OVERLAY);
 
         var gradient = ctx.createRadialGradient(width/2, height/2, height/2 * iris / 100, width/2, height/2, width/2 * iris / 100);
         gradient.addColorStop(0, p.color(pupilColor.r, pupilColor.g, pupilColor.b, pupilOpacity));
@@ -643,7 +632,7 @@ function drawDarkGradients(p, config) {
         gradient.addColorStop(1, p.color(24, 24, 24));
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
-         p.blendMode(p.NORMAL);
+        p.blendMode(p.NORMAL);
     }
 }
 

@@ -1,7 +1,7 @@
 var sketchConfig = {
     width: window.innerWidth,
     height: window.innerHeight,
-    bgcolor: _rgb(24, 24, 24),
+    bgcolor: _rgb(255, 255, 255),
     layers: []
     //backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };

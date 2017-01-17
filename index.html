@@ -266,7 +266,7 @@
             falloffNoiseNode.inlets['max'].receive(1);
 
 
-            var noiseStep = patch.addNode('util/dial', 'Step').move(leftMargin + 31, topMargin + 214);
+            var noiseStep = patch.addNode('util/dial', 'Grain').move(leftMargin + 31, topMargin + 214);
             noiseStep.inlets['max'].receive(100);
             noiseStep.inlets['min'].receive(1);
             noiseStep.inlets['submit'].receive(1/10);
@@ -292,7 +292,7 @@
             paletteNode.outlets['palette'].connect(edgesSquaresNode.inlets['palette']);
             octaveNoiseNode.outlets['number'].connect(noiseNode.inlets['octave']);
             falloffNoiseNode.outlets['number'].connect(noiseNode.inlets['falloff']);
-            noiseStep.outlets['number'].connect(noiseNode.inlets['step']);
+            noiseStep.outlets['number'].connect(noiseNode.inlets['grain']);
             voronoiNode.outlets['voronoi'].connect(edgesSquaresNode.inlets['voronoi']);
             rorschachNode.outlets['pixels'].connect(edgesSquaresNode.inlets['pixels']);
             voronoiNode.outlets['voronoi'].connect(curvedEdgesNode.inlets['voronoi']);
