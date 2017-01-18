@@ -314,7 +314,7 @@ function collectPointData(pixels, config) {
 
     if (!step) return [];
 
-    var chaos = config.chaos;
+    var chaos = config.chaos / 100;
     var d = pixels.density;
     var srcWidth = pixels.width;
     var srcHeight = pixels.height;

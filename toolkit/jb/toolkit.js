@@ -328,7 +328,7 @@ Rpd.nodetype('jb/draw-pixels', {
 Rpd.nodetype('jb/collect-point-data', {
     title: 'Collect Points',
     inlets: {
-        'chaos': { type: 'util/number', default: 0.5 },
+        'chaos': { type: 'util/number', default: 50 },
         'step': { type: 'util/number', default: 16 },
         'pixels': { type: 'jb/pixels' }
     },

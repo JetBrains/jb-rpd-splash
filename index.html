@@ -271,7 +271,17 @@
             noiseStep.inlets['min'].receive(1);
             noiseStep.inlets['submit'].receive(1/10);
 
-            var collectPointDataNode = patch.addNode('jb/collect-point-data').move(leftMargin + 370,topMargin + 187);
+            var collectorStep = patch.addNode('util/dial', 'Step').move(leftMargin + 260, topMargin + 100);
+            collectorStep.inlets['max'].receive(40);
+            collectorStep.inlets['min'].receive(7);
+            collectorStep.inlets['submit'].receive(11/40);
+
+            var chaos = patch.addNode('util/dial', 'Chaos').move(leftMargin + 260, topMargin + 10);
+            chaos.inlets['submit'].receive(1/2);
+
+
+
+            var collectPointDataNode = patch.addNode('jb/collect-point-data').move(leftMargin + 370,topMargin + 125);
 
             var drawPixelsNode = patch.addNode('jb/draw-pixels').move(leftMargin + 383, topMargin + 325);
             var applyGradientNode = patch.addNode('jb/apply-gradient').move(leftMargin + 749, topMargin + 433);
@@ -283,6 +293,7 @@
             var vignetteNode = patch.addNode('jb/vignette').move(leftMargin + 571, topMargin + 365);
 
             backgroundNode.outlets['pixels'].connect(rorschachVerticalNode.inlets['pixels']);
+
             rorschachVerticalNode.outlets['pixels'].connect(collectPointDataNode.inlets['pixels']);
             rorschachVerticalNode.outlets['pixels'].connect(drawPixelsNode.inlets['pixels']);
 
@@ -290,9 +301,13 @@
           //  paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
             paletteNode.outlets['product'].connect(drawLogoNode.inlets['product']);
             paletteNode.outlets['palette'].connect(edgesSquaresNode.inlets['palette']);
+
             octaveNoiseNode.outlets['number'].connect(noiseNode.inlets['octave']);
             falloffNoiseNode.outlets['number'].connect(noiseNode.inlets['falloff']);
             noiseStep.outlets['number'].connect(noiseNode.inlets['grain']);
+            collectorStep.outlets['number'].connect(collectPointDataNode.inlets['step']);
+            chaos.outlets['number'].connect(collectPointDataNode.inlets['chaos']);
+
             voronoiNode.outlets['voronoi'].connect(edgesSquaresNode.inlets['voronoi']);
             rorschachNode.outlets['pixels'].connect(edgesSquaresNode.inlets['pixels']);
             voronoiNode.outlets['voronoi'].connect(curvedEdgesNode.inlets['voronoi']);
