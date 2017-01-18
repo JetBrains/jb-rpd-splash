@@ -318,6 +318,8 @@ function collectPointData(pixels, config) {
     var d = pixels.density;
     var srcWidth = pixels.width;
     var srcHeight = pixels.height;
+    var low = config.low;
+    var high = config.high;
 
     var dsrcWidth = srcWidth * d;
     var dsrcHeight = srcHeight * d;
@@ -341,7 +343,7 @@ function collectPointData(pixels, config) {
             // console.log('y', y, pointData.length >= maxPoints);
             pxBrightness = pixelBrightnessByCoords(x, y, srcPixels, srcWidth, d);
 
-            if ((pxBrightness > 40) && (random(0, pxBrightness) < 30)) {
+            if ((pxBrightness > low) && (random(0, pxBrightness) < high)) {
 
                 xpos = x + random(-step / 2, step / 2) * chaos;
                 ypos = y + random(-step / 2, step / 2) * chaos;
@@ -618,7 +620,7 @@ function drawDarkGradients(p, config) {
      if (ctx) {
       //   p.blendMode(p.OVERLAY);
 
-        var gradient = ctx.createRadialGradient(width/2, height/2, height/2 * iris / 100, width/2, height/2, width/2 * iris / 100);
+        var gradient = ctx.createRadialGradient(width/2, height/2, 4.5 * iris, width/2, height/2, width/2 * iris / 100);
         gradient.addColorStop(0, p.color(pupilColor.r, pupilColor.g, pupilColor.b, pupilOpacity));
         gradient.addColorStop(1, p.color(0));
         ctx.fillStyle = gradient;
@@ -627,7 +629,7 @@ function drawDarkGradients(p, config) {
 
 
         p.blendMode(p.MULTIPLY);
-        var gradient = ctx.createRadialGradient(width/2, height/2, height/3 * iris / 100, width/2, height/2, 0.7 * width * iris / 100);
+        var gradient = ctx.createRadialGradient(width/2, height/2, 2 * iris, width/2, height/2, 0.7 * width * iris / 100);
         gradient.addColorStop(0, p.color(pupilColor.r, pupilColor.g, pupilColor.b, pupilOpacity));
         gradient.addColorStop(1, p.color(24, 24, 24));
         ctx.fillStyle = gradient;

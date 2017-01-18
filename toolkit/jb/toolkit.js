@@ -25,6 +25,13 @@ Rpd.channeltype('jb/noise-step', {
     adapt : function(val) { return val < 1 ? 1 : val; }
 });
 
+
+Rpd.channeltype('jb/brightness', {
+    allow: ['util/wholenumber'],
+    adapt : function(val) { return val > 255 ? 255 : val; }
+});
+
+
 Rpd.channeltype('jb/palette', { show: howMuch('color', 'colors') });
 Rpd.channeltype('jb/logo', { show: function(logo) { return logo.product + ', ' + logo.x + ', '+ logo.y; } });
 
@@ -330,6 +337,8 @@ Rpd.nodetype('jb/collect-point-data', {
     inlets: {
         'chaos': { type: 'util/number', default: 50 },
         'step': { type: 'util/number', default: 16 },
+        'low': { type: 'jb/brightness', default: 40 },
+        'high': { type: 'jb/brightness', default: 30 },
         'pixels': { type: 'jb/pixels' }
     },
     outlets: {
