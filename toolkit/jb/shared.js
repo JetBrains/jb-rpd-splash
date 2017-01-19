@@ -154,14 +154,17 @@ function initNoiseSketch() {
 
         var setupCalled = false;
 
+        var cvs;
+
         p.setup = function() {
-            var cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
+            cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
             //cvs.position(-5000, -5000);
             cvs.canvas.className = 'noise-canvas';
             cvs.canvas.style.display = 'none';
-         //  console.log(cvs);
+            // console.log(cvs);
             //cvs.style.display = 'none';
             p.noLoop();
+            p.background(p.color(0, 0, 0, 0));
             setupCalled = true;
         };
 
@@ -203,6 +206,7 @@ function initNoiseSketch() {
                 width: width,
                 height: height,
                 values: p.pixels,
+                canvas: cvs.canvas,
                 //values: lastValues,
                 step: lastStep || 10,
                 time: new Date(),
@@ -296,9 +300,15 @@ function drawPixels(p, config, ctx, renderOptions) {
 
     if (!pixels) return;
 
+    p.push();
+
+    if (opacity) ctx.globalAlpha = opacity;
+
+    ctx.drawImage(pixels.canvas, 0, 0);
+
     p.loadPixels();
 
-    var src = pixels.values;
+    var src = p.pixels; // pixels.values
     var trg = p.pixels;
 
     // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
@@ -307,13 +317,14 @@ function drawPixels(p, config, ctx, renderOptions) {
         trg[i] = src[i] - contrast ;
         trg[i+1] = src[i+1] - contrast ;
         trg[i+2] = src[i+2] - contrast;
-        trg[i+3] = src[i+3] * opacity;
+        trg[i+3] = src[i+3]/*  * opacity */;
 
         //trg[i] = src[i];
     }
     p.updatePixels();
     if (blur) { p.filter(p.BLUR, blur); }
 
+    p.pop();
 
 }
 
@@ -576,7 +587,7 @@ function drawShapes(p, voronoi) {
 
     for (j = 0; j < shapes.length; j++) {
         if (!shapes[j]) continue;
-        p.fill(p.color(255, p.random(2, 20)));
+        p.fill(p.color(255, 0, 0, p.random(2, 255)));
         p.beginShape();
         coords = shapes[j];
         for (var l = 0; l < coords.length; ++l) {
