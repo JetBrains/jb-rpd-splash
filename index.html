@@ -192,6 +192,8 @@
 
             d3.select('#loader-wrapper').style('opacity', '0');
 
+            Rpd.allNodeTypes['util/knob'].inlets['max'].default = 1;
+
             var patch = Rpd.addPatch('jetbrains-art');
 
             patch.render('svg', document.getElementById('patch-target'),

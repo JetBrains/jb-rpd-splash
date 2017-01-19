@@ -317,8 +317,9 @@ Rpd.nodetype('jb/layers', {
 Rpd.nodetype('jb/draw-pixels', {
     title: 'Draw Pixels',
     inlets: {
-        'pixels': { type: 'jb/pixels' },
-        'blur': { type: 'util/wholenumber' }
+        'pixels': { type: 'jb/pixels'},
+        'blur': { type: 'util/wholenumber'},
+        'contrast': { type: 'util/number'}
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }

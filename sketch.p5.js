@@ -133,7 +133,7 @@ function draw() {
         var layer = v.layer;
         //console.time(layer.name || 'layer-' + v.index);
         applyRenderOptions(p5, v.renderOptions, v.index);
-        layer.func(p5, layer.conf, ctx);
+        layer.func(p5, layer.conf, ctx, v.renderOptions);
         resetRenderOptions(p5);
         //console.timeEnd(layer.name || 'layer-' + v.index);
         if (v.index == (layersToRender.length - 1)) hideLoader();

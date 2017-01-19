@@ -287,18 +287,29 @@ function initBackgroundSketch() {
 }
 
 // jb/draw-pixels
-function drawPixels(p, config) {
+function drawPixels(p, config, ctx, renderOptions) {
     var pixels = config.pixels;
     var blur = config.blur;
+    var contrast = Math.floor(config.contrast * 255);
+
+    var opacity = renderOptions.opacity;
+
+    if (!pixels) return;
 
     p.loadPixels();
 
     var src = pixels.values;
-    var pixels = p.pixels;
+    var trg = p.pixels;
 
     // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
-    for (var i = 0; i < src.length; i++) {
-        pixels[i] = src[i];
+    for (var i = 0; i < src.length; i += 4) {
+
+        trg[i] = src[i] - contrast ;
+        trg[i+1] = src[i+1] - contrast ;
+        trg[i+2] = src[i+2] - contrast;
+        trg[i+3] = src[i+3] * opacity;
+
+        //trg[i] = src[i];
     }
     p.updatePixels();
     if (blur) { p.filter(p.BLUR, blur); }
