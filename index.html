@@ -261,25 +261,25 @@
             var backgroundNode = patch.addNode('jb/background').move(leftMargin + 130, topMargin + 40);
 
             var octaveNoiseNode = patch.addNode('util/dial', 'Octaves').move(leftMargin + 29, topMargin + 310);
+            octaveNoiseNode.configure({ dial: 4/10 });
             octaveNoiseNode.inlets['max'].receive(10);
-            octaveNoiseNode.inlets['submit'].receive(0.4);
 
             var falloffNoiseNode = patch.addNode('util/knob', 'Falloff').move(leftMargin + 33, topMargin + 408);
             falloffNoiseNode.inlets['max'].receive(1);
 
 
             var noiseStep = patch.addNode('util/dial', 'Grain').move(leftMargin + 31, topMargin + 214);
+            noiseStep.configure({ dial: 4/(100 - 1) });
             noiseStep.inlets['max'].receive(100);
             noiseStep.inlets['min'].receive(1);
-            noiseStep.inlets['submit'].receive(1/10);
 
             var collectorStep = patch.addNode('util/dial', 'Step').move(leftMargin + 260, topMargin + 100);
+            collectorStep.configure({ dial: 4/(40-7) });
             collectorStep.inlets['max'].receive(40);
             collectorStep.inlets['min'].receive(7);
-            collectorStep.inlets['submit'].receive(11/40);
 
             var chaos = patch.addNode('util/dial', 'Chaos').move(leftMargin + 260, topMargin + 10);
-            chaos.inlets['submit'].receive(1/2);
+            chaos.configure({ dial: 50/100 });
 
 
 
