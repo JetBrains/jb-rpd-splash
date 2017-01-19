@@ -287,18 +287,21 @@ function initBackgroundSketch() {
 }
 
 // jb/draw-pixels
-function drawPixels(p, pixels) {
+function drawPixels(p, config) {
+    var pixels = config.pixels;
+    var blur = config.blur;
+
     p.loadPixels();
 
     var src = pixels.values;
     var pixels = p.pixels;
-    tint(0, 255, 0, 100);
 
     // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
     for (var i = 0; i < src.length; i++) {
         pixels[i] = src[i];
     }
     p.updatePixels();
+    if (blur) { p.filter(p.BLUR, blur); }
 
 
 }

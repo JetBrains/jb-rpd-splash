@@ -318,6 +318,7 @@ Rpd.nodetype('jb/draw-pixels', {
     title: 'Draw Pixels',
     inlets: {
         'pixels': { type: 'jb/pixels' },
+        'blur': { type: 'util/wholenumber' }
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
@@ -325,7 +326,7 @@ Rpd.nodetype('jb/draw-pixels', {
     process: function(inlets) {
         return {
             'drawable': {
-                'conf': inlets.pixels,
+                'conf': inlets,
                 'func': drawPixels
             }
         }
