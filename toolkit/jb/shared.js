@@ -239,9 +239,10 @@ function initBackgroundSketch() {
         var setupCalled = false;
 
         var ctx;
+        var cvs;
 
         p.setup = function() {
-            var cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
+            cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
             //cvs.position(-5000, -5000);
             cvs.canvas.className = 'background-canvas';
             cvs.canvas.style.display = 'none';
@@ -276,6 +277,7 @@ function initBackgroundSketch() {
                 height: lastConfig.height,
                 values: p.pixels,
                 //values: lastValues,
+                canvas: cvs.canvas,
                 step: -1,
                 time: new Date(),
                 density: p.pixelDensity(),
@@ -304,7 +306,7 @@ function drawPixels(p, config, ctx, renderOptions) {
 
     if (opacity) ctx.globalAlpha = opacity;
 
-    ctx.drawImage(pixels.canvas, 0, 0);
+    ctx.drawImage(pixels.canvas, 0, 0, pixels.width, pixels.height);
 
     p.loadPixels();
 
