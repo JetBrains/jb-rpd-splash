@@ -139,53 +139,77 @@ var EMPTY_PIXELS = {
   density: -1,
   time: -1
 };
-function initNoiseSketch() {
 
+function makePixelExtractingSketch(className, drawContent, adaptPixels) {
     var refresher;
-    //var values = Kefir.emitter();
 
     function refreshSketch(inlets) {
         return refresher ? refresher(inlets) : EMPTY_PIXELS;
     }
 
-    var noiseSketch = function(p) {
+    var sketchFunc = function(p) {
         var width = window.innerWidth;
         var height = window.innerHeight;
 
         var setupCalled = false;
 
+        var ctx;
         var cvs;
 
         p.setup = function() {
             cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
             //cvs.position(-5000, -5000);
-            cvs.canvas.className = 'noise-canvas';
+            cvs.canvas.className = className || 'hidden-canvas';
             cvs.canvas.style.display = 'none';
-            // console.log(cvs);
+         //  console.log(cvs);
             //cvs.style.display = 'none';
-            p.noLoop();
+
+            ctx = cvs.drawingContext;
             p.background(p.color(0, 0, 0, 0));
+            p.noLoop();
             setupCalled = true;
         };
 
+        var lastConfig;
         var lastPixels;
-        var lastSeed;
-        var lastValues;
-        var lastStep;
         refresher = function(inlets) {
             if (!setupCalled) return;
+            lastConfig = inlets;
+            p.redraw();
+            return adaptPixels
+                ? adaptPixels(lastPixels, lastConfig, p, cvs.canvas, width, height)
+                : lastPixels;
+        };
+
+        p.draw = function() {
+            if (!lastConfig) return;
+
+            p.clear();
+            //lastValues = [];
+
+            //drawBackground(p, lastConfig, ctx);
+            drawContent(p, lastConfig, ctx, width, height);
+
+            p.loadPixels();
+            lastPixels = p.pixels;
+        };
+    };
+
+    /*var backgroundP5 =*/ new p5(sketchFunc);
+
+    return refreshSketch;
+}
+
+// jb/noise
+function initNoiseSketch() {
+    var lastSeed, lastStep;
+    return makePixelExtractingSketch('noise-canvas',
+        function(p, inlets, ctx, width, height) {
+            p.noStroke();
             p.noiseDetail(inlets.octave, inlets.falloff);
             lastSeed = p.random(1000);
             lastStep = inlets.grain;
             p.noiseSeed(lastSeed);
-            p.redraw();
-            return lastPixels;
-        };
-
-        p.draw = function() {
-            p.clear();
-            p.noStroke();
-            //lastValues = [];
             var x, y, c;
 
             //for (var x = 0; x <= width/2+10; x+=10) {
@@ -201,95 +225,38 @@ function initNoiseSketch() {
                 }
                 //lastValues.push(column);
             }
-            p.loadPixels();
-            lastPixels = {
+        },
+        function(values, config, p, canvas, width, height) {
+            return {
                 width: width,
                 height: height,
-                values: p.pixels,
-                canvas: cvs.canvas,
-                //values: lastValues,
-                step: lastStep || 10,
+                values: values,
+                canvas: canvas,
                 time: new Date(),
+                step: lastStep,
                 density: p.pixelDensity(),
                 seed: lastSeed
             };
-        };
-    };
-
-    /*var noiseP5 =*/ new p5(noiseSketch);
-
-    return refreshSketch;
-
+        });
 }
 
 // jb/background
 function initBackgroundSketch() {
-
-    var refresher;
-    //var values = Kefir.emitter();
-
-    function refreshSketch(inlets) {
-        return refresher ? refresher(inlets) : EMPTY_PIXELS;
-    }
-
-    var backgroundSketch = function(p) {
-        var width = window.innerWidth;
-        var height = window.innerHeight;
-
-        var setupCalled = false;
-
-        var ctx;
-        var cvs;
-
-        p.setup = function() {
-            cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
-            //cvs.position(-5000, -5000);
-            cvs.canvas.className = 'background-canvas';
-            cvs.canvas.style.display = 'none';
-         //  console.log(cvs);
-            //cvs.style.display = 'none';
-
-            ctx = cvs.drawingContext;
-            p.noLoop();
-            setupCalled = true;
-        };
-
-        var lastConfig;
-        var lastPixels;
-        refresher = function(inlets) {
-            if (!setupCalled) return;
-            lastConfig = inlets;
-            p.redraw();
-            return lastPixels;
-        };
-
-        p.draw = function() {
-            if (!lastConfig) return;
-
-            p.clear();
-            //lastValues = [];
-
-            drawBackground(p, lastConfig, ctx);
-
-            p.loadPixels();
-            lastPixels = {
-                width: lastConfig.width,
-                height: lastConfig.height,
-                values: p.pixels,
-                //values: lastValues,
-                canvas: cvs.canvas,
-                step: -1,
+    return makePixelExtractingSketch(
+        'background-canvas',
+        drawBackground,
+        function(values, config, p, canvas, width, height) {
+            return {
+                width: width,
+                height: height,
+                values: values,
+                canvas: canvas,
                 time: new Date(),
+                step: -1,
                 density: p.pixelDensity(),
                 seed: -1
             };
-        };
-    };
-
-    /*var backgroundP5 =*/ new p5(backgroundSketch);
-
-    return refreshSketch;
-
+        });
 }
 
 // jb/draw-pixels
