@@ -270,8 +270,8 @@
 
             var paletteNode = patch.addNode('jb/palette').move(bangX, bangY - 100);
             var drawLogoNode = patch.addNode('jb/draw-logo').move(leftMargin + 944, topMargin + 376);
-            var rorschachNode = patch.addNode('jb/rorschach').move(leftMargin + 252, topMargin + 285);
-            var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(leftMargin + 253, topMargin + 205);
+            var rorschachNode = patch.addNode('jb/rorschach').move(leftMargin + 252, topMargin + 330);
+            var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(leftMargin + 253, topMargin + 395);
 
             var noiseNode = patch.addNode('jb/noise').move(leftMargin + 127, topMargin + 258);
             var backgroundNode = patch.addNode('jb/background').move(leftMargin + 130, topMargin + 40);
@@ -308,10 +308,10 @@
             var shapesNode = patch.addNode('jb/shapes').move(leftMargin + 779, topMargin + 171);
             var vignetteNode = patch.addNode('jb/vignette').move(leftMargin + 571, topMargin + 365);
 
-            backgroundNode.outlets['pixels'].connect(rorschachVerticalNode.inlets['pixels']);
+            backgroundNode.outlets['pixels'].connect(collectPointDataNode.inlets['pixels']);
 
-            rorschachVerticalNode.outlets['pixels'].connect(collectPointDataNode.inlets['pixels']);
-            rorschachVerticalNode.outlets['pixels'].connect(drawPixelsNode.inlets['pixels']);
+           // rorschachVerticalNode.outlets['pixels'].connect(collectPointDataNode.inlets['pixels']);
+            backgroundNode.outlets['pixels'].connect(drawPixelsNode.inlets['pixels']);
 
             paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
           //  paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
