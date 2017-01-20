@@ -318,7 +318,7 @@ Rpd.nodetype('jb/draw-pixels', {
     title: 'Draw Pixels',
     inlets: {
         'pixels': { type: 'jb/pixels'},
-        'blur': { type: 'util/wholenumber'},
+        'blur': { type: 'util/number'},
         'contrast': { type: 'util/number'}
     },
     outlets: {
@@ -436,7 +436,8 @@ Rpd.nodetype('jb/curved-edges', {
 Rpd.nodetype('jb/shapes', {
     title: 'Shapes',
     inlets: {
-        'voronoi': { type: 'jb/voronoi' }
+        'voronoi': { type: 'jb/voronoi' },
+        'palette': { type: 'jb/palette' }
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
@@ -445,7 +446,7 @@ Rpd.nodetype('jb/shapes', {
         if (!inlets.voronoi) return;
         return {
             'drawable': {
-                'conf': inlets.voronoi,
+                'conf': inlets,
                 'func': drawShapes
             }
         }

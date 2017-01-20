@@ -302,13 +302,13 @@ function drawPixels(p, config, ctx, renderOptions) {
 
     p.push();
 
-    if (opacity) ctx.globalAlpha = opacity;
+    //if (opacity) ctx.globalAlpha = opacity;
 
-    ctx.drawImage(pixels.canvas, 0, 0);
+    //ctx.drawImage(pixels.canvas, 0, 0);
 
     p.loadPixels();
 
-    var src = p.pixels; // pixels.values
+    var src = pixels.values; // pixels.values
     var trg = p.pixels;
 
     // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
