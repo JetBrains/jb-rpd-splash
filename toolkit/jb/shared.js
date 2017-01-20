@@ -599,10 +599,11 @@ function drawCurvedEdges(p, voronoi) {
 
 // jb/shapes
 function drawShapes(p, config) {
-    return;
+   // return;
     var voronoi = config.voronoi;
     var edges = voronoi.edges;
     var cells = voronoi.cells;
+    var palette = config.palette;
 
     p.smooth();
 
@@ -644,17 +645,22 @@ function drawShapes(p, config) {
         }
 
         area = (maxX - minX) * (maxY - minY);
-
-        if (area < 2000) {
+        var qty = p.map(config.qty, 0, 1, 0, 5000);
+        if (area < qty) {
             shapes.push(coords);
             s++;
         }
 
+
+        var opacity = p.map(config.opacity, 0, 1, 2, 255);
+
     }
+
 
     for (j = 0; j < shapes.length; j++) {
         if (!shapes[j]) continue;
-        p.fill(p.color(255, 0, 0, p.random(2, 255)));
+        var color = Math.floor(p.random(3));
+        p.fill(p.color(p.red(p.color(palette[color])), p.green(p.color(palette[color])), p.blue(p.color(palette[color])), opacity * p.noise(j)));
         p.beginShape();
         coords = shapes[j];
         for (var l = 0; l < coords.length; ++l) {
