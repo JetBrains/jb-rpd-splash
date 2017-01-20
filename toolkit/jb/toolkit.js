@@ -122,88 +122,45 @@ Rpd.nodetype('jb/preview', {
 });
 
 
-Rpd.nodetype('jb/rorschach', {
-    title: 'H-Rorschach',
-    inlets: {
-        'pixels': { type: 'jb/pixels' }
-    },
-    outlets: {
-        'pixels': { type: 'jb/pixels' }
-    },
-    process: function(inlets) {
-        if (!inlets.pixels) return; // FIXME: why this condition needed?
-        var pixels = inlets.pixels;
-        var d = pixels.density;
-        var width =  pixels.width;
-        var height = pixels.height;
-        var source = pixels.values;
-        var target = [];
+Rpd.nodetype('jb/rorschach', function() {
 
-        var trgIdx, srcIdx;
-        for (var x = 0; x < width; x++) {
-            for (var y = 0; y < height; y++) {
-                for (var i = 0; i < d; i++) {
-                    for (var j = 0; j < d; j++) {
-                        trgIdx = 4 * ((y * d + j) * width * d + (x * d + i));
-                        srcIdx = (x < width / 2) ? trgIdx : 4 * ((y * d + j) * width * d + ((width - x) * d + i));
-                        target[trgIdx] = source[srcIdx];
-                        target[trgIdx+1] = source[srcIdx+1];
-                        target[trgIdx+2] = source[srcIdx+2];
-                        target[trgIdx+3] = source[srcIdx+3];
-                    }
-                }
-            }
+    var refreshSketch = initHRorschachSketch();
+
+    return {
+        title: 'H-Rorschach',
+        inlets: {
+            'pixels': { type: 'jb/pixels' }
+        },
+        outlets: {
+            'pixels': { type: 'jb/pixels' }
+        },
+        process: function(inlets) {
+            if (!inlets.pixels) return;
+
+            return { 'pixels': refreshSketch(inlets) };
         }
-
-        pixels.values = target;
-        return { 'pixels': pixels };
-    }
-
-
+    };
 });
 
 // FIXME: make an option for rorshach node
-Rpd.nodetype('jb/rorschach-vertical', {
-    title: 'V-Rorschach',
-    inlets: {
-        'pixels': { type: 'jb/pixels' }
-    },
-    outlets: {
-        'pixels': { type: 'jb/pixels' }
-    },
-    process: function(inlets) {
-        if (!inlets.pixels) return; // FIXME: why this condition needed?
-        var pixels = inlets.pixels;
-        var d = pixels.density;
-        var width = pixels.width;
-        var height = pixels.height;
-        var source = pixels.values;
-        var target = [];
+Rpd.nodetype('jb/rorschach-vertical', function() {
 
+    var refreshSketch = initVRorschachSketch();
 
-        var trgIdx, srcIdx;
-        for (var x = 0; x < width; x++) {
-            for (var y = 0; y < height; y++) {
-                for (var i = 0; i < d; i++) {
-                    for (var j = 0; j < d; j++) {
-                        trgIdx = 4 * ((y * d + j) * width * d + (x * d + i));
-                        srcIdx = (y < height / 2) ? trgIdx : 4 * (((height - y) * d + j) * width * d + ((x * d + i)));
-                        target[trgIdx] = source[srcIdx];
-                        target[trgIdx+1] = source[srcIdx+1];
-                        target[trgIdx+2] = source[srcIdx+2];
-                        target[trgIdx+3] = source[srcIdx+3];
-                    }
-                }
-            }
+    return {
+        title: 'V-Rorschach',
+        inlets: {
+            'pixels': { type: 'jb/pixels' }
+        },
+        outlets: {
+            'pixels': { type: 'jb/pixels' }
+        },
+        process: function(inlets) {
+            if (!inlets.pixels) return;
+
+            return { 'pixels': refreshSketch(inlets) };
         }
-
-        //console.log(target)
-
-        pixels.values = target;
-        return { 'pixels': pixels };
-    }
-
-
+    };
 });
 
 

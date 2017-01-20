@@ -187,7 +187,6 @@ function makePixelExtractingSketch(className, drawContent, adaptPixels) {
             p.clear();
             //lastValues = [];
 
-            //drawBackground(p, lastConfig, ctx);
             drawContent(p, lastConfig, ctx, width, height);
 
             p.loadPixels();
@@ -259,6 +258,103 @@ function initBackgroundSketch() {
         });
 }
 
+function initHRorschachSketch() {
+    var lastInlets;
+
+    return makePixelExtractingSketch(
+        'rorschach-canvas',
+        function(p, inlets, ctx, width, height) {
+            lastInlets = inlets;
+
+            p.loadPixels();
+
+            var pixels = inlets.pixels;
+            var d = pixels.density;
+            var width =  pixels.width;
+            var height = pixels.height;
+            var source = pixels.values;
+            var target = p.pixels;
+
+            var trgIdx, srcIdx;
+            for (var x = 0; x < width; x++) {
+                for (var y = 0; y < height; y++) {
+                    for (var i = 0; i < d; i++) {
+                        for (var j = 0; j < d; j++) {
+                            trgIdx = 4 * ((y * d + j) * width * d + (x * d + i));
+                            srcIdx = (x < width / 2) ? trgIdx : 4 * ((y * d + j) * width * d + ((width - x) * d + i));
+                            target[trgIdx] = source[srcIdx];
+                            target[trgIdx+1] = source[srcIdx+1];
+                            target[trgIdx+2] = source[srcIdx+2];
+                            target[trgIdx+3] = source[srcIdx+3];
+                        }
+                    }
+                }
+            }
+
+            p.updatePixels();
+        },
+        function(values, config, p, canvas, width, height) {
+            return {
+                width: width,
+                height: height,
+                values: values,
+                canvas: canvas,
+                time: new Date(),
+                step: lastInlets.pixels.step,
+                density: p.pixelDensity(),
+                seed: lastInlets.pixels.seed
+            };
+        });
+}
+
+function initVRorschachSketch() {
+    var lastInlets;
+    return makePixelExtractingSketch(
+        'rorschach-canvas',
+        function(p, inlets, ctx, width, height) {
+            lastInlets = inlets;
+
+            p.loadPixels();
+
+            var pixels = inlets.pixels;
+            var d = pixels.density;
+            var width =  pixels.width;
+            var height = pixels.height;
+            var source = pixels.values;
+            var target = p.pixels;
+
+            var trgIdx, srcIdx;
+            for (var x = 0; x < width; x++) {
+                for (var y = 0; y < height; y++) {
+                    for (var i = 0; i < d; i++) {
+                        for (var j = 0; j < d; j++) {
+                            trgIdx = 4 * ((y * d + j) * width * d + (x * d + i));
+                            srcIdx = (y < height / 2) ? trgIdx : 4 * (((height - y) * d + j) * width * d + ((x * d + i)));
+                            target[trgIdx] = source[srcIdx];
+                            target[trgIdx+1] = source[srcIdx+1];
+                            target[trgIdx+2] = source[srcIdx+2];
+                            target[trgIdx+3] = source[srcIdx+3];
+                        }
+                    }
+                }
+            }
+
+            p.updatePixels();
+        },
+        function(values, config, p, canvas, width, height) {
+            return {
+                width: width,
+                height: height,
+                values: values,
+                canvas: canvas,
+                time: new Date(),
+                step: lastInlets.pixels.step,
+                density: p.pixelDensity(),
+                seed: lastInlets.pixels.seed
+            };
+        });
+}
+
 // jb/draw-pixels
 function drawPixels(p, config, ctx, renderOptions) {
     var pixels = config.pixels;
@@ -271,13 +367,13 @@ function drawPixels(p, config, ctx, renderOptions) {
 
     p.push();
 
-    //if (opacity) ctx.globalAlpha = opacity;
+    if (opacity) ctx.globalAlpha = opacity;
 
     ctx.drawImage(pixels.canvas, 0, 0, pixels.width, pixels.height);
 
     p.loadPixels();
 
-    var src = pixels.values; // pixels.values
+    var src = p.pixels; // pixels.values
     var trg = p.pixels;
 
     // console.log('copying', src.length, 'pixels to', pixels.length, 'pixels');
@@ -502,7 +598,9 @@ function drawCurvedEdges(p, voronoi) {
 }
 
 // jb/shapes
-function drawShapes(p, voronoi) {
+function drawShapes(p, config) {
+    return;
+    var voronoi = config.voronoi;
     var edges = voronoi.edges;
     var cells = voronoi.cells;
 
