@@ -57,8 +57,12 @@
             }
 
             #patch-target .rpd-background {
-                /* fill: transparent; */
                 opacity: 0.3;
+            }
+
+            #patch-target .rpd-patch .rpd-background.hidden {
+                fill: transparent;
+                opacity: 0;
             }
 
             #rpd-jb-preview-target {
@@ -198,7 +202,6 @@
             d3.select('#loader-wrapper').style('opacity', '0');
 
             Rpd.allNodeTypes['util/knob'].inlets['max'].default = 1;
-
             var patch = Rpd.addPatch('jetbrains-art');
 
             patch.render('svg', document.getElementById('patch-target'),
@@ -212,6 +215,14 @@
 
             var topMargin = window.innerHeight - 500;
             var leftMargin = window.innerWidth/2 - 700;
+
+            var scaleAt = 1200;
+
+            if (window.innerWidth < scaleAt) {
+                d3.select('.rpd-patch').style('transform', 'scale(0.8, 0.8)');
+                d3.select('.rpd-patch .rpd-background').classed('hidden', true);
+                leftMargin = window.innerWidth/2 - 500;
+            }
 
             patch.addNode('jb/clear').move(leftMargin + 1061,topMargin + 112);
 
@@ -353,6 +364,12 @@
             //setTimeout(function() {
              //   metroNode.outlets['bang'].connect(randomNode.inlets['bang']);
             //}, 2000);
+
+            if (window.innerWidth < scaleAt) {
+                d3.select('.rpd-nodelist-list').style('transform', 'scale(0.8, 0.8) translate(-15px, -125px)');
+            }
+
+
             setTimeout(function() {
                bangNode.outlets['bang'].send({});
             }, 2000);
