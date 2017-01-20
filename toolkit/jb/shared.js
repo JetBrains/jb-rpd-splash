@@ -736,7 +736,7 @@ function drawBackground(p, config, ctx) {
     var width = config.width;
     var height = config.height;
     //p.blendMode(p.NORMAL);
-    if (cachedImages[productId + '/bg'] && ctx) {
+    if (cachedImages[productId + '/bg'] && ctx && productId!='empty0') {
         ctx.save();
         ctx.rotate(config.angle);
         ctx.scale(config.scale, config.scale);

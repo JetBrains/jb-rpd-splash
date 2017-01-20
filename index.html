@@ -280,6 +280,10 @@
             octaveNoiseNode.inlets['max'].receive(10);
             octaveNoiseNode.configure({ dial: 4/10 });
 
+
+            var contrast = patch.addNode('util/knob', 'Contrast').move(leftMargin + 385,topMargin + 395);
+
+
             var falloffNoiseNode = patch.addNode('util/knob', 'Falloff').move(leftMargin + 33, topMargin + 408);
             falloffNoiseNode.inlets['max'].receive(1);
 
@@ -299,7 +303,7 @@
 
             var collectPointDataNode = patch.addNode('jb/collect-point-data').move(leftMargin + 370,topMargin + 125);
 
-            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(leftMargin + 383, topMargin + 325);
+            var drawPixelsNode = patch.addNode('jb/draw-pixels').move(leftMargin + 483, topMargin + 295);
             var applyGradientNode = patch.addNode('jb/apply-gradient').move(leftMargin + 749, topMargin + 433);
             var voronoiNode = patch.addNode('jb/voronoi').move(leftMargin + 496, topMargin + 127);
             var edgesSquaresNode = patch.addNode('jb/edges-squares').move(leftMargin + 625, topMargin + 185);
@@ -323,6 +327,7 @@
             noiseStep.outlets['number'].connect(noiseNode.inlets['grain']);
             collectorStep.outlets['number'].connect(collectPointDataNode.inlets['step']);
             chaos.outlets['number'].connect(collectPointDataNode.inlets['chaos']);
+            contrast.outlets['number'].connect(drawPixelsNode.inlets['contrast']);
 
             voronoiNode.outlets['voronoi'].connect(edgesSquaresNode.inlets['voronoi']);
             rorschachNode.outlets['pixels'].connect(edgesSquaresNode.inlets['pixels']);
