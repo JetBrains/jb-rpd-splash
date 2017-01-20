@@ -306,7 +306,7 @@ function drawPixels(p, config, ctx, renderOptions) {
 
     //if (opacity) ctx.globalAlpha = opacity;
 
-    //ctx.drawImage(pixels.canvas, 0, 0);
+    ctx.drawImage(pixels.canvas, 0, 0, pixels.width, pixels.height);
 
     p.loadPixels();
 
