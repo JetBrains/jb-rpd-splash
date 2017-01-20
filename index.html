@@ -207,8 +207,8 @@
                            linkForm: 'curve',
                            inletAcceptsMultipleLinks: true });
 
-            var bangX = 50;
-            var bangY = 50;
+            var bangX = 40;
+            var bangY = 140;
 
             var topMargin = window.innerHeight - 500;
             var leftMargin = window.innerWidth/2 - 700;
@@ -252,12 +252,12 @@
 
 
             var previewNode = patch.addNode('jb/preview').move(leftMargin + 1210, topMargin + 89);
-            var saveNode = patch.addNode('jb/save').move(leftMargin + 1303, topMargin - 6);
+            var saveNode = patch.addNode('jb/save').move(leftMargin + 1203, topMargin - 6);
 
-            var bangNode = patch.addNode('util/bang').move(bangX, bangY);
-            var bang2Node = patch.addNode('util/bang').move(bangX + 100, bangY);
+            var bangNode = patch.addNode('util/bang', 'Bang!').move(bangX, bangY);
+            var bang2Node = patch.addNode('util/bang', 'Bong!').move(bangX + 100, bangY);
 
-            var paletteNode = patch.addNode('jb/palette').move(leftMargin + 129, topMargin + 394);
+            var paletteNode = patch.addNode('jb/palette').move(bangX, bangY - 100);
             var drawLogoNode = patch.addNode('jb/draw-logo').move(leftMargin + 944, topMargin + 376);
             var rorschachNode = patch.addNode('jb/rorschach').move(leftMargin + 252, topMargin + 285);
             var rorschachVerticalNode = patch.addNode('jb/rorschach-vertical').move(leftMargin + 253, topMargin + 205);

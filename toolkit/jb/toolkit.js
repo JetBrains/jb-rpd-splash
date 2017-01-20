@@ -193,7 +193,7 @@ Rpd.nodetype('jb/rorschach-vertical', function() {
 });
 
 Rpd.nodetype('jb/palette', {
-    title: 'Palette',
+    title: 'Product Palette',
     inlets: {
         'palette': { type: 'jb/palette', default: PRODUCTS[0].palette, label: 'selection', hidden: true },
         'product': { type: 'jb/product', default: PRODUCTS[0].id, label: 'product', hidden: true },
