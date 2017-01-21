@@ -122,11 +122,6 @@
                 /* alignment-baseline: hanging; */
             }
 
-            .rpd-inlet.rpd-util-wholenumber .rpd-connector {
-                fill: blue;
-
-            }
-
             #p5_loading {
                 position: absolute;
                 top: 0;
@@ -301,6 +296,8 @@
             var chaos = patch.addNode('util/dial', 'Chaos').move(leftMargin + 260, topMargin + 10);
             chaos.configure({ dial: 50/100 });
 
+            var threeColorsNode = patch.addNode('jb/three-colors', '3 Colors').move(leftMargin + 1249, bangY - 100);
+
             var collectPointDataNode = patch.addNode('jb/collect-point-data').move(leftMargin + 370,topMargin + 125);
 
             var drawPixelsNode = patch.addNode('jb/draw-pixels').move(leftMargin + 483, topMargin + 295);
@@ -309,7 +306,7 @@
             var edgesSquaresNode = patch.addNode('jb/edges-squares').move(leftMargin + 625, topMargin + 185);
             var curvedEdgesNode = patch.addNode('jb/curved-edges').move(leftMargin + 891, topMargin + 114);
             var backEdgesSquaresNode = patch.addNode('jb/back-edges-squares').move(leftMargin + 783, topMargin + 286);
-            var shapesNode = patch.addNode('jb/shapes').move(leftMargin + 779, topMargin + 171);
+            var shapesNode = patch.addNode('jb/shapes').move(leftMargin + 779, topMargin + 131);
             var vignetteNode = patch.addNode('jb/vignette').move(leftMargin + 571, topMargin + 365);
 
             backgroundNode.outlets['pixels'].connect(collectPointDataNode.inlets['pixels']);

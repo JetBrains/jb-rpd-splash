@@ -500,3 +500,49 @@ Rpd.noderenderer('jb/switch', 'svg', {
         };
     }
 });
+
+function addColorRect(parent, color, size) {
+    return d3.select(parent).append('rect')
+                     .attr('width', size || 7).attr('height', size || 7)
+                     .attr('rx', 1).attr('ry', 1)
+                     .attr('fill', color || 'transparent')
+                     .attr('stroke-width', 0.5)
+                     .attr('stroke', 'white');
+}
+
+Rpd.channelrenderer('util/color', 'svg', {
+    show: function(target, value, repr) {
+        if (!value) return;
+        addColorRect(target.parentNode, repr).style('transform', 'translate(8px,1px)');
+    }
+});
+
+Rpd.channelrenderer('jb/palette', 'svg', {
+    show: function(target, value, repr) {
+        if (!value) return;
+        var groupNode = d3.select(target.parentNode).append('g')
+                          .style('transform', 'translate(8px,1px)')
+                          .node();
+        value.forEach(function(color, i) {
+            addColorRect(groupNode, color).style('transform', 'translate(' + (i * 10) + 'px, 0)');
+        });
+    }
+});
+
+Rpd.noderenderer('jb/three-colors', 'svg', function() {
+    var group;
+    return {
+        first: function(bodyElm) {
+            group = d3.select(bodyElm).append('g')
+                      .attr('transform', 'translate(-10, -30)');
+        },
+        always: function(bodyElm, inlets, outlets) {
+            if (!outlets.palette) return;
+            group.empty();
+            outlets.palette.forEach(function(color, i) {
+                console.log(color, i);
+                addColorRect(group.node(), color, 20).style('transform', 'translate(0, ' +  (i * 20) + 'px)');
+            });
+        }
+    };
+});
