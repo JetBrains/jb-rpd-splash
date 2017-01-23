@@ -513,15 +513,15 @@ function addColorRect(parent, color, size) {
 Rpd.channelrenderer('util/color', 'svg', {
     show: function(target, value, repr) {
         if (!value) return;
-        addColorRect(target.parentNode, repr).style('transform', 'translate(8px,1px)');
+        addColorRect(target, repr).classed('jb-color-value', true);
     }
 });
 
 Rpd.channelrenderer('jb/palette', 'svg', {
     show: function(target, value, repr) {
         if (!value) return;
-        var groupNode = d3.select(target.parentNode).append('g')
-                          .style('transform', 'translate(8px,1px)')
+        var groupNode = d3.select(target).append('g')
+                          .classed('jb-palette-value', true)
                           .node();
         value.forEach(function(color, i) {
             addColorRect(groupNode, color).style('transform', 'translate(' + (i * 10) + 'px, 0)');
