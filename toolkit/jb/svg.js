@@ -237,13 +237,13 @@ var defaultKnobConf = {
 };
 
 function createKnob(state, conf) {
-    var lastValue = 1;
-    var state = { min: 0, max: 1 };
+    var lastValue = 0;
+    //var state = { min: 0, max: 100 };
 
     var adaptAngle = conf.adaptAngle || function(s, v) { return v * 360; };
 
     return {
-        init: function(parent) {
+        init: function(parent, valueIn) {
             var hand, handGhost, face, text;
             var submit = Kefir.emitter();
             d3.select(parent)
@@ -266,7 +266,7 @@ function createKnob(state, conf) {
                   text = bodyGroup.append('text')
                                   .style('text-anchor', 'middle')
                                   .style('fill', '#fff')
-                                  .text(1);
+                                  .text(0);
               });
             Kefir.fromEvents(parent, 'mousedown')
                  .map(stopPropagation)
@@ -298,23 +298,25 @@ function createKnob(state, conf) {
                          submit.emit(lastValue);
                      });
                      return values;
-                 }).onValue(function(value) {
-                     var valueText = Math.floor(value * 100) / 100;
+                 })
+                 .merge(valueIn || Kefir.never())
+                 .onValue(function(value) {
+                     var valueText = adaptToState(state, value);
                      text.text(conf.adaptValue ? conf.adaptValue(valueText) : valueText);
                      hand.attr('transform', 'rotate(' + adaptAngle(state, value) + ')');
                  });
-            return submit;
+            return submit.merge(valueIn ? valueIn : Kefir.never());
         }
     }
 }
 
-function initKnobInGroup(knob, target, id, count, width, height) {
+function initKnobInGroup(knob, target, id, count, width, height, valueIn) {
     var submit;
     d3.select(target).append('g')
       .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
       .call(function(knobRoot) {
           knob.root = knobRoot;
-          submit = knob.init(knobRoot.node());
+          submit = knob.init(knobRoot.node(), valueIn);
       });
     return submit;
 }
