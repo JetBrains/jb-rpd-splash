@@ -510,7 +510,10 @@ function drawEdgesSquares(p, config) {
 
     var myEdges = voronoi.edges; //myDelaunay.getEdges();
 
+    var squares = [];
+
     for (var n = 0; n < myEdges.length; n++) {
+
         if (!myEdges[n]) continue;
         var startX = myEdges[n][0][0];
         var startY = myEdges[n][0][1];
@@ -520,37 +523,53 @@ function drawEdgesSquares(p, config) {
 
         var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, srcPixels, srcWidth, d));
         var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, srcPixels, srcWidth, d));
-        if(!pxBrightnessEnd) { pxBrightnessEnd = 0 };
-        if(!pxBrightnessStart) { pxBrightnessStart = 0 };
+        if (!pxBrightnessEnd) {
+            pxBrightnessEnd = 0
+        }
+        ;
+        if (!pxBrightnessStart) {
+            pxBrightnessStart = 0
+        }
+        ;
 
-      //  if (pxBrightnessStart & pxBrightnessEnd) {
-            var colX = p.map(pxBrightnessStart, 0, 100, 0, 1);
-            var colY = p.map(pxBrightnessEnd, 0, 100, 0, 1);
-            var colcolX = p.lerpColor(p.color(palette[2]), p.color(palette[0]), colX);
-            var colcolY = p.lerpColor(p.color(palette[2]), p.color(palette[0]), colY);
+        //  if (pxBrightnessStart & pxBrightnessEnd) {
+
+        //   if(pxBrightnessStart > 80) {console.log(pxBrightnessStart) };
+        var brightnessStart = p.map(pxBrightnessStart, 40, 100, 0, 1);
+        var brightnessEnd = p.map(pxBrightnessEnd, 40, 100, 0, 1);
+        var colorStart = p.lerpColor(p.color(palette[2]), p.color(palette[0]), brightnessStart);
+        var colorEnd = p.lerpColor(p.color(palette[2]), p.color(palette[0]), brightnessEnd);
 
 
-            p.strokeWeight(0.8);
-            p.stroke(255);
+        p.strokeWeight(0.8);
+        p.stroke(255);
 
-            // --> p.blendMode(p.SCREEN);
+        // --> p.blendMode(p.SCREEN);
 
-            gradientLine(startX, startY, endX, endY, colcolX, colcolY);
-           //     line(startX, startY, endX, endY);
+        gradientLine(startX, startY, endX, endY, colorStart, colorEnd);
+        //     line(startX, startY, endX, endY);
 
+        squares[n] = {
+            x: startX, y: startY,
+            size: Math.floor(p.map(pxBrightnessStart, 40, 100, 1, s)),
+            color: p.lerpColor(colorStart, p.color(255), p.random(0, 1))
+        };
 
-            var sqSize = Math.floor(p.map(pxBrightnessStart, 40, 100, 1, s));
-            p.fill(p.lerpColor(colcolX, p.color(255), p.random(0, 1)));
-            p.noStroke();
-            // console.log(pxBrightness);
-            p.rect(startX, startY, sqSize, sqSize);
+    }
 
+    var square;
+    for (var n = 0; n < myEdges.length; n++) {
+        if (!myEdges[n]) continue;
+        square = squares[n];
+        var sqSize = square.size;
+        p.fill(square.color);
+        p.noStroke();
+        // console.log(pxBrightness);
+        p.rect(square.x, square.y, sqSize, sqSize);
+    }
 
 
        // }
-
-
-    }
 
 }
 
