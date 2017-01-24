@@ -301,7 +301,7 @@ function createKnob(state, conf) {
                  })
                  .merge(valueIn || Kefir.never())
                  .onValue(function(value) {
-                     var valueText = adaptToState(state, value);
+                     var valueText = Math.floor(value * 100) / 100;
                      text.text(conf.adaptValue ? conf.adaptValue(valueText) : valueText);
                      hand.attr('transform', 'rotate(' + adaptAngle(state, value) + ')');
                  });
@@ -349,6 +349,18 @@ var DEFAULT_LAYERS_BLENDS = [
     /* layer-6: back edges */ 'O', // overlay
     /* layer-7: vignette */ 'O', // before: overlay, between: multiply, then: normal
     /* layer-8: logo */ 'N' // normal
+];
+
+var DEFAULT_LAYERS_OPACITIES = [
+    1, /* layer-1: draw-pixels */
+    1, /* layer-2: apply-gradient */
+    1, /* layer-3: curves */
+    1, /* layer-4: shapes */
+    1, /* layer-5: edges & squares */
+    1, /* layer-6: back edges */
+    1, /* layer-7: vignette */
+    1,  /* layer-8: logo */
+    1
 ];
 
 var DEFAULT_BLEND = '';
@@ -443,10 +455,12 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
             var knobsRoot = d3.select(nodeRoot).append('g')
                               .attr('transform', 'translate(' + knobsX + ',0)')
                               .node();
+            var defaultValueStream;
             var knobsOut = Kefir.combine(
                 knobs.map(function(knob, i) {
-                    return initKnobInGroup(knob, knobsRoot, i, count, defaultKnobConf.width, defaultKnobConf.height - 5)
-                           .merge(Kefir.constant(1));
+                    defaultValueStream = Kefir.constant(DEFAULT_LAYERS_OPACITIES[i]);
+                    return initKnobInGroup(knob, knobsRoot, i, count, defaultKnobConf.width, defaultKnobConf.height - 5, defaultValueStream)
+                           .merge(defaultValueStream);
                            // knob.init() returns stream of updates,
                            // so Kefir.combine will send every change
                 })
