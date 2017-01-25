@@ -237,13 +237,13 @@ var defaultKnobConf = {
 };
 
 function createKnob(state, conf) {
-    var lastValue = 1;
-    var state = { min: 0, max: 1 };
+    var lastValue = 0;
+    //var state = { min: 0, max: 100 };
 
     var adaptAngle = conf.adaptAngle || function(s, v) { return v * 360; };
 
     return {
-        init: function(parent) {
+        init: function(parent, valueIn) {
             var hand, handGhost, face, text;
             var submit = Kefir.emitter();
             d3.select(parent)
@@ -266,7 +266,7 @@ function createKnob(state, conf) {
                   text = bodyGroup.append('text')
                                   .style('text-anchor', 'middle')
                                   .style('fill', '#fff')
-                                  .text(1);
+                                  .text(0);
               });
             Kefir.fromEvents(parent, 'mousedown')
                  .map(stopPropagation)
@@ -298,23 +298,25 @@ function createKnob(state, conf) {
                          submit.emit(lastValue);
                      });
                      return values;
-                 }).onValue(function(value) {
+                 })
+                 .merge(valueIn || Kefir.never())
+                 .onValue(function(value) {
                      var valueText = Math.floor(value * 100) / 100;
                      text.text(conf.adaptValue ? conf.adaptValue(valueText) : valueText);
                      hand.attr('transform', 'rotate(' + adaptAngle(state, value) + ')');
                  });
-            return submit;
+            return submit.merge(valueIn ? valueIn : Kefir.never());
         }
     }
 }
 
-function initKnobInGroup(knob, target, id, count, width, height) {
+function initKnobInGroup(knob, target, id, count, width, height, valueIn) {
     var submit;
     d3.select(target).append('g')
       .attr('transform', 'translate(0,' + ((id * height) + (height / 2) - (count * height / 2)) + ')')
       .call(function(knobRoot) {
           knob.root = knobRoot;
-          submit = knob.init(knobRoot.node());
+          submit = knob.init(knobRoot.node(), valueIn);
       });
     return submit;
 }
@@ -343,10 +345,22 @@ var DEFAULT_LAYERS_BLENDS = [
     /* layer-2: apply-gradient */ 'O', //overlay, after: blend
     /* layer-3: curves */ 'O', //overlay, after each: blend?
     /* layer-4: shapes */ 'S', // screen
-    /* layer-5: edges & squares */ 'S', //screen
+    /* layer-5: edges & squares */ 'O', // overlay
     /* layer-6: back edges */ 'O', // overlay
     /* layer-7: vignette */ 'O', // before: overlay, between: multiply, then: normal
     /* layer-8: logo */ 'N' // normal
+];
+
+var DEFAULT_LAYERS_OPACITIES = [
+    1, /* layer-1: draw-pixels */
+    1, /* layer-2: apply-gradient */
+    1, /* layer-3: curves */
+    0.05, /* layer-4: shapes */
+    1, /* layer-5: edges & squares */
+    1, /* layer-6: back edges */
+    1, /* layer-7: vignette */
+    1,  /* layer-8: logo */
+    1
 ];
 
 var DEFAULT_BLEND = '';
@@ -441,10 +455,12 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
             var knobsRoot = d3.select(nodeRoot).append('g')
                               .attr('transform', 'translate(' + knobsX + ',0)')
                               .node();
+            var defaultValueStream;
             var knobsOut = Kefir.combine(
                 knobs.map(function(knob, i) {
-                    return initKnobInGroup(knob, knobsRoot, i, count, defaultKnobConf.width, defaultKnobConf.height - 5)
-                           .merge(Kefir.constant(1));
+                    defaultValueStream = Kefir.constant(DEFAULT_LAYERS_OPACITIES[i]);
+                    return initKnobInGroup(knob, knobsRoot, i, count, defaultKnobConf.width, defaultKnobConf.height - 5, defaultValueStream)
+                           .merge(defaultValueStream);
                            // knob.init() returns stream of updates,
                            // so Kefir.combine will send every change
                 })
@@ -499,4 +515,50 @@ Rpd.noderenderer('jb/switch', 'svg', {
             'value': { valueOut: Kefir.merge(allClicks) }
         };
     }
+});
+
+function addColorRect(parent, color, size) {
+    return d3.select(parent).append('rect')
+                     .attr('width', size || 7).attr('height', size || 7)
+                     .attr('rx', 1).attr('ry', 1)
+                     .attr('fill', color || 'transparent')
+                     .attr('stroke-width', 0.5)
+                     .attr('stroke', 'white');
+}
+
+Rpd.channelrenderer('util/color', 'svg', {
+    show: function(target, value, repr) {
+        if (!value) return;
+        addColorRect(target, repr).classed('jb-color-value', true);
+    }
+});
+
+Rpd.channelrenderer('jb/palette', 'svg', {
+    show: function(target, value, repr) {
+        if (!value) return;
+        var groupNode = d3.select(target).append('g')
+                          .classed('jb-palette-value', true)
+                          .node();
+        value.forEach(function(color, i) {
+            addColorRect(groupNode, color).style('transform', 'translate(' + (i * 10) + 'px, 0)');
+        });
+    }
+});
+
+Rpd.noderenderer('jb/three-colors', 'svg', function() {
+    var group;
+    return {
+        first: function(bodyElm) {
+            group = d3.select(bodyElm).append('g')
+                      .attr('transform', 'translate(-10, -30)');
+        },
+        always: function(bodyElm, inlets, outlets) {
+            if (!outlets.palette) return;
+            group.empty();
+            outlets.palette.forEach(function(color, i) {
+                console.log(color, i);
+                addColorRect(group.node(), color, 20).style('transform', 'translate(0, ' +  (i * 20) + 'px)');
+            });
+        }
+    };
 });

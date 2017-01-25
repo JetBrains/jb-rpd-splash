@@ -55,6 +55,12 @@ function toHexColor(color) {
                + numberToHex(color.b || 0);
 }
 
+function hexToColor (p, hex, opacity) {
+      // TODO: unhex!!
+      return p.color(p.red(p.color(hex)),  p.green(p.color(hex)),  p.blue(p.color(hex)), opacity);
+
+}
+
 function _rgb(r, g, b, a) {
     return { r: r, g: g, b: b, a: a };
 }
@@ -510,7 +516,10 @@ function drawEdgesSquares(p, config) {
 
     var myEdges = voronoi.edges; //myDelaunay.getEdges();
 
+    var squares = [];
+
     for (var n = 0; n < myEdges.length; n++) {
+
         if (!myEdges[n]) continue;
         var startX = myEdges[n][0][0];
         var startY = myEdges[n][0][1];
@@ -520,37 +529,80 @@ function drawEdgesSquares(p, config) {
 
         var pxBrightnessStart = Math.floor(pixelBrightnessByCoords(startX, startY, srcPixels, srcWidth, d));
         var pxBrightnessEnd = Math.floor(pixelBrightnessByCoords(endX, endY, srcPixels, srcWidth, d));
-        if(!pxBrightnessEnd) { pxBrightnessEnd = 0 };
-        if(!pxBrightnessStart) { pxBrightnessStart = 0 };
+        if (!pxBrightnessEnd) {
+            pxBrightnessEnd = 0
+        }
+        ;
+        if (!pxBrightnessStart) {
+            pxBrightnessStart = 0
+        }
+        ;
 
-      //  if (pxBrightnessStart & pxBrightnessEnd) {
-            var colX = p.map(pxBrightnessStart, 0, 100, 0, 1);
-            var colY = p.map(pxBrightnessEnd, 0, 100, 0, 1);
-            var colcolX = p.lerpColor(p.color(palette[2]), p.color(palette[0]), colX);
-            var colcolY = p.lerpColor(p.color(palette[2]), p.color(palette[0]), colY);
+        //  if (pxBrightnessStart & pxBrightnessEnd) {
+
+        //   if(pxBrightnessStart > 80) {console.log(pxBrightnessStart) };
+    //   var randomStartSeed = Math.floor(p.random(3));
+     //   var randomEndSeed = Math.floor(p.random(3));
+      //  var randomEndSeed = randomStartSeed;
+
+       /* while( randomEndSeed != randomStartSeed ) {
+            randomEndSeed = Math.floor(p.random(3));
+        }
+*/
+
+        var randomStartColor = p.random(palette);
+        var randomEndColor = p.random(palette);
 
 
-            p.strokeWeight(0.8);
-            p.stroke(255);
-
-            // --> p.blendMode(p.SCREEN);
-
-            gradientLine(startX, startY, endX, endY, colcolX, colcolY);
-           //     line(startX, startY, endX, endY);
+        /* while (randomStartColor  == randomEndColor) {
+            randomEndColor = p.random(palette);
+        } */
 
 
-            var sqSize = Math.floor(p.map(pxBrightnessStart, 40, 100, 1, s));
-            p.fill(p.lerpColor(colcolX, p.color(255), p.random(0, 1)));
-            p.noStroke();
-            // console.log(pxBrightness);
-            p.rect(startX, startY, sqSize, sqSize);
 
+
+        var brightnessStart = p.map(pxBrightnessStart, 40, 100, 0, 1);
+        var brightnessEnd = p.map(pxBrightnessEnd, 40, 100, 0, 1);
+        //var colorStart = p.lerpColor(hexToColor (p, randomStartColor, 200), hexToColor (p, randomStartColor, 255), brightnessStart);
+        //var colorEnd = p.lerpColor(hexToColor (p, randomEndColor, 200), hexToColor (p, randomEndColor, 255), brightnessEnd);
+        //var colorStart = p.lerpColor(p.color(255, 100), p.color(255, 255), brightnessStart);
+        //var colorEnd = p.lerpColor(p.color(255, 100), p.color(255, 255), brightnessEnd);
+        var colorStart = p.lerpColor(hexToColor(p, randomStartColor, 100), hexToColor(p, randomStartColor, 255), brightnessStart);
+        var colorEnd = p.lerpColor(hexToColor(p, randomEndColor, 100), hexToColor(p, randomEndColor, 255), brightnessEnd);
+
+
+        //p.strokeWeight(0.8);
+        p.strokeWeight(1);
+        p.stroke(255);
+
+        // --> p.blendMode(p.SCREEN);
+
+        gradientLine(startX, startY, endX, endY, colorStart, colorEnd);
+        //     line(startX, startY, endX, endY);
+
+        squares[n] = {
+            x: startX, y: startY,
+            size: Math.floor(p.map(pxBrightnessStart, 40, 100, 1, s)),
+            //color: /*p.color(p.random(0, 255), p.random(0, 255), p.random(0, 255))*/ p.lerpColor(hexToColor (p, randomStartColor, 100), hexToColor (p, randomStartColor, 255),/*colorStart , p.color(255, 255), */ p.random(0, 1))
+            color: (Math.random() < 0.5) ? colorStart : colorEnd
+        };
+
+    }
+
+    var square, sqSize;
+    for (var n = 0; n < myEdges.length; n++) {
+        if (!myEdges[n]) continue;
+        square = squares[n];
+        sqSize = square.size;
+        p.fill(square.color);
+        p.noStroke();
+        // console.log(pxBrightness);
+        //p.ellipse(square.x, square.y, 3, 3);
+        p.rect(square.x, square.y, sqSize, sqSize);
+    }
 
 
        // }
-
-
-    }
 
 }
 
@@ -576,7 +628,7 @@ function drawCurvedEdges(p, voronoi) {
         randomX = myEdges[randomEdge][0][0];
         randomY = myEdges[randomEdge][0][1];
 
-        myDist = p.dist(startX, startY, randomX, randomY)
+        myDist = p.dist(startX, startY, randomX, randomY);
 
         if (p.random(0, 1) < 0.3 && (myDist < 500) && (myDist > 400)) {
             p.noFill();
@@ -599,10 +651,12 @@ function drawCurvedEdges(p, voronoi) {
 
 // jb/shapes
 function drawShapes(p, config) {
-    return;
+   // return;
     var voronoi = config.voronoi;
-    var edges = voronoi.edges;
-    var cells = voronoi.cells;
+
+    var polygons = voronoi.polygons();
+
+    var palette = config.palette;
 
     p.smooth();
 
@@ -617,26 +671,19 @@ function drawShapes(p, config) {
 
     var area;
 
-    var cellEdges;
     var coords;
 
     var l;
 
-    for (var j = 0; j < cells.length; j++) {
-        if (!cells[j]) continue;
-        cellEdges = cells[j].halfedges;
+    for (var j = 0; j < polygons.length; j++) {
+        //if (!polygons[j]) continue;
+
+        coords = polygons[j];
 
         minX = Infinity, minY = Infinity;
         maxX = 0, maxY = 0;
 
-        coords = [];
-
-        for (l = 0; l < cellEdges.length; ++l) {
-            coords.push(edges[cellEdges[l]][0]);
-            coords.push(edges[cellEdges[l]][1]);
-        }
-
-        for (l = 0; l < coords.length; ++l) {
+        for (l = 0; l < coords.length; l++) {
             minX = Math.min(maxX, coords[l][0]);
             minY = Math.min(minY, coords[l][1]);
             maxX = Math.max(maxX, coords[l][0]);
@@ -644,20 +691,23 @@ function drawShapes(p, config) {
         }
 
         area = (maxX - minX) * (maxY - minY);
-
-        if (area < 2000) {
+        var qty = p.map(config.qty, 0, 1, 0, 5000);
+        if (area < qty) {
             shapes.push(coords);
             s++;
         }
 
     }
 
+
     for (j = 0; j < shapes.length; j++) {
         if (!shapes[j]) continue;
-        p.fill(p.color(255, 0, 0, p.random(2, 255)));
+        var color = Math.floor(p.random(3));
+        p.fill(p.color(palette[color]));
+        //p.fill(p.color('#ff0000'));
         p.beginShape();
         coords = shapes[j];
-        for (var l = 0; l < coords.length; ++l) {
+        for (var l = 0; l < coords.length; l++) {
             p.vertex(coords[l][0], coords[l][1]);
         }
         p.endShape(p.CLOSE);

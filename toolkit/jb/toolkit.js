@@ -294,8 +294,8 @@ Rpd.nodetype('jb/draw-pixels', {
 Rpd.nodetype('jb/collect-point-data', {
     title: 'Collect Points',
     inlets: {
-        'chaos': { type: 'util/number', default: 50 },
-        'step': { type: 'util/number', default: 16 },
+        'chaos': { type: 'util/wholenumber', default: 50 },
+        'step': { type: 'util/wholenumber', default: 16 },
         'low': { type: 'jb/brightness', default: 40 },
         'high': { type: 'jb/brightness', default: 30 },
         'pixels': { type: 'jb/pixels' }
@@ -394,7 +394,8 @@ Rpd.nodetype('jb/shapes', {
     title: 'Shapes',
     inlets: {
         'voronoi': { type: 'jb/voronoi' },
-        'palette': { type: 'jb/palette' }
+        'qty': { type: 'util/number', default: 0.12 },
+        'palette': { type: 'jb/palette', default: [ '#ffffff', '#aaaaaa', '#000000']}
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
@@ -415,7 +416,7 @@ Rpd.nodetype('jb/edges-squares', {
     inlets: {
         'voronoi': { type: 'jb/voronoi' },
         'pixels': { type: 'jb/pixels' },
-        'palette': { type: 'jb/palette' },
+        'palette': { type: 'jb/palette', default: [ '#ffffff', '#ffffff', '#ffffff']},
         'maxSquareSize': { type: 'util/number', default: 15 }
     },
     outlets: {
@@ -509,5 +510,23 @@ Rpd.nodetype('jb/switch', {
     process: function(inlets) {
         if (inlets.value == 1) return { 'way-one': {} };
         if (inlets.value == 2) return { 'way-two': {} };
+    }
+});
+
+Rpd.nodetype('jb/three-colors', {
+    inlets: {
+        'color-1': { type: 'util/color' },
+        'color-2': { type: 'util/color' },
+        'color-3': { type: 'util/color' }
+    },
+    outlets: {
+        'palette': { type: 'jb/palette' }
+    },
+    process: function(inlets) {
+        return {
+            'palette':  [ inlets['color-1'] ? toHexColor(inlets['color-1']) : 'transparent',
+                          inlets['color-2'] ? toHexColor(inlets['color-2']) : 'transparent',
+                          inlets['color-3'] ? toHexColor(inlets['color-3']) : 'transparent' ]
+        }
     }
 });
