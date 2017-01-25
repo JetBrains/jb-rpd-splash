@@ -653,8 +653,9 @@ function drawCurvedEdges(p, voronoi) {
 function drawShapes(p, config) {
    // return;
     var voronoi = config.voronoi;
-    var edges = voronoi.edges;
-    var cells = voronoi.cells;
+
+    var polygons = voronoi.polygons();
+
     var palette = config.palette;
 
     p.smooth();
@@ -670,26 +671,19 @@ function drawShapes(p, config) {
 
     var area;
 
-    var cellEdges;
     var coords;
 
     var l;
 
-    for (var j = 0; j < cells.length; j++) {
-        if (!cells[j]) continue;
-        cellEdges = cells[j].halfedges;
+    for (var j = 0; j < polygons.length; j++) {
+        //if (!polygons[j]) continue;
+
+        coords = polygons[j];
 
         minX = Infinity, minY = Infinity;
         maxX = 0, maxY = 0;
 
-        coords = [];
-
-        for (l = 0; l < cellEdges.length; ++l) {
-            coords.push(edges[cellEdges[l]][0]);
-            coords.push(edges[cellEdges[l]][1]);
-        }
-
-        for (l = 0; l < coords.length; ++l) {
+        for (l = 0; l < coords.length; l++) {
             minX = Math.min(maxX, coords[l][0]);
             minY = Math.min(minY, coords[l][1]);
             maxX = Math.max(maxX, coords[l][0]);
@@ -710,9 +704,10 @@ function drawShapes(p, config) {
         if (!shapes[j]) continue;
         var color = Math.floor(p.random(3));
         p.fill(p.color(palette[color]));
+        //p.fill(p.color('#ff0000'));
         p.beginShape();
         coords = shapes[j];
-        for (var l = 0; l < coords.length; ++l) {
+        for (var l = 0; l < coords.length; l++) {
             p.vertex(coords[l][0], coords[l][1]);
         }
         p.endShape(p.CLOSE);
