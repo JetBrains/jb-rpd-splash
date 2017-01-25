@@ -355,7 +355,7 @@ var DEFAULT_LAYERS_OPACITIES = [
     1, /* layer-1: draw-pixels */
     1, /* layer-2: apply-gradient */
     1, /* layer-3: curves */
-    1, /* layer-4: shapes */
+    0.1, /* layer-4: shapes */
     1, /* layer-5: edges & squares */
     1, /* layer-6: back edges */
     1, /* layer-7: vignette */

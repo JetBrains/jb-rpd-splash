@@ -394,8 +394,7 @@ Rpd.nodetype('jb/shapes', {
     title: 'Shapes',
     inlets: {
         'voronoi': { type: 'jb/voronoi' },
-        'opacity': { type: 'util/number', default: 0.1 },
-        'qty': { type: 'util/number', default: 0.2 },
+        'qty': { type: 'util/number', default: 0.12 },
         'palette': { type: 'jb/palette', default: [ '#ffffff', '#aaaaaa', '#000000']}
     },
     outlets: {

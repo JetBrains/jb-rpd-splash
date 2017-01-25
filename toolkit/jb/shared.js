@@ -703,16 +703,13 @@ function drawShapes(p, config) {
             s++;
         }
 
-
-        var opacity = p.map(config.opacity, 0, 1, 2, 255);
-
     }
 
 
     for (j = 0; j < shapes.length; j++) {
         if (!shapes[j]) continue;
         var color = Math.floor(p.random(3));
-        p.fill(hexToColor (p, palette[color], opacity * p.noise(j)));
+        p.fill(p.color(palette[color]));
         p.beginShape();
         coords = shapes[j];
         for (var l = 0; l < coords.length; ++l) {
