@@ -357,7 +357,7 @@ var DEFAULT_LAYERS_OPACITIES = [
     1, /* layer-3: curves */
     0.2, /* layer-4: shapes */
     1, /* layer-5: edges & squares */
-    1, /* layer-6: back edges */
+    0.2, /* layer-6: back edges */
     1, /* layer-7: vignette */
     1,  /* layer-8: logo */
     1

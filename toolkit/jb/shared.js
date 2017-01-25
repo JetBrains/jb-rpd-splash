@@ -743,7 +743,11 @@ function drawShapes(p, config) {
 }
 
 // jb/back-edges-squares
-function drawBackEdgesSquares(p, data) {
+function drawBackEdgesSquares(p, config) {
+
+    var data = config.points;
+    var palette = config.palette;
+    var range = config.range;
 
 
     p.rectMode(p.CENTER);
@@ -754,20 +758,21 @@ function drawBackEdgesSquares(p, data) {
     for (var i = 0; i < data.length; i++) {
         point = data[i];
 
-        p.fill(255, 40);
+        p.fill(hexToColor(p, p.random(palette), 255));
 
-        p.rect(point[0], point[1], 1, 1);
+        p.rect(point[0], point[1], 2, 2);
 
     }
     p.strokeWeight(0.25);
-    p.stroke(255, 20);
+
     // --> p.blendMode(p.OVERLAY);
 
     for (var i = 0; i < data.length; i++) {
+        p.stroke(hexToColor(p, p.random(palette), Math.floor(p.random(100,255))));
         for (var j = 0; j < data.length; j++) {
             var point1 = data[i];
             var point2 = data[j];
-            if (p.dist(point1[0], point1[1], point2[0], point2[1]) < 50) {
+            if (p.dist(point1[0], point1[1], point2[0], point2[1]) < range) {
                 p.line(point1[0], point1[1], point2[0], point2[1]);
 
             }

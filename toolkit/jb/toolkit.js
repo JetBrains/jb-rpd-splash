@@ -436,7 +436,9 @@ Rpd.nodetype('jb/edges-squares', {
 Rpd.nodetype('jb/back-edges-squares', {
     title: 'Back Edges & Squares',
     inlets: {
-        'points': { type: 'jb/point-data' }
+        'points': { type: 'jb/point-data' },
+        'range': { type: 'util/number', 'default': 50 },
+        'palette': { type: 'jb/palette', default: [ '#ffffff', '#ffffff', '#ffffff']}
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
@@ -445,7 +447,7 @@ Rpd.nodetype('jb/back-edges-squares', {
         if (!inlets.points) return;
         return {
             'drawable': {
-                'conf': inlets.points,
+                'conf': inlets,
                 'func': drawBackEdgesSquares
             }
         }
