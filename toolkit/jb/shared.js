@@ -597,7 +597,7 @@ function drawEdgesSquares(p, config) {
         p.fill(square.color);
         p.noStroke();
         // console.log(pxBrightness);
-        //p.ellipse(square.x, square.y, 3, 3);
+        p.ellipse(square.x, square.y, 3, 3);
         p.rect(square.x, square.y, sqSize, sqSize);
     }
 
@@ -680,7 +680,7 @@ function drawShapes(p, config) {
 
     var l, site;
 
-    p.noiseDetail(4, 0.7);
+   // p.noiseDetail(1, 1);
 
     for (var j = 0; j < polygons.length; j++) {
         //if (!polygons[j]) continue;
@@ -719,19 +719,19 @@ function drawShapes(p, config) {
     for (j = 0; j < shapes.length; j++) {
         if (!shapes[j]) continue;
         value = shapes[j].value;
-        startColor = hexToColor(p, palette[0], value * 255);
-        middleColor = hexToColor(p, palette[1], value * 255);
-        endColor = hexToColor(p, palette[2], value * 255);
-        colorValue = value * 0.6;
-        if (colorValue < 0.5) {
-            resultColor = p.lerpColor(startColor, middleColor, colorValue * 2);
-        } else {
-            resultColor = p.lerpColor(middleColor, endColor, (colorValue - 0.5) * 2);
-        }
+        // startColor = hexToColor(p, palette[0], value * 255);
+        // middleColor = hexToColor(p, palette[1], value * 255);
+        // endColor = hexToColor(p, palette[2], value * 255);
+        // colorValue = value * 0.6;
+        // if (colorValue < 0.5) {
+        //     resultColor = p.lerpColor(startColor, middleColor, colorValue );
+        // } else {
+        //     resultColor = p.lerpColor(middleColor, endColor, (colorValue - 0.5) );
+        // }
         //console.log(/*value, palette.length, value * palette.length, */colorIdx);
-        //p.fill(hexToColor(p, palette[colorIdx], value * 255));
+        p.fill(hexToColor(p, p.random(palette), value * 255));
         //p.fill(255, value * 255);
-        p.fill(resultColor);
+      //  p.fill(resultColor);
         //p.fill(p.color('#ff0000'));
         p.beginShape();
         coords = shapes[j].coords;

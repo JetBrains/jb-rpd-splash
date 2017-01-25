@@ -344,7 +344,7 @@ var DEFAULT_LAYERS_BLENDS = [
     /* layer-1: draw-pixels */ '', // normal
     /* layer-2: apply-gradient */ 'O', //overlay, after: blend
     /* layer-3: curves */ 'O', //overlay, after each: blend?
-    /* layer-4: shapes */ '', // screen
+    /* layer-4: shapes */ 'S', // overlay
     /* layer-5: edges & squares */ 'O', // overlay
     /* layer-6: back edges */ 'O', // overlay
     /* layer-7: vignette */ 'O', // before: overlay, between: multiply, then: normal
@@ -355,7 +355,7 @@ var DEFAULT_LAYERS_OPACITIES = [
     1, /* layer-1: draw-pixels */
     1, /* layer-2: apply-gradient */
     1, /* layer-3: curves */
-    1, /* layer-4: shapes */
+    0.2, /* layer-4: shapes */
     1, /* layer-5: edges & squares */
     1, /* layer-6: back edges */
     1, /* layer-7: vignette */
