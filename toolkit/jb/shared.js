@@ -55,6 +55,12 @@ function toHexColor(color) {
                + numberToHex(color.b || 0);
 }
 
+function hexToColor (p, hex, opacity) {
+      // TODO: unhex!!
+      return p.color(p.red(p.color(hex)),  p.green(p.color(hex)),  p.blue(p.color(hex)), opacity);
+
+}
+
 function _rgb(r, g, b, a) {
     return { r: r, g: g, b: b, a: a };
 }
@@ -535,13 +541,38 @@ function drawEdgesSquares(p, config) {
         //  if (pxBrightnessStart & pxBrightnessEnd) {
 
         //   if(pxBrightnessStart > 80) {console.log(pxBrightnessStart) };
+    //   var randomStartSeed = Math.floor(p.random(3));
+     //   var randomEndSeed = Math.floor(p.random(3));
+      //  var randomEndSeed = randomStartSeed;
+
+       /* while( randomEndSeed != randomStartSeed ) {
+            randomEndSeed = Math.floor(p.random(3));
+        }
+*/
+
+        var randomStartColor = p.random(palette);
+        var randomEndColor = p.random(palette);
+
+
+        while( randomStartColor  == randomEndColor ) {
+            randomEndColor = p.random(palette);
+        }
+
+
+
+
         var brightnessStart = p.map(pxBrightnessStart, 40, 100, 0, 1);
         var brightnessEnd = p.map(pxBrightnessEnd, 40, 100, 0, 1);
-        var colorStart = p.lerpColor(p.color(palette[2]), p.color(palette[0]), brightnessStart);
-        var colorEnd = p.lerpColor(p.color(palette[2]), p.color(palette[0]), brightnessEnd);
+        //var colorStart = p.lerpColor(hexToColor (p, randomStartColor, 200), hexToColor (p, randomStartColor, 255), brightnessStart);
+        //var colorEnd = p.lerpColor(hexToColor (p, randomEndColor, 200), hexToColor (p, randomEndColor, 255), brightnessEnd);
+        //var colorStart = p.lerpColor(p.color(255, 100), p.color(255, 255), brightnessStart);
+        //var colorEnd = p.lerpColor(p.color(255, 100), p.color(255, 255), brightnessEnd);
+        var colorStart = p.lerpColor(hexToColor(p, palette[0], 100), hexToColor(p, palette[0], 255), brightnessStart);
+        var colorEnd = p.lerpColor(hexToColor(p, palette[1], 100), hexToColor(p, palette[1], 255), brightnessEnd);
 
 
-        p.strokeWeight(0.8);
+        //p.strokeWeight(0.8);
+        p.strokeWeight(1);
         p.stroke(255);
 
         // --> p.blendMode(p.SCREEN);
@@ -549,23 +580,32 @@ function drawEdgesSquares(p, config) {
         gradientLine(startX, startY, endX, endY, colorStart, colorEnd);
         //     line(startX, startY, endX, endY);
 
-        squares[n] = {
+        squares[n] = [ {
             x: startX, y: startY,
             size: Math.floor(p.map(pxBrightnessStart, 40, 100, 1, s)),
-            color: p.lerpColor(colorStart, p.color(255), p.random(0, 1))
-        };
+            //color: /*p.color(p.random(0, 255), p.random(0, 255), p.random(0, 255))*/ p.lerpColor(hexToColor (p, randomStartColor, 100), hexToColor (p, randomStartColor, 255),/*colorStart , p.color(255, 255), */ p.random(0, 1))
+            color: colorStart
+        }, {
+            x: endX, y: endY,
+            size: Math.floor(p.map(pxBrightnessStart, 40, 100, 1, s)),
+            //color: /*p.color(p.random(0, 255), p.random(0, 255), p.random(0, 255))*/ p.lerpColor(hexToColor (p, randomStartColor, 100), hexToColor (p, randomStartColor, 255),/*colorStart , p.color(255, 255), */ p.random(0, 1))
+            color: colorEnd
+        } ];
 
     }
 
-    var square;
+    var squarePair;
     for (var n = 0; n < myEdges.length; n++) {
         if (!myEdges[n]) continue;
-        square = squares[n];
-        var sqSize = square.size;
-        p.fill(square.color);
-        p.noStroke();
-        // console.log(pxBrightness);
-        p.rect(square.x, square.y, sqSize, sqSize);
+        squarePair = squares[n];
+        squarePair.forEach(function(square) {
+            var sqSize = square.size;
+            p.fill(square.color);
+            p.noStroke();
+            // console.log(pxBrightness);
+            //p.ellipse(square.x, square.y, 3, 3);
+            p.rect(square.x, square.y, sqSize, sqSize);
+        });
     }
 
 
@@ -595,7 +635,7 @@ function drawCurvedEdges(p, voronoi) {
         randomX = myEdges[randomEdge][0][0];
         randomY = myEdges[randomEdge][0][1];
 
-        myDist = p.dist(startX, startY, randomX, randomY)
+        myDist = p.dist(startX, startY, randomX, randomY);
 
         if (p.random(0, 1) < 0.3 && (myDist < 500) && (myDist > 400)) {
             p.noFill();
@@ -679,7 +719,7 @@ function drawShapes(p, config) {
     for (j = 0; j < shapes.length; j++) {
         if (!shapes[j]) continue;
         var color = Math.floor(p.random(3));
-        p.fill(p.color(p.red(p.color(palette[color])), p.green(p.color(palette[color])), p.blue(p.color(palette[color])), opacity * p.noise(j)));
+        p.fill(hexToColor (p, palette[color], opacity * p.noise(j)));
         p.beginShape();
         coords = shapes[j];
         for (var l = 0; l < coords.length; ++l) {
