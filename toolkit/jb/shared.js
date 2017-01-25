@@ -654,7 +654,12 @@ function drawShapes(p, config) {
    // return;
     var voronoi = config.voronoi;
 
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+
     var polygons = voronoi.polygons();
+    var cells = voronoi.cells;
+
 
     var palette = config.palette;
 
@@ -673,7 +678,9 @@ function drawShapes(p, config) {
 
     var coords;
 
-    var l;
+    var l, site;
+
+    p.noiseDetail(4, 0.7);
 
     for (var j = 0; j < polygons.length; j++) {
         //if (!polygons[j]) continue;
@@ -690,23 +697,44 @@ function drawShapes(p, config) {
             maxY = Math.max(maxY, coords[l][1]);
         }
 
+        site = cells[j].site;
+
         area = (maxX - minX) * (maxY - minY);
         var qty = p.map(config.qty, 0, 1, 0, 5000);
         if (area < qty) {
-            shapes.push(coords);
+            shapes.push({
+                coords: coords,
+                value: p.noise(site[0] / width, site[1] / height)
+            });
             s++;
         }
 
     }
 
 
+
+    var value, colorValue;
+
+    var startColor, middleColor, endColor, resultColor;
     for (j = 0; j < shapes.length; j++) {
         if (!shapes[j]) continue;
-        var color = Math.floor(p.random(3));
-        p.fill(p.color(palette[color]));
+        value = shapes[j].value;
+        startColor = hexToColor(p, palette[0], value * 255);
+        middleColor = hexToColor(p, palette[1], value * 255);
+        endColor = hexToColor(p, palette[2], value * 255);
+        colorValue = value * 0.6;
+        if (colorValue < 0.5) {
+            resultColor = p.lerpColor(startColor, middleColor, colorValue * 2);
+        } else {
+            resultColor = p.lerpColor(middleColor, endColor, (colorValue - 0.5) * 2);
+        }
+        //console.log(/*value, palette.length, value * palette.length, */colorIdx);
+        //p.fill(hexToColor(p, palette[colorIdx], value * 255));
+        //p.fill(255, value * 255);
+        p.fill(resultColor);
         //p.fill(p.color('#ff0000'));
         p.beginShape();
-        coords = shapes[j];
+        coords = shapes[j].coords;
         for (var l = 0; l < coords.length; l++) {
             p.vertex(coords[l][0], coords[l][1]);
         }
