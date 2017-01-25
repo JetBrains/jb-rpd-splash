@@ -345,7 +345,7 @@ var DEFAULT_LAYERS_BLENDS = [
     /* layer-2: apply-gradient */ 'O', //overlay, after: blend
     /* layer-3: curves */ 'O', //overlay, after each: blend?
     /* layer-4: shapes */ 'S', // screen
-    /* layer-5: edges & squares */ '',
+    /* layer-5: edges & squares */ 'O', // overlay
     /* layer-6: back edges */ 'O', // overlay
     /* layer-7: vignette */ 'O', // before: overlay, between: multiply, then: normal
     /* layer-8: logo */ 'N' // normal

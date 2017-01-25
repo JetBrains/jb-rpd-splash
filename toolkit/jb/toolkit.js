@@ -417,7 +417,7 @@ Rpd.nodetype('jb/edges-squares', {
     inlets: {
         'voronoi': { type: 'jb/voronoi' },
         'pixels': { type: 'jb/pixels' },
-        'palette': { type: 'jb/palette', default: [ '#ff0000', '#00ffff', '#b4b4b4']},
+        'palette': { type: 'jb/palette', default: [ '#ffffff', '#ffffff', '#ffffff']},
         'maxSquareSize': { type: 'util/number', default: 15 }
     },
     outlets: {

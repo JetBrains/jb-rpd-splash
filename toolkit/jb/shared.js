@@ -554,9 +554,9 @@ function drawEdgesSquares(p, config) {
         var randomEndColor = p.random(palette);
 
 
-        while( randomStartColor  == randomEndColor ) {
+        /* while (randomStartColor  == randomEndColor) {
             randomEndColor = p.random(palette);
-        }
+        } */
 
 
 
@@ -567,8 +567,8 @@ function drawEdgesSquares(p, config) {
         //var colorEnd = p.lerpColor(hexToColor (p, randomEndColor, 200), hexToColor (p, randomEndColor, 255), brightnessEnd);
         //var colorStart = p.lerpColor(p.color(255, 100), p.color(255, 255), brightnessStart);
         //var colorEnd = p.lerpColor(p.color(255, 100), p.color(255, 255), brightnessEnd);
-        var colorStart = p.lerpColor(hexToColor(p, palette[0], 100), hexToColor(p, palette[0], 255), brightnessStart);
-        var colorEnd = p.lerpColor(hexToColor(p, palette[1], 100), hexToColor(p, palette[1], 255), brightnessEnd);
+        var colorStart = p.lerpColor(hexToColor(p, randomStartColor, 100), hexToColor(p, randomStartColor, 255), brightnessStart);
+        var colorEnd = p.lerpColor(hexToColor(p, randomEndColor, 100), hexToColor(p, randomEndColor, 255), brightnessEnd);
 
 
         //p.strokeWeight(0.8);
@@ -580,32 +580,25 @@ function drawEdgesSquares(p, config) {
         gradientLine(startX, startY, endX, endY, colorStart, colorEnd);
         //     line(startX, startY, endX, endY);
 
-        squares[n] = [ {
+        squares[n] = {
             x: startX, y: startY,
             size: Math.floor(p.map(pxBrightnessStart, 40, 100, 1, s)),
             //color: /*p.color(p.random(0, 255), p.random(0, 255), p.random(0, 255))*/ p.lerpColor(hexToColor (p, randomStartColor, 100), hexToColor (p, randomStartColor, 255),/*colorStart , p.color(255, 255), */ p.random(0, 1))
-            color: colorStart
-        }, {
-            x: endX, y: endY,
-            size: Math.floor(p.map(pxBrightnessStart, 40, 100, 1, s)),
-            //color: /*p.color(p.random(0, 255), p.random(0, 255), p.random(0, 255))*/ p.lerpColor(hexToColor (p, randomStartColor, 100), hexToColor (p, randomStartColor, 255),/*colorStart , p.color(255, 255), */ p.random(0, 1))
-            color: colorEnd
-        } ];
+            color: (Math.random() < 0.5) ? colorStart : colorEnd
+        };
 
     }
 
-    var squarePair;
+    var square, sqSize;
     for (var n = 0; n < myEdges.length; n++) {
         if (!myEdges[n]) continue;
-        squarePair = squares[n];
-        squarePair.forEach(function(square) {
-            var sqSize = square.size;
-            p.fill(square.color);
-            p.noStroke();
-            // console.log(pxBrightness);
-            //p.ellipse(square.x, square.y, 3, 3);
-            p.rect(square.x, square.y, sqSize, sqSize);
-        });
+        square = squares[n];
+        sqSize = square.size;
+        p.fill(square.color);
+        p.noStroke();
+        // console.log(pxBrightness);
+        //p.ellipse(square.x, square.y, 3, 3);
+        p.rect(square.x, square.y, sqSize, sqSize);
     }
 
 
