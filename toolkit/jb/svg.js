@@ -354,7 +354,7 @@ var DEFAULT_LAYERS_BLENDS = [
 var DEFAULT_LAYERS_OPACITIES = [
     1, /* layer-1: draw-pixels */
     1, /* layer-2: apply-gradient */
-    1, /* layer-3: curves */
+    0.5, /* layer-3: curves */
     0.2, /* layer-4: shapes */
     1, /* layer-5: edges & squares */
     0.2, /* layer-6: back edges */

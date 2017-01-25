@@ -607,7 +607,17 @@ function drawEdgesSquares(p, config) {
 }
 
 // jb/curved-edges
-function drawCurvedEdges(p, voronoi) {
+function drawCurvedEdges(p, config) {
+
+    var voronoi = config.voronoi;
+
+    var palette = config.palette;
+
+    var near = config.near;
+    var far = config.far;
+    var curve = config.curve;
+
+    var density = config.density;
 
     var myEdges = voronoi.edges;
 
@@ -630,16 +640,16 @@ function drawCurvedEdges(p, voronoi) {
 
         myDist = p.dist(startX, startY, randomX, randomY);
 
-        if (p.random(0, 1) < 0.3 && (myDist < 500) && (myDist > 400)) {
+        if (p.random(0, 1) < density && (myDist < near * 1000) && (myDist > far * 1000)) {
             p.noFill();
-            p.stroke(p.random(100, 255));
+            p.stroke(p.color(hexToColor(p, p.random(palette),p.random(100, 255))));
             p.strokeWeight(0.3);
             // --> p.blendMode(p.OVERLAY);
 
             p.bezier(
                 startX, startY,
-                startX, startY + 500,
-                randomX, randomY - 500,
+                startX, startY + curve * 1000, //TODO: make beautiful curves in future
+                randomX, randomY - curve * 1000,
                 randomX, randomY
             );
             // --> p.blendMode(p.BLEND);
