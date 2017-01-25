@@ -556,7 +556,6 @@ Rpd.noderenderer('jb/three-colors', 'svg', function() {
             if (!outlets.palette) return;
             group.empty();
             outlets.palette.forEach(function(color, i) {
-                console.log(color, i);
                 addColorRect(group.node(), color, 20).style('transform', 'translate(0, ' +  (i * 20) + 'px)');
             });
         }
