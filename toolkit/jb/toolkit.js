@@ -374,7 +374,12 @@ Rpd.nodetype('jb/voronoi', {
 Rpd.nodetype('jb/curved-edges', {
     title: 'Curves',
     inlets: {
-        'voronoi': { type: 'jb/voronoi' }
+        'voronoi': { type: 'jb/voronoi' },
+        'density': { type: 'util/number', default: 0.3 },
+        'near': { type: 'util/number', default: 0.5 },
+        'far': { type: 'util/number', default: 0.4 },
+        'curve': { type: 'util/number', default: 0.5 },
+        'palette': { type: 'jb/palette', default: [ '#ffffff', '#ffffff', '#ffffff']}
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
@@ -383,7 +388,7 @@ Rpd.nodetype('jb/curved-edges', {
         if (!inlets.voronoi) return;
         return {
             'drawable': {
-                'conf': inlets.voronoi,
+                'conf': inlets,
                 'func': drawCurvedEdges
             }
         }
@@ -395,7 +400,7 @@ Rpd.nodetype('jb/shapes', {
     inlets: {
         'voronoi': { type: 'jb/voronoi' },
         'qty': { type: 'util/number', default: 0.12 },
-        'palette': { type: 'jb/palette', default: [ '#ffffff', '#aaaaaa', '#000000']}
+        'palette': { type: 'jb/palette', default: [ '#ffffff', '#ffffff', '#ffffff']}
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
@@ -436,7 +441,9 @@ Rpd.nodetype('jb/edges-squares', {
 Rpd.nodetype('jb/back-edges-squares', {
     title: 'Back Edges & Squares',
     inlets: {
-        'points': { type: 'jb/point-data' }
+        'points': { type: 'jb/point-data' },
+        'range': { type: 'util/number', 'default': 50 },
+        'palette': { type: 'jb/palette', default: [ '#ffffff', '#ffffff', '#ffffff']}
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }
@@ -445,7 +452,7 @@ Rpd.nodetype('jb/back-edges-squares', {
         if (!inlets.points) return;
         return {
             'drawable': {
-                'conf': inlets.points,
+                'conf': inlets,
                 'func': drawBackEdgesSquares
             }
         }

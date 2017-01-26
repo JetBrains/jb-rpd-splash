@@ -597,7 +597,7 @@ function drawEdgesSquares(p, config) {
         p.fill(square.color);
         p.noStroke();
         // console.log(pxBrightness);
-        //p.ellipse(square.x, square.y, 3, 3);
+        p.ellipse(square.x, square.y, 3, 3);
         p.rect(square.x, square.y, sqSize, sqSize);
     }
 
@@ -607,7 +607,17 @@ function drawEdgesSquares(p, config) {
 }
 
 // jb/curved-edges
-function drawCurvedEdges(p, voronoi) {
+function drawCurvedEdges(p, config) {
+
+    var voronoi = config.voronoi;
+
+    var palette = config.palette;
+
+    var near = config.near;
+    var far = config.far;
+    var curve = config.curve;
+
+    var density = config.density;
 
     var myEdges = voronoi.edges;
 
@@ -630,16 +640,16 @@ function drawCurvedEdges(p, voronoi) {
 
         myDist = p.dist(startX, startY, randomX, randomY);
 
-        if (p.random(0, 1) < 0.3 && (myDist < 500) && (myDist > 400)) {
+        if (p.random(0, 1) < density && (myDist < near * 1000) && (myDist > far * 1000)) {
             p.noFill();
-            p.stroke(p.random(100, 255));
+            p.stroke(p.color(hexToColor(p, p.random(palette),p.random(100, 255))));
             p.strokeWeight(0.3);
             // --> p.blendMode(p.OVERLAY);
 
             p.bezier(
                 startX, startY,
-                startX, startY + 500,
-                randomX, randomY - 500,
+                startX, startY + curve * 1000, //TODO: make beautiful curves in future
+                randomX, randomY - curve * 1000,
                 randomX, randomY
             );
             // --> p.blendMode(p.BLEND);
@@ -654,7 +664,12 @@ function drawShapes(p, config) {
    // return;
     var voronoi = config.voronoi;
 
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+
     var polygons = voronoi.polygons();
+    var cells = voronoi.cells;
+
 
     var palette = config.palette;
 
@@ -673,7 +688,9 @@ function drawShapes(p, config) {
 
     var coords;
 
-    var l;
+    var l, site;
+
+   // p.noiseDetail(1, 1);
 
     for (var j = 0; j < polygons.length; j++) {
         //if (!polygons[j]) continue;
@@ -690,23 +707,44 @@ function drawShapes(p, config) {
             maxY = Math.max(maxY, coords[l][1]);
         }
 
+        site = cells[j].site;
+
         area = (maxX - minX) * (maxY - minY);
         var qty = p.map(config.qty, 0, 1, 0, 5000);
         if (area < qty) {
-            shapes.push(coords);
+            shapes.push({
+                coords: coords,
+                value: p.noise(site[0] / width, site[1] / height)
+            });
             s++;
         }
 
     }
 
 
+
+    var value, colorValue;
+
+    var startColor, middleColor, endColor, resultColor;
     for (j = 0; j < shapes.length; j++) {
         if (!shapes[j]) continue;
-        var color = Math.floor(p.random(3));
-        p.fill(p.color(palette[color]));
+        value = shapes[j].value;
+        // startColor = hexToColor(p, palette[0], value * 255);
+        // middleColor = hexToColor(p, palette[1], value * 255);
+        // endColor = hexToColor(p, palette[2], value * 255);
+        // colorValue = value * 0.6;
+        // if (colorValue < 0.5) {
+        //     resultColor = p.lerpColor(startColor, middleColor, colorValue );
+        // } else {
+        //     resultColor = p.lerpColor(middleColor, endColor, (colorValue - 0.5) );
+        // }
+        //console.log(/*value, palette.length, value * palette.length, */colorIdx);
+        p.fill(hexToColor(p, p.random(palette), value * 255));
+        //p.fill(255, value * 255);
+      //  p.fill(resultColor);
         //p.fill(p.color('#ff0000'));
         p.beginShape();
-        coords = shapes[j];
+        coords = shapes[j].coords;
         for (var l = 0; l < coords.length; l++) {
             p.vertex(coords[l][0], coords[l][1]);
         }
@@ -715,7 +753,11 @@ function drawShapes(p, config) {
 }
 
 // jb/back-edges-squares
-function drawBackEdgesSquares(p, data) {
+function drawBackEdgesSquares(p, config) {
+
+    var data = config.points;
+    var palette = config.palette;
+    var range = config.range;
 
 
     p.rectMode(p.CENTER);
@@ -726,20 +768,21 @@ function drawBackEdgesSquares(p, data) {
     for (var i = 0; i < data.length; i++) {
         point = data[i];
 
-        p.fill(255, 40);
+        p.fill(hexToColor(p, p.random(palette), 255));
 
-        p.rect(point[0], point[1], 1, 1);
+        p.rect(point[0], point[1], 2, 2);
 
     }
     p.strokeWeight(0.25);
-    p.stroke(255, 20);
+
     // --> p.blendMode(p.OVERLAY);
 
     for (var i = 0; i < data.length; i++) {
+        p.stroke(hexToColor(p, p.random(palette), Math.floor(p.random(100,255))));
         for (var j = 0; j < data.length; j++) {
             var point1 = data[i];
             var point2 = data[j];
-            if (p.dist(point1[0], point1[1], point2[0], point2[1]) < 50) {
+            if (p.dist(point1[0], point1[1], point2[0], point2[1]) < range) {
                 p.line(point1[0], point1[1], point2[0], point2[1]);
 
             }
