@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python ./cors_server.py 8000
+python ./cors_server.py 8100

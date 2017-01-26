@@ -13,9 +13,10 @@ function initP5(w, h) {
     }
 }
 
-/* function maybeCachedImage(p, f) {
+function maybeCachedImage(p, f) {
+    // TODO: here should be a cache
     return p.createImg(f.data);
-} */
+}
 
 var PRODUCTS = [
 
