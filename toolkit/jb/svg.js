@@ -344,7 +344,7 @@ var DEFAULT_LAYERS_BLENDS = [
     /* layer-1: draw-pixels */ '', // normal
     /* layer-2: apply-gradient */ 'O', //overlay, after: blend
     /* layer-3: curves */ 'O', //overlay, after each: blend?
-    /* layer-4: shapes */ 'S', // screen
+    /* layer-4: shapes */ 'S', // overlay
     /* layer-5: edges & squares */ 'O', // overlay
     /* layer-6: back edges */ 'O', // overlay
     /* layer-7: vignette */ 'O', // before: overlay, between: multiply, then: normal
@@ -354,10 +354,10 @@ var DEFAULT_LAYERS_BLENDS = [
 var DEFAULT_LAYERS_OPACITIES = [
     1, /* layer-1: draw-pixels */
     1, /* layer-2: apply-gradient */
-    1, /* layer-3: curves */
-    0.05, /* layer-4: shapes */
+    0.5, /* layer-3: curves */
+    0.2, /* layer-4: shapes */
     1, /* layer-5: edges & squares */
-    1, /* layer-6: back edges */
+    0.2, /* layer-6: back edges */
     1, /* layer-7: vignette */
     1,  /* layer-8: logo */
     1
@@ -556,7 +556,6 @@ Rpd.noderenderer('jb/three-colors', 'svg', function() {
             if (!outlets.palette) return;
             group.empty();
             outlets.palette.forEach(function(color, i) {
-                console.log(color, i);
                 addColorRect(group.node(), color, 20).style('transform', 'translate(0, ' +  (i * 20) + 'px)');
             });
         }
