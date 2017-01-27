@@ -220,7 +220,9 @@ Rpd.nodetype('jb/noise', function() {
             'bang': { type: 'util/bang' },
             'grain': { type: 'jb/noise-step', 'default': 10 },
             'octave': { type: 'util/wholenumber', 'default': 4 },
-            'falloff': { type: 'util/number', 'default': 0.5 }
+            'falloff': { type: 'util/number', 'default': 0.9 },
+            'palette': { type: 'jb/palette', default: [ '#ffffff', '#000000', '#000000']},
+            'border': { type: 'util/number', 'default': 0 }
         },
         outlets: { 'pixels': { type: 'jb/pixels' } },
         process: function(inlets) {
@@ -422,7 +424,7 @@ Rpd.nodetype('jb/edges-squares', {
         'voronoi': { type: 'jb/voronoi' },
         'pixels': { type: 'jb/pixels' },
         'palette': { type: 'jb/palette', default: [ '#ffffff', '#ffffff', '#ffffff']},
-        'maxSquareSize': { type: 'util/number', default: 15 }
+        'maxSquareSize': { type: 'util/number', default: 10 }
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }

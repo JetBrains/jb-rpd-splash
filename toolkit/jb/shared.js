@@ -19,7 +19,7 @@ function initP5(w, h) {
 
 var PRODUCTS = [
 
-    { label: 'JB',  id: 'jetbrains',     palette: [ '#9151e1', '#fde74a', '#ec4476'] },  // jetbrains-1
+    { label: 'JB',  id: 'jetbrains',     palette: [ '#9151e1',  '#ec4476', '#fde74a'] },  // jetbrains-1
     { label: ' ',   id: 'empty0',        palette: [ ] },  // separator
     { label: 'IJ',  id: 'intellij-idea', palette: [ '#087cfa', '#fe315d', '#f97a12' ] },  // idea // IJ_
     { label: 'PS',  id: 'phpstorm',      palette: [ '#b24eee', '#7660f4', '#fc378c' ] },  // phpstorm // PS_
@@ -208,22 +208,65 @@ function makePixelExtractingSketch(className, drawContent, adaptPixels) {
 // jb/noise
 function initNoiseSketch() {
     var lastSeed, lastStep;
+
+
+
     return makePixelExtractingSketch('noise-canvas',
         function(p, inlets, ctx, width, height) {
+
             p.noStroke();
+
+            var palette = inlets.palette;
+
             p.noiseDetail(inlets.octave, inlets.falloff);
             lastSeed = p.random(1000);
             lastStep = inlets.grain;
             p.noiseSeed(lastSeed);
-            var x, y, c;
 
-            //for (var x = 0; x <= width/2+10; x+=10) {
+            var x, y, c, opacity, resultColor, startColor, middleColor, endColor;
+
+            var noisePoints = [];
+            var max = 0
+            var point;
             for (x = 0; x < width; x+=lastStep) {
-                //var column = [];
+                noisePoints[x] = [];
                 for (y = 0; y < height; y+=lastStep) {
-                    c = 255 * p.noise(0.005 * x, 0.005 * y);
+                    point = p.noise(x * 0.005, y * 0.005);
+                    noisePoints[x][y] = point;
+                    if( point >= max) {
+                        max = point;
+
+                    }
+
+                }
+            }
+
+
+
+
+            for (x = 0; x < width; x+=lastStep) {
+                for (y = 0; y < height; y+=lastStep) {
+
+
+                    opacity = noisePoints[x][y] + 1 - max;
+
+
+                    startColor = hexToColor(p, palette[2], opacity * 255);
+                    middleColor = hexToColor(p, palette[1], opacity * 255);
+                    endColor = hexToColor(p, palette[0], opacity * 255);
+
+                     if (opacity < 0.5) {
+                         resultColor = p.lerpColor(startColor, middleColor, opacity * 2);
+                     } else {
+                         resultColor = p.lerpColor(middleColor, endColor, (opacity - 0.5) * 2 );
+                     }
+
                     //c = (x / width) * 255;
-                    p.fill(c);
+                    if(inlets.border) {
+                        p.stroke(p.color(sketchConfig.bgcolor.r, sketchConfig.bgcolor.g, sketchConfig.bgcolor.b));
+                        p.strokeWeight(inlets.border);
+                    }
+                    p.fill(resultColor);
                     p.rect(x, y, lastStep, lastStep);
                     //p.rect(width - x, y, 10, 10);
                     //column.push(c);
