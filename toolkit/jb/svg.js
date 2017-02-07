@@ -1,4 +1,5 @@
 var SVG_XMLNS = "http://www.w3.org/2000/svg";
+var HTML_XMLNS = "http://www.w3.org/1999/xhtml";
 
 Rpd.noderenderer('jb/preview', 'svg', function() {
     //var myP5;
@@ -55,7 +56,8 @@ Rpd.noderenderer('jb/save', 'svg', {
     }
 });
 
-/* Rpd.noderenderer('jb/image', 'svg', function() {
+var lastCvsId = 0;
+Rpd.noderenderer('jb/image', 'svg', function() {
     var myP5, lastFile;
     function getLastFile() { return lastFile; }
     return {
@@ -76,9 +78,9 @@ Rpd.noderenderer('jb/save', 'svg', {
             }
         }
     };
-}); */
+});
 
-/* function createCanvasWrapper(wrapperId, bodyElm) {
+function createCanvasWrapper(wrapperId, bodyElm) {
     var group = document.createElementNS(SVG_XMLNS, 'g');
     group.setAttributeNS(null, 'transform', 'translate(10, 10)');
     var foreign = document.createElementNS(SVG_XMLNS, 'foreignObject');
@@ -89,12 +91,14 @@ Rpd.noderenderer('jb/save', 'svg', {
     group.appendChild(foreign);
     bodyElm.appendChild(group);
     return wrapper;
-} */
+}
 
-/* function createP5ForImageDrop(node, inletName, getFile) {
+function createP5ForImageDrop(node, inletName, getFile) {
     return function(p) {
+        p.preload = function() {};
         p.setup = function() { var c = p.createCanvas(180, 30);
                                c.addClass('p5-canvas');
+                               c.addClass('p5-drop-canvas');
                                c.drop(function(file) {
                                    if (file.type === 'image') {
                                        node.inlets[inletName].receive(file);
@@ -122,7 +126,7 @@ Rpd.noderenderer('jb/save', 'svg', {
             }
         };
     }
-} */
+}
 
 var PALETTE_NODE_WIDTH = PRODUCTS.length * 14 + 20;
 var PALETTE_NODE_HEIGHT = 70;
