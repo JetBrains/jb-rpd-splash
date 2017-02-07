@@ -163,26 +163,21 @@ Rpd.nodetype('jb/rorschach-vertical', function() {
     };
 });
 
-Rpd.nodetype('jb/image', {
-    inlets: {
-        file: { type: 'core/any', hidden: true },
-    },
-    outlets: {
-        drawable: { type: 'jb/drawable' }
-    },
-    process: function(inlets) {
-        var file = inlets.file;
-        return {
-            drawable: {
-                conf: inlets,
-                func: file
-                    ? function(p) {
-                        p.image(maybeCachedImage(p, file).hide(), 0, 0, 300, 300);
-                    } :
-                    function() {}
-            }
+Rpd.nodetype('jb/image', function() {
+
+    var refreshSketch = initCustomBackgroundSketch();
+
+    return {
+        inlets: {
+            file: { type: 'core/any', hidden: true },
+        },
+        outlets: {
+            pixels: { type: 'jb/pixels' }
+        },
+        process: function(inlets) {
+            return { 'pixels': refreshSketch(inlets) };
         }
-    }
+    };
 });
 
  Rpd.nodetype('jb/save', {

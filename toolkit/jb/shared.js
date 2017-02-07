@@ -13,10 +13,10 @@ function initP5(w, h) {
     }
 }
 
-function maybeCachedImage(p, f) {
-    // TODO: here should be a cache
-    return p.createImg(f.data);
-}
+// function maybeCachedImage(p, f) {
+//     // TODO: here should be a cache
+//     return p.createImg(f.data);
+// }
 
 var PRODUCTS = [
 
@@ -210,8 +210,6 @@ function makePixelExtractingSketch(className, drawContent, adaptPixels) {
 function initNoiseSketch() {
     var lastSeed, lastStep;
 
-
-
     return makePixelExtractingSketch('noise-canvas',
         function(p, inlets, ctx, width, height) {
 
@@ -242,15 +240,10 @@ function initNoiseSketch() {
                 }
             }
 
-
-
-
-            for (x = 0; x < width; x+=lastStep) {
-                for (y = 0; y < height; y+=lastStep) {
-
+            for (x = 0; x < width; x += lastStep) {
+                for (y = 0; y < height; y += lastStep) {
 
                     opacity = noisePoints[x][y] + 1 - max;
-
 
                     startColor = hexToColor(p, palette[2], opacity * 255);
                     middleColor = hexToColor(p, palette[1], opacity * 255);
@@ -263,10 +256,11 @@ function initNoiseSketch() {
                      }
 
                     //c = (x / width) * 255;
-                    if(inlets.border) {
+                    if (inlets.border) {
                         p.stroke(p.color(sketchConfig.bgcolor.r, sketchConfig.bgcolor.g, sketchConfig.bgcolor.b));
                         p.strokeWeight(inlets.border);
                     }
+
                     p.fill(resultColor);
                     p.rect(x, y, lastStep, lastStep);
                     //p.rect(width - x, y, 10, 10);
@@ -308,6 +302,7 @@ function initBackgroundSketch() {
         });
 }
 
+// jb/h-rorschach
 function initHRorschachSketch() {
     var lastInlets;
 
@@ -357,6 +352,7 @@ function initHRorschachSketch() {
         });
 }
 
+// jb/v-rorschach
 function initVRorschachSketch() {
     var lastInlets;
     return makePixelExtractingSketch(
@@ -838,8 +834,11 @@ function drawBackEdgesSquares(p, config) {
 
 }
 
+var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
 // jb/dark-gradients
 function drawDarkGradients(p, config) {
+    //if (isSafari) return;
     var width = config.width || window.innerWidth;
     var height = config.height || window.innerHeight;
     var iris = config.iris;
@@ -847,26 +846,39 @@ function drawDarkGradients(p, config) {
     var pupilColor = config.pupilColor;
 
      if (ctx) {
-      //   p.blendMode(p.OVERLAY);
+        //p.blendMode(p.OVERLAY);
+
+        //if (isSafari && ctx.globalCompositeOperation == 'overlay') {
+            //p.blendMode(p.NORMAL);
+        //}
 
         var gradient = ctx.createRadialGradient(width/2, height/2, 4.5 * iris, width/2, height/2, width/2 * iris / 100);
-        gradient.addColorStop(0, p.color(pupilColor.r, pupilColor.g, pupilColor.b, pupilOpacity));
-        gradient.addColorStop(1, p.color(0));
+        //gradient.addColorStop(0, p.color(pupilColor.r, pupilColor.g, pupilColor.b, pupilOpacity));
+        gradient.addColorStop(0, 'rgba(' + pupilColor.r + ',' + pupilColor.g + ',' + pupilColor.b + ',' + pupilOpacity + ')');
+        //gradient.addColorStop(0, 'green');
+        //gradient.addColorStop(1, p.color(0));
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 1)');
+        //gradient.addColorStop(1, 'white');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
 
-
-
-        p.blendMode(p.MULTIPLY);
+        //if (!isSafari) {
+            p.blendMode(p.MULTIPLY);
+        //}
         var gradient = ctx.createRadialGradient(width/2, height/2, 2 * iris, width/2, height/2, 0.7 * width * iris / 100);
-        gradient.addColorStop(0, p.color(pupilColor.r, pupilColor.g, pupilColor.b, pupilOpacity));
-        gradient.addColorStop(1, p.color(24, 24, 24));
+        //gradient.addColorStop(0, p.color(pupilColor.r, pupilColor.g, pupilColor.b, pupilOpacity));
+        gradient.addColorStop(0, 'rgba(' + pupilColor.r + ',' + pupilColor.g + ',' + pupilColor.b + ',' + pupilOpacity + ')');
+        //gradient.addColorStop(0, 'green');
+        //gradient.addColorStop(1, p.color(24, 24, 24));
+        gradient.addColorStop(1, 'rgba(24, 24, 24, 1)');
+        //gradient.addColorStop(1, 'white');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
         p.blendMode(p.NORMAL);
     }
 }
 
+// jb/background
 function drawBackground(p, config, ctx) {
     var productId = config.product;
     if (!productId) return;
@@ -881,6 +893,33 @@ function drawBackground(p, config, ctx) {
         ctx.restore();
         //putLogoAt(ctx,  , logo.x * width, logo.y * height);
     }
+}
+
+// jb/image
+function initCustomBackgroundSketch() {
+    return makePixelExtractingSketch(
+        'custom-background-canvas',
+        drawCustomBackground,
+        function(values, config, p, canvas, width, height) {
+            return {
+                width: width,
+                height: height,
+                values: values,
+                canvas: canvas,
+                time: new Date(),
+                step: -1,
+                density: p.pixelDensity(),
+                seed: -1
+            };
+        });
+}
+
+function drawCustomBackground(p, config, ctx) {
+    var file = config.file;
+    if (!file) return;
+    //var pImage = p.createImg(f.data);
+    //p.image(maybeCachedImage(p, file), 0, 0, 300, 300);
+    ctx.drawImage(file, 0, 0, file.width, file.height, 0, 0, window.innerWidth, window.innerHeight);
 }
 
 function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {
