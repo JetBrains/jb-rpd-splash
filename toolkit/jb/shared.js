@@ -922,7 +922,10 @@ function initCustomBackgroundSketch() {
 function drawCustomBackground(p, config, ctx) {
     var file = config.file;
     if (!file) return;
+
     p.image(maybeCachedImage(p, file), 0, 0, window.innerWidth, window.innerHeight);
+    p.filter(GRAY);
+    p.filter(INVERT);
     //ctx.drawImage(file, 0, 0, file.width, file.height, 0, 0, window.innerWidth, window.innerHeight);
 }
 
