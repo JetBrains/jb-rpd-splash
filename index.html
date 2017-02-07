@@ -65,6 +65,10 @@
                 opacity: 0;
             }
 
+            #rpd-jb-hidden-canvases canvas {
+                display: none;
+            }
+
             #rpd-jb-preview-target {
                 position: fixed;
             }
@@ -86,8 +90,6 @@
                 pointer-events: all;
                 cursor: pointer;
             }
-
-
 
             .rpd-node.rpd-util-comment .rpd-process text {
                 fill: white;
@@ -189,6 +191,7 @@
     </head>
     <body>
 
+        <div id="rpd-jb-hidden-canvases"></div>
         <div id="rpd-jb-preview-target"></div>
         <div id="front-layer">
             <div id="loader-wrapper">

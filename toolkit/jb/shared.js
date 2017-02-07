@@ -164,7 +164,7 @@ function makePixelExtractingSketch(className, drawContent, adaptPixels) {
         var cvs;
 
         p.setup = function() {
-            cvs = p.createCanvas(width, height).parent('rpd-jb-preview-target');
+            cvs = p.createCanvas(width, height).parent('rpd-jb-hidden-canvases');
             //cvs.position(-5000, -5000);
             cvs.canvas.className = className || 'hidden-canvas';
             cvs.canvas.style.display = 'none';
