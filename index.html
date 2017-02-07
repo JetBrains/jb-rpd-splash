@@ -38,9 +38,11 @@
             }
 
             #overlay {
-                background-color: rgba(0,0,0,0.5);
+                background: rgba(0,0,0,0.5);
                 opacity: 1;
                 transition: opacity 500ms ease-in;
+                position: absolute;
+                z-index: 0;
             }
 
             #overlay.hidden {
@@ -49,19 +51,12 @@
 
             #patch-target {
                 opacity: 1;
+                z-index: 1;
+                position: relative;
                 transition: opacity 500ms ease-in;
             }
 
             #patch-target.hidden {
-                opacity: 0;
-            }
-
-            #patch-target .rpd-background {
-                opacity: 0.3;
-            }
-
-            #patch-target .rpd-patch .rpd-background.hidden {
-                fill: transparent;
                 opacity: 0;
             }
 
@@ -71,11 +66,21 @@
 
             #rpd-jb-preview-target {
                 position: fixed;
+                z-index: -1;
             }
 
             #rpd-jb-preview-target,
             #rpd-jb-preview-target canvas {
-                background: #12181C;
+                background: transparent;
+            }
+
+            .rpd-background {
+                fill: transparent !important;
+            }
+
+            #patch-target .rpd-patch .rpd-background.hidden {
+                fill: transparent;
+                opacity: 0;
             }
 
             #front-layer {
@@ -158,6 +163,18 @@
             .rpd-outlet .jb-color-value,
             .rpd-outlet .jb-palette-value {
                 transform: translate(9px, 4px);
+            }
+
+            svg text {
+                cursor: default;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+            svg text::selection {
+                background: none;
             }
 
         </style>
@@ -261,6 +278,8 @@
             });
 
             var overlayElm = document.getElementById('overlay');
+            overlayElm.style.width = window.innerWidth + 'px';
+            overlayElm.style.height = window.innerHeight + 'px';
             var patchElm = document.getElementById('patch-target');
             Kefir.fromEvents(document.body, 'keydown').filter(function(evt) {
                 return evt.keyCode === 32;

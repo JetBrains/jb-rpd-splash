@@ -1,7 +1,7 @@
 var sketchConfig = {
     width: window.innerWidth,
     height: window.innerHeight,
-    bgcolor: _rgb(24, 24, 24),
+    bgcolor: _rgb(66, 66, 66),
     layers: []
     //backImgSrc: 'http://localhost:8000/experiment_bg.png'
 };
@@ -56,8 +56,9 @@ function setup() {
 
 
     var bgcolor = sketchConfig.bgcolor;
-    background(color(bgcolor.r, bgcolor.g, bgcolor.b));
     clear();
+
+    background(color(bgcolor.r, bgcolor.g, bgcolor.b));
 
     d3.select('#rpd-jb-preview-target').selectAll('.sketch-canvas').remove();
     canvas = createCanvas(sketchConfig.width, sketchConfig.height).parent('rpd-jb-preview-target');
@@ -128,6 +129,9 @@ function draw() {
     var p5 = this;
     clear();
 
+    var bgcolor = sketchConfig.bgcolor;
+    background(color(bgcolor.r, bgcolor.g, bgcolor.b));
+
     drawLayer.delay(10).onValue(function(v) {
         showLoaderAt((v.index + 1) / layersToRender.length, 'Rendering');
         var layer = v.layer;
@@ -136,7 +140,9 @@ function draw() {
         layer.func(p5, layer.conf, ctx, v.renderOptions);
         resetRenderOptions(p5);
         //console.timeEnd(layer.name || 'layer-' + v.index);
-        if (v.index == (layersToRender.length - 1)) hideLoader();
+        if (v.index == (layersToRender.length - 1)) {
+            hideLoader();
+        }
     });
 
     for (var i = 0; i < layersToRender.length; i++) {
@@ -146,6 +152,8 @@ function draw() {
             renderOptions: layersToRender[i][1]
         });
     }
+
+    // hideLoader();
 }
 
 function applyRenderOptions(p, options, index) {
