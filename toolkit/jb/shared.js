@@ -838,7 +838,7 @@ var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 // jb/dark-gradients
 function drawDarkGradients(p, config) {
-    //if (isSafari) return;
+    if (isSafari) return;
     var width = config.width || window.innerWidth;
     var height = config.height || window.innerHeight;
     var iris = config.iris;
@@ -849,7 +849,7 @@ function drawDarkGradients(p, config) {
         //p.blendMode(p.OVERLAY);
 
         //if (isSafari && ctx.globalCompositeOperation == 'overlay') {
-            //p.blendMode(p.NORMAL);
+            p.blendMode(p.NORMAL);
         //}
 
         var gradient = ctx.createRadialGradient(width/2, height/2, 4.5 * iris, width/2, height/2, width/2 * iris / 100);
@@ -861,6 +861,8 @@ function drawDarkGradients(p, config) {
         //gradient.addColorStop(1, 'white');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
+
+        //if (isSafari) return;
 
         //if (!isSafari) {
             p.blendMode(p.MULTIPLY);
