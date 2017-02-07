@@ -924,8 +924,10 @@ function drawCustomBackground(p, config, ctx) {
     if (!file) return;
 
     p.image(maybeCachedImage(p, file), 0, 0, window.innerWidth, window.innerHeight);
+
     p.filter(GRAY);
     p.filter(INVERT);
+
     //ctx.drawImage(file, 0, 0, file.width, file.height, 0, 0, window.innerWidth, window.innerHeight);
 }
 

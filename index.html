@@ -344,6 +344,8 @@
             collectorStep.inlets['min'].receive(7);
             collectorStep.configure({ dial: (16 - 7) / (40 - 7) });
 
+
+
             var chaos = patch.addNode('util/dial', 'Chaos').move(leftMargin + 260, topMargin + 10);
             chaos.configure({ dial: 50/100 });
 
