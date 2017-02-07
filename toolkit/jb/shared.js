@@ -13,10 +13,10 @@ function initP5(w, h) {
     }
 }
 
-// function maybeCachedImage(p, f) {
-//     // TODO: here should be a cache
-//     return p.createImg(f.data);
-// }
+function maybeCachedImage(p, f) {
+    // TODO: here should be a cache
+    return p.createImg(f.data);
+}
 
 var PRODUCTS = [
 
@@ -163,11 +163,14 @@ function makePixelExtractingSketch(className, drawContent, adaptPixels) {
         var ctx;
         var cvs;
 
+        p.preload = function() {}; // or else it calls `preload` of the main sketch
+
         p.setup = function() {
             cvs = p.createCanvas(width, height).parent('rpd-jb-hidden-canvases');
             //cvs.position(-5000, -5000);
             cvs.canvas.className = className || 'hidden-canvas';
             cvs.canvas.style.display = 'none';
+            cvs.canvas.style.visibility = 'hidden';
          //  console.log(cvs);
             //cvs.style.display = 'none';
 
@@ -919,9 +922,8 @@ function initCustomBackgroundSketch() {
 function drawCustomBackground(p, config, ctx) {
     var file = config.file;
     if (!file) return;
-    //var pImage = p.createImg(f.data);
-    //p.image(maybeCachedImage(p, file), 0, 0, 300, 300);
-    ctx.drawImage(file, 0, 0, file.width, file.height, 0, 0, window.innerWidth, window.innerHeight);
+    p.image(maybeCachedImage(p, file), 0, 0, window.innerWidth, window.innerHeight);
+    //ctx.drawImage(file, 0, 0, file.width, file.height, 0, 0, window.innerWidth, window.innerHeight);
 }
 
 function pixelBrightnessByCoords(x, y, srcPixels, width, pxDensity) {

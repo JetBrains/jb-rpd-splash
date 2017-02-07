@@ -36,16 +36,18 @@ var pxDensity;
 var lastPixelsTime, lastPointData;
 
 var loadingResources = false;
+var resourcesReceived = false;
 
 var BLEND_TO_P5;
 
 function preload() {
-    if (loadingResources) return;
+    if (loadingResources || resourcesReceived) return;
   //  console.log('preload');
 
     pxDensity = pixelDensity();
     loadingResources = true;
     loadSketchImages(this, function() {
+        resourcesReceived = true;
         loadingResources = false;
     });
 
