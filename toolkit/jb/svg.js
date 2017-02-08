@@ -1,6 +1,8 @@
 var SVG_XMLNS = "http://www.w3.org/2000/svg";
 var HTML_XMLNS = "http://www.w3.org/1999/xhtml";
 
+var drawInnerCanvases = true;
+
 Rpd.noderenderer('jb/preview', 'svg', function() {
     //var myP5;
     return {
@@ -566,3 +568,76 @@ Rpd.noderenderer('jb/three-colors', 'svg', function() {
         }
     };
 });
+
+function createP5ToDisplayPixels(node, trgWidth, trgHeight, getPixels) {
+    var srcWidth = window.innerWidth;
+    var srcHeight = window.innerHeight;
+    return function(p) {
+        p.preload = function() {};
+        p.setup = function() { var c = p.createCanvas(srcWidth, srcHeight);
+                               c.addClass('p5-inner-canvas');
+                               c.canvas.style.transform = 'scale(' + (trgWidth / srcWidth) + ',' +
+                                                                     (trgHeight / srcHeight) + ')';
+                               p.noLoop(); }
+        p.draw = function() {
+            var pixels = getPixels();
+            if (!pixels) return;
+            p.loadPixels();
+            var source = pixels;
+            var target = p.pixels;
+            var d = p.pixelDensity();
+            for (var x = 0; x < srcWidth; x++) {
+                    for (var y = 0; y < srcHeight; y++) {
+                        for (var i = 0; i < d; i++) {
+                            for (var j = 0; j < d; j++) {
+                                pixelIdx = 4 * ((y * d + j) * srcWidth * d + (x * d + i));
+                                target[pixelIdx] = source[pixelIdx];
+                                target[pixelIdx+1] = source[pixelIdx+1];
+                                target[pixelIdx+2] = source[pixelIdx+2];
+                                target[pixelIdx+3] = source[pixelIdx+3];
+                            }
+                        }
+                    }
+                }
+            p.updatePixels();
+        };
+    }
+}
+
+function nodeWhichRendersPixels(width, height, cvsWidth, cvsHeight) {
+    return function() {
+        var myP5, lastPixels;
+        function getLastPixels() { return lastPixels; }
+        return {
+            size: { width: width, height: height },
+            pivot: { x: 0, y: 0 },
+            first: function(bodyElm) {
+                if (!drawInnerCanvases) return;
+                var wrapperId = 'p5-canvas-' + lastCvsId;
+                var wrapper = createCanvasWrapper(wrapperId, bodyElm);
+                var node = this;
+                myP5 = new p5(createP5ToDisplayPixels(node, cvsWidth, cvsHeight, getLastPixels), wrapper);
+                lastCvsId++;
+            },
+            always: function(bodyElm, inlets, outlets) {
+                if (!drawInnerCanvases) return;
+                if (outlets && outlets.pixels) {
+                    lastPixels = outlets.pixels.values;
+                    myP5.redraw();
+                }
+            }
+        };
+    }
+}
+
+if (drawInnerCanvases) {
+    Rpd.noderenderer('jb/noise', 'svg', nodeWhichRendersPixels(70, 200, 50, 40));
+
+    Rpd.noderenderer('jb/background', 'svg', nodeWhichRendersPixels(70, 150, 50, 40));
+
+    //Rpd.noderenderer('jb/draw-pixels', 'svg', nodeWhichRendersPixels(70, 100, 50, 40));
+
+    Rpd.noderenderer('jb/rorschach', 'svg', nodeWhichRendersPixels(70, 40, 50, 20));
+
+    Rpd.noderenderer('jb/rorschach-vertical', 'svg', nodeWhichRendersPixels(70, 40, 50, 20));
+}

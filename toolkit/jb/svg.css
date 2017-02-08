@@ -1,6 +1,12 @@
-.p5-canvas {
+.p5-canvas, .p5-inner-canvas {
     position: fixed;
     visibility: visible !important;
+}
+
+.p5-inner-canvas {
+    /* border: 5px solid black; */
+    transform-origin: left top;
+    box-shadow: 30px 10px;
 }
 
 /* .rpd-node.rpd-jb-preview .fullscreen-trigger {
