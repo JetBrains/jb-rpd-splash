@@ -35,6 +35,9 @@
         <!-- d3.voronoi.js -->
         <script src="./d3-voronoi.v1.min.js"></script>
 
+        <!-- https://github.com/blueimp/JavaScript-Canvas-to-Blob -->
+        <script src="./canvas-to-blob.js"></script>
+
         <style>
             body {
                 margin: 0;
@@ -423,6 +426,36 @@
             if (window.innerWidth < scaleAt) {
                 d3.select('.rpd-nodelist-list').style('transform', 'scale(0.8, 0.8) translate(-15px, -125px)');
             }
+
+            var dropAllowedClass = 'rpd-jb-drop-allowed';
+
+            function dropAllowedOn(elm) {
+                return elm && elm.className && elm.className.indexOf && (elm.className.indexOf(dropAllowedClass) >= 0);
+            }
+
+            window.addEventListener("dragenter", function(e) {
+                if (!dropAllowedOn(e.target)) {
+                    e.preventDefault();
+                    e.dataTransfer.effectAllowed = "none";
+                    e.dataTransfer.dropEffect = "none";
+                }
+            }, false);
+
+            window.addEventListener("dragover", function(e) {
+                if (!dropAllowedOn(e.target)) {
+                    e.preventDefault();
+                    e.dataTransfer.effectAllowed = "none";
+                    e.dataTransfer.dropEffect = "none";
+                }
+            });
+
+            window.addEventListener("drop", function(e) {
+                if (!dropAllowedOn(e.target)) {
+                    e.preventDefault();
+                    e.dataTransfer.effectAllowed = "none";
+                    e.dataTransfer.dropEffect = "none";
+                }
+            });
 
 
             setTimeout(function() {

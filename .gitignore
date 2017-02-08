@@ -5,6 +5,7 @@ d3.v4.min.js
 d3-voronoi.*.min.js
 loaders.min.css
 sample.sketch.java
+canvas-to-blob.js
 *.example.js
 p5.js
 p5.*.js

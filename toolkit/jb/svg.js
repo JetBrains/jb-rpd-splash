@@ -99,6 +99,7 @@ function createP5ForImageDrop(node, inletName, getFile) {
         p.setup = function() { var c = p.createCanvas(180, 30);
                                c.addClass('p5-canvas');
                                c.addClass('p5-drop-canvas');
+                               c.addClass('rpd-jb-drop-allowed');
                                c.drop(function(file) {
                                    if (file.type === 'image') {
                                        node.inlets[inletName].receive(file);
