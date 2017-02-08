@@ -49,6 +49,9 @@ function preload() {
     loadSketchImages(this, function() {
         resourcesReceived = true;
         loadingResources = false;
+        if (window.__sendFirstBang) {
+            window.__sendFirstBang();
+        }
     });
 
 }

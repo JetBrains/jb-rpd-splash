@@ -211,7 +211,6 @@ window.addEventListener("drop", function(e) {
     }
 });
 
-
-setTimeout(function() {
+window.__sendFirstBang = function() {
     bangNode.outlets['bang'].send({});
-}, 2000);
+}
