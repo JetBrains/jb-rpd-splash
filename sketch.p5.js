@@ -124,14 +124,14 @@ function draw() {
     // a tiny bit slower version, ensures to show loading bar for every step by waiting 10msec
     // between calls to free up GPU
 
-    var layersToRender = sketchConfig.layers;
+    var layersToRender = sketchConfig.layers.values;
+    var bgcolor = sketchConfig.layers.background || sketchConfig.bgcolor;
 
     var drawLayer = Kefir.emitter();
 
     var p5 = this;
     clear();
 
-    var bgcolor = sketchConfig.bgcolor;
     background(color(bgcolor.r, bgcolor.g, bgcolor.b));
 
     drawLayer.delay(10).onValue(function(v) {
@@ -180,7 +180,7 @@ function resetRenderOptions(p) {
 var updateStream = Kefir.emitter();
 updateStream.filter(function(value) {
                 //return value.config.srcPixels && value.config.srcPixels.pixels.length && value.config.logo && value.config.logo.product;
-                return value.config.layers && (value.config.layers.length > 0);
+                return value.config.layers.values && (value.config.layers.values.length > 0);
             })
             .throttle(1000, { leading: false })
             .onValue(function(value) {

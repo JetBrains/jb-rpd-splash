@@ -452,6 +452,8 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
     var modesX = (BLENDS.length * LETTER_WIDTH) - width - 3;
     var knobsX = 10 + (width - defaultKnobConf.width) - (width / 2);
 
+    var shiftY = 13;
+
     return {
         size: { width: width,
                 height: height },
@@ -460,7 +462,7 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
             var valueOut = Kefir.pool();
             var nodeRoot = bodyElm;
             var knobsRoot = d3.select(nodeRoot).append('g')
-                              .attr('transform', 'translate(' + knobsX + ',0)')
+                              .attr('transform', 'translate(' + knobsX + ',' + shiftY + ')')
                               .node();
             var defaultValueStream;
             var knobsOut = Kefir.combine(
@@ -473,7 +475,7 @@ Rpd.noderenderer('jb/layers', 'svg', function() {
                 })
             );
             var switchersRoot = d3.select(nodeRoot).append('g')
-                                  .attr('transform', 'translate(' + modesX + ',0)')
+                                  .attr('transform', 'translate(' + modesX + ',' + shiftY + ')')
                                   .node();
             var blendsChanges = [];
             for (var i = 0; i < count; i++) {

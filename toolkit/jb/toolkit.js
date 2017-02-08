@@ -46,7 +46,11 @@ Rpd.channeltype('jb/voronoi', { show: function(v) { return v ? '<Voronoi>' : '<E
 
 Rpd.channeltype('jb/point-data', { show: howMuch('point', 'points') });
 
-Rpd.channeltype('jb/layers', { show: howMuch('layer', 'layers') });
+Rpd.channeltype('jb/layers', {
+    show: function(v) {
+        return howMuch('layer', 'layers')(v.values);
+    }
+});
 
 Rpd.channeltype('jb/angle', {
     allow: [ 'util/number' ],
@@ -230,6 +234,7 @@ Rpd.nodetype('jb/noise', function() {
 var MAX_LAYERS = 9;
 
 var LAYERS_INLETS = {};
+LAYERS_INLETS['background'] = { type: 'util/color', default: { r: 66, g: 66, b: 66 } };
 for (var i = 0; i < MAX_LAYERS; i++) {
     LAYERS_INLETS['layer-' + (i + 1)] =  { type: 'jb/drawable' }
 };
@@ -262,7 +267,8 @@ Rpd.nodetype('jb/layers', {
         }
         if (!layers.length) return;
         return {
-            'layers': layers
+            'layers': { background: inlets.background,
+                        values: layers }
         }
     }
 });
