@@ -641,3 +641,69 @@ if (drawInnerCanvases) {
 
     Rpd.noderenderer('jb/rorschach-vertical', 'svg', nodeWhichRendersPixels(70, 40, 50, 20));
 }
+
+function createP5ToCallDrawable(node, trgWidth, trgHeight, getDrawable) {
+    var srcWidth = window.innerWidth;
+    var srcHeight = window.innerHeight;
+    var ctx;
+    return function(p) {
+        p.preload = function() {};
+        p.setup = function() { var c = p.createCanvas(srcWidth, srcHeight);
+                               c.addClass('p5-inner-canvas');
+                               c.canvas.style.transform = 'scale(' + (trgWidth / srcWidth) + ',' +
+                                                                     (trgHeight / srcHeight) + ')';
+                               ctx = c.drawingContext;
+                               p.noLoop(); }
+        p.draw = function() {
+            var drawable = getDrawable();
+            if (!drawable) return;
+            drawable.func(p, drawable.conf, ctx, { opacity: 1, blendMode: 'N' });
+        };
+    }
+}
+
+function nodeWhichRendersDrawable(width, height, cvsWidth, cvsHeight) {
+    return function() {
+        var myP5, lastDrawable;
+        function getLastDrawable() { return lastDrawable; }
+        return {
+            size: { width: width, height: height },
+            pivot: { x: 0, y: 0 },
+            first: function(bodyElm) {
+                if (!drawInnerCanvases) return;
+                var wrapperId = 'p5-canvas-' + lastCvsId;
+                var wrapper = createCanvasWrapper(wrapperId, bodyElm);
+                var node = this;
+                myP5 = new p5(createP5ToCallDrawable(node, cvsWidth, cvsHeight, getLastDrawable), wrapper);
+                lastCvsId++;
+            },
+            always: function(bodyElm, inlets, outlets) {
+                if (!drawInnerCanvases) return;
+                if (outlets && outlets.drawable) {
+                    lastDrawable = outlets.drawable;
+                    myP5.redraw();
+                }
+            }
+        };
+    }
+}
+
+if (drawInnerCanvases) {
+    Rpd.noderenderer('jb/shapes', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+
+    //Rpd.noderenderer('jb/apply-gradient', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+
+    //Rpd.noderenderer('jb/vignette', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+
+    Rpd.noderenderer('jb/curved-edges', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+
+    Rpd.noderenderer('jb/edges-squares', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+
+    Rpd.noderenderer('jb/back-edges-squares', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+
+    //Rpd.noderenderer('jb/draw-logo', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+
+    //Rpd.noderenderer('jb/draw-pixels', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+
+}
+

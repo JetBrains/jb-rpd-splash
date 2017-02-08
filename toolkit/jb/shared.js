@@ -844,9 +844,9 @@ function drawDarkGradients(p, config) {
     if (isSafari) return; // FIXME
     var width = config.width || window.innerWidth;
     var height = config.height || window.innerHeight;
-    var iris = config.iris;
-    var pupilOpacity = config.pupilOpacity;
-    var pupilColor = config.pupilColor;
+    var iris = config.iris || 0;
+    var pupilOpacity = config.pupilOpacity || 0;
+    var pupilColor = config.pupilColor || { r: 0, g: 0, b: 0 };
 
      if (ctx) {
         //p.blendMode(p.OVERLAY);
