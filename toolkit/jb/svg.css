@@ -5,3 +5,7 @@
     cursor: pointer;
     z-index: 10;
 } */
+
+.rpd-inlet.rpd-util-number foreignobject, .rpd-outlet.rpd-util-number foreignobject {
+    transform: translate(-43px,1px);
+}
