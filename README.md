@@ -6,4 +6,4 @@ Built with [RPD](http://shamansir.github.io/rpd) and [p5.js](https://p5js.org).
 
 Feel free to touch and drag anything you want.
 
-![Screenshot](./master/screenshot.png?raw=true)
+![Screenshot](./screenshot.png?raw=true)
