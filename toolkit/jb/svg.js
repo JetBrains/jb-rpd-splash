@@ -573,12 +573,14 @@ function createP5ToDisplayPixels(node, trgWidth, trgHeight, getPixels) {
     var srcWidth = window.innerWidth;
     var srcHeight = window.innerHeight;
     return function(p) {
+        var setupCalled = false;
         p.preload = function() {};
         p.setup = function() { var c = p.createCanvas(srcWidth, srcHeight);
                                c.addClass('p5-inner-canvas');
                                c.canvas.style.transform = 'scale(' + (trgWidth / srcWidth) + ',' +
                                                                      (trgHeight / srcHeight) + ')';
-                               p.noLoop(); }
+                               p.noLoop();
+                               setupCalled = true; }
         p.draw = function() {
             var pixels = getPixels();
             if (!pixels) return;
@@ -600,6 +602,11 @@ function createP5ToDisplayPixels(node, trgWidth, trgHeight, getPixels) {
                     }
                 }
             p.updatePixels();
+        };
+        var prevRedraw = p.redraw;
+        p.redraw = function() {
+            if (!setupCalled) return;
+            prevRedraw.call(this);
         };
     }
 }
@@ -646,6 +653,7 @@ function createP5ToCallDrawable(node, trgWidth, trgHeight, getDrawable) {
     var srcWidth = window.innerWidth;
     var srcHeight = window.innerHeight;
     var ctx;
+    var setupCalled = false;
     return function(p) {
         p.preload = function() {};
         p.setup = function() { var c = p.createCanvas(srcWidth, srcHeight);
@@ -653,11 +661,22 @@ function createP5ToCallDrawable(node, trgWidth, trgHeight, getDrawable) {
                                c.canvas.style.transform = 'scale(' + (trgWidth / srcWidth) + ',' +
                                                                      (trgHeight / srcHeight) + ')';
                                ctx = c.drawingContext;
-                               p.noLoop(); }
+                               p.noLoop();
+                               setupCalled = true; }
         p.draw = function() {
             var drawable = getDrawable();
             if (!drawable) return;
             drawable.func(p, drawable.conf, ctx, { opacity: 1, blendMode: 'N' });
+        };
+        var prevRedraw = p.redraw;
+        p.redraw = function() {
+            if (!setupCalled) {
+                setTimeout(function() {
+                    prevRedraw.call(p);
+                }, 1000);
+                return;
+            }
+            prevRedraw.call(p);
         };
     }
 }
@@ -689,21 +708,21 @@ function nodeWhichRendersDrawable(width, height, cvsWidth, cvsHeight) {
 }
 
 if (drawInnerCanvases) {
-    Rpd.noderenderer('jb/shapes', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+    Rpd.noderenderer('jb/shapes', 'svg', nodeWhichRendersDrawable(70, 70, 50, 40));
 
-    //Rpd.noderenderer('jb/apply-gradient', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+    Rpd.noderenderer('jb/apply-gradient', 'svg', nodeWhichRendersDrawable(70, 40, 50, 25));
 
-    //Rpd.noderenderer('jb/vignette', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+    Rpd.noderenderer('jb/vignette', 'svg', nodeWhichRendersDrawable(70, 70, 50, 40));
 
     Rpd.noderenderer('jb/curved-edges', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
 
     Rpd.noderenderer('jb/edges-squares', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
 
-    Rpd.noderenderer('jb/back-edges-squares', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+    Rpd.noderenderer('jb/back-edges-squares', 'svg', nodeWhichRendersDrawable(70, 70, 50, 40));
 
-    //Rpd.noderenderer('jb/draw-logo', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+    Rpd.noderenderer('jb/draw-logo', 'svg', nodeWhichRendersDrawable(70, 70, 50, 40));
 
-    //Rpd.noderenderer('jb/draw-pixels', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+    Rpd.noderenderer('jb/draw-pixels', 'svg', nodeWhichRendersDrawable(70, 70, 50, 40));
 
 }
 

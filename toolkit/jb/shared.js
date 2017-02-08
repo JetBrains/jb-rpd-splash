@@ -408,7 +408,7 @@ function initVRorschachSketch() {
 function drawPixels(p, config, ctx, renderOptions) {
     var pixels = config.pixels;
     var blur = config.blur;
-    var contrast = Math.floor(config.contrast * 255);
+    var contrast = Math.floor((config.contrast || 0) * 255);
 
     var opacity = renderOptions.opacity;
 
