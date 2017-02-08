@@ -7,6 +7,7 @@
     /* border: 5px solid black; */
     transform-origin: left top;
     box-shadow: 30px 10px;
+    background: rgba(255,255,255,0.2);
 }
 
 /* .rpd-node.rpd-jb-preview .fullscreen-trigger {
