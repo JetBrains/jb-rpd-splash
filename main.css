@@ -1,0 +1,175 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#overlay {
+    background: rgba(0,0,0,0.5);
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+    position: absolute;
+    z-index: 0;
+}
+
+#overlay.hidden {
+    opacity: 0;
+}
+
+#patch-target {
+    opacity: 1;
+    z-index: 1;
+    position: relative;
+    transition: opacity 500ms ease-in;
+}
+
+#patch-target.hidden {
+    opacity: 0;
+}
+
+#rpd-jb-hidden-canvases canvas {
+    display: none;
+}
+
+#rpd-jb-preview-target {
+    position: fixed;
+    z-index: -1;
+}
+
+#rpd-jb-preview-target,
+#rpd-jb-preview-target canvas {
+    background: transparent;
+}
+
+.rpd-background {
+    fill: transparent !important;
+}
+
+#patch-target .rpd-patch .rpd-background.hidden {
+    fill: transparent;
+    opacity: 0;
+}
+
+#front-layer {
+    position: relative;
+}
+
+.rpd-node .rpd-content {
+    opacity: 0.85;
+}
+
+.rpd-node.rpd-jb-save .rpd-process * {
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.rpd-node.rpd-util-comment .rpd-process text {
+    fill: white;
+    font-size: 1.5em;
+}
+
+.rpd-node.rpd-jb-palette .rpd-process .rpd-jb-palette-variant * {
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.rpd-node.rpd-jb-palette .rpd-process .rpd-jb-product-label {
+    font-size: 7px;
+    font-weight: bold;
+}
+
+.rpd-jb-active-label {
+    fill: white;
+}
+
+.rpd-jb-palette-variant.rpd-jb-active-variant {
+    stroke: white;
+}
+
+.rpd-jb-switch .rpd-process text.highlighted {
+    fill: yellow;
+    transition: fill 200ms ease-in;
+}
+
+.rpd-node.rpd-util-comment {
+    text-anchor: middle;
+    /* alignment-baseline: hanging; */
+}
+
+/* #p5_loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: aliceblue;
+} */
+
+#loading-bar {
+    position: absolute;
+    top: 0;
+    width: 0%;
+    height: 20px;
+    background-color: navajowhite;
+    display: none;
+    /* background-color: rgba(255, 0, 0, 0.7); */
+}
+
+.rpd-link {
+    pointer-events: none;
+}
+
+.rpd-inlet .jb-color-value {
+    transform: translate(-15px, 4px);
+}
+
+.rpd-inlet .jb-palette-value {
+    transform: translate(-36px, 4px);
+}
+
+.rpd-outlet .jb-color-value,
+.rpd-outlet .jb-palette-value {
+    transform: translate(9px, 4px);
+}
+
+svg text {
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+svg text::selection {
+    background: none;
+}
+
+.p5-drop-canvas {
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.p5-drop-canvas:hover {
+    border: 1px solid bisque;
+}
+
+#p5_loading {
+    display: none;
+    visibility: hidden;
+}
+
+::-webkit-scrollbar {
+    display: none;
+    /* width: 3px;
+    background: rgba(255,255,255,0.1); */
+}
+
+.p5-canvas, .p5-inner-canvas {
+    position: fixed;
+    visibility: visible !important;
+}
+
+.p5-inner-canvas {
+    /* border: 5px solid black; */
+    transform-origin: left top;
+    box-shadow: 30px 10px;
+    background: rgba(255,255,255,0.2);
+}
