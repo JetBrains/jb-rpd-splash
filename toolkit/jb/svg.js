@@ -718,7 +718,7 @@ if (drawInnerCanvases) {
 
     Rpd.noderenderer('jb/curved-edges', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
 
-    Rpd.noderenderer('jb/edges-squares', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
+    Rpd.noderenderer('jb/edges-joints', 'svg', nodeWhichRendersDrawable(70, 100, 50, 40));
 
     Rpd.noderenderer('jb/back-edges-squares', 'svg', nodeWhichRendersDrawable(70, 70, 50, 40));
 

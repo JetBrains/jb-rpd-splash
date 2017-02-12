@@ -113,7 +113,10 @@ var collectPointDataNode = patch.addNode('jb/collect-point-data').move(leftMargi
 var drawPixelsNode = patch.addNode('jb/draw-pixels').move(leftMargin + 483, topMargin + 295);
 var applyGradientNode = patch.addNode('jb/apply-gradient').move(leftMargin + 749, topMargin + 433);
 var voronoiNode = patch.addNode('jb/voronoi').move(leftMargin + 496, topMargin + 127);
-var edgesSquaresNode = patch.addNode('jb/edges-squares').move(leftMargin + 625, topMargin + 185);
+
+var edgesJointNode = patch.addNode('jb/edges-joints').move(leftMargin + 625, topMargin + 185);
+
+
 var curvedEdgesNode = patch.addNode('jb/curved-edges').move(leftMargin + 891, topMargin + 114);
 var backEdgesSquaresNode = patch.addNode('jb/back-edges-squares').move(leftMargin + 783, topMargin + 286);
 var shapesNode = patch.addNode('jb/shapes').move(leftMargin + 779, topMargin + 131);
@@ -127,7 +130,7 @@ backgroundNode.outlets['pixels'].connect(drawPixelsNode.inlets['pixels']);
 paletteNode.outlets['palette'].connect(applyGradientNode.inlets['palette']);
 //  paletteNode.outlets['palette'].connect(vignetteNode.inlets['palette']);
 paletteNode.outlets['product'].connect(drawLogoNode.inlets['product']);
-// paletteNode.outlets['palette'].connect(edgesSquaresNode.inlets['palette']);
+// paletteNode.outlets['palette'].connect(edgesJointNode.inlets['palette']);
 
 octaveNoiseNode.outlets['number'].connect(noiseNode.inlets['octave']);
 falloffNoiseNode.outlets['number'].connect(noiseNode.inlets['falloff']);
@@ -136,8 +139,8 @@ collectorStep.outlets['number'].connect(collectPointDataNode.inlets['step']);
 chaos.outlets['number'].connect(collectPointDataNode.inlets['chaos']);
 contrast.outlets['number'].connect(drawPixelsNode.inlets['contrast']);
 
-voronoiNode.outlets['voronoi'].connect(edgesSquaresNode.inlets['voronoi']);
-rorschachNode.outlets['pixels'].connect(edgesSquaresNode.inlets['pixels']);
+voronoiNode.outlets['voronoi'].connect(edgesJointNode.inlets['voronoi']);
+rorschachNode.outlets['pixels'].connect(edgesJointNode.inlets['pixels']);
 voronoiNode.outlets['voronoi'].connect(curvedEdgesNode.inlets['voronoi']);
 voronoiNode.outlets['voronoi'].connect(shapesNode.inlets['voronoi']);
 //paletteNode.outlets['product'].connect(backgroundNode.inlets['product']);
@@ -159,7 +162,7 @@ drawPixelsNode.outlets['drawable'].connect(layersNode.inlets['layer-1']);
 applyGradientNode.outlets['drawable'].connect(layersNode.inlets['layer-2']);
 curvedEdgesNode.outlets['drawable'].connect(layersNode.inlets['layer-3']);
 shapesNode.outlets['drawable'].connect(layersNode.inlets['layer-4']);
-edgesSquaresNode.outlets['drawable'].connect(layersNode.inlets['layer-5']);
+edgesJointNode.outlets['drawable'].connect(layersNode.inlets['layer-5']);
 backEdgesSquaresNode.outlets['drawable'].connect(layersNode.inlets['layer-6']);
 vignetteNode.outlets['drawable'].connect(layersNode.inlets['layer-7']);
 drawLogoNode.outlets['drawable'].connect(layersNode.inlets['layer-8']);

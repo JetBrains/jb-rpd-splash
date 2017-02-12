@@ -223,6 +223,7 @@ function initNoiseSketch() {
             p.noiseDetail(inlets.octave, inlets.falloff);
             lastSeed = p.random(1000);
             lastStep = inlets.grain;
+            grainRadius = inlets.radius;
             p.noiseSeed(lastSeed);
 
             var x, y, c, opacity, resultColor, startColor, middleColor, endColor;
@@ -265,7 +266,7 @@ function initNoiseSketch() {
                     }
 
                     p.fill(resultColor);
-                    p.rect(x, y, lastStep, lastStep);
+                    p.rect(x, y, lastStep, lastStep, grainRadius * lastStep );
                     //p.rect(width - x, y, 10, 10);
                     //column.push(c);
                 }
@@ -539,9 +540,11 @@ function drawLogo(p, logo, ctx) {
     }
 }
 
-// jb/edges-squares
-function drawEdgesSquares(p, config) {
+// jb/edges-joints
+function drawEdgesJoints(p, config) {
     var voronoi = config.voronoi;
+    var radius = config.jointRadius;
+    var border = config.jointBorder;
     var srcPixels = config.pixels.values;
     var srcWidth = config.pixels.width || window.innerWidth;
     var srcHeight = config.pixels.height || window.innerHeight;
@@ -553,7 +556,7 @@ function drawEdgesSquares(p, config) {
 
     var palette = config.palette;
 
-    var s = config.maxSquareSize;
+    var s = config.jointSize;
     p.rectMode(p.CENTER);
 
 
@@ -614,7 +617,6 @@ function drawEdgesSquares(p, config) {
         var colorEnd = p.lerpColor(hexToColor(p, randomEndColor, 100), hexToColor(p, randomEndColor, 255), brightnessEnd);
 
 
-        //p.strokeWeight(0.8);
         p.strokeWeight(1);
         p.stroke(255);
 
@@ -637,11 +639,16 @@ function drawEdgesSquares(p, config) {
         if (!myEdges[n]) continue;
         square = squares[n];
         sqSize = square.size;
-        p.fill(square.color);
+        p.fill(p.red(square.color), p.green(square.color), p.blue(square.color), 255);
         p.noStroke();
-        // console.log(pxBrightness);
-        p.ellipse(square.x, square.y, 3, 3);
-        p.rect(square.x, square.y, sqSize, sqSize);
+
+
+        if (sqSize > 0) {
+            p.ellipse(square.x, square.y, sqSize/3, sqSize/3);
+            p.stroke(24);
+            p.strokeWeight(border);
+            p.rect(square.x, square.y, sqSize, sqSize, sqSize * radius);
+        }
     }
 
 
