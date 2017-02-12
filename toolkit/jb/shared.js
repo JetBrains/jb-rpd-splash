@@ -30,6 +30,7 @@ var PRODUCTS = [
     { label: 'CL',  id: 'clion',         palette: [ '#32d791', '#1a9edd', '#ea3a8c' ] },  // clion // CL_
     { label: 'DG',  id: 'datagrip',      palette: [ '#32d791', '#9779f5', '#fd5fe4' ] },  // // DG_
     { label: 'AC',  id: 'appcode',       palette: [ '#2b7fe3', '#25daee', '#30de95' ] },  // appcode // AC_
+    { label: 'GO',  id: 'gogland',       palette: [ '#078efc', '#bb4efc', '#3bea62' ] },  // gogland // GO_
     { label: ' ',   id: 'empty1',        palette: [ ] },  // separator
     { label: 'R#',  id: 'resharper',     palette: [ '#c21456', '#e14ce3', '#fdbc2c' ] },  // resharper // R#_
     { label: 'R++', id: 'resharper-cpp', palette: [ '#fdbc2c', '#e14ce3', '#c21456' ] },  // // R++_
@@ -37,6 +38,7 @@ var PRODUCTS = [
     { label: 'DM',  id: 'dotmemory',     palette: [ '#fdbc2c', '#786bfb', '#e14ce3' ] },  // // DM_
     { label: 'DP',  id: 'dotpeek',       palette: [ '#23cbfc', '#786bfb', '#e14ce3' ] },  // // DP_
     { label: 'DT',  id: 'dottrace',      palette: [ '#fc1681', '#786bfb', '#e14ce3' ] },  // dottrace // DT_
+    { label: 'RD',  id: 'rider',         palette: [ '#c40b55', '#e800ca', '#ffbd00' ] },  // rider // RD_
     { label: ' ',   id: 'empty2',        palette: [ ] },  // separator
     { label: 'TC',  id: 'teamcity',      palette: [ '#22b1ef', '#9062f7', '#46e869' ] },  // teamcity // TC_
     { label: 'YT',  id: 'youtrack',      palette: [ '#22b1ef', '#9062f7', '#fc378c' ] },  // youtrack // YT_
