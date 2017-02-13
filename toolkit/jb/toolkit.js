@@ -31,19 +31,6 @@ Rpd.channeltype('jb/brightness', {
     adapt : function(val) { return val > 255 ? 255 : val; }
 });
 
-Rpd.channeltype('jb/joint-radius', {
-    allow: ['util/number'],
-    adapt : function(val) {
-        if ( val < 0 ) {
-            return 0;
-        } else if (val > 1) {
-            return 1;
-
-        } else {
-        return val;
-        }
-}});
-
 
 
 Rpd.channeltype('jb/palette', { show: howMuch('color', 'colors') });
@@ -84,6 +71,16 @@ Rpd.channeltype('jb/pixels', {
              : '0px'); */
     }
 });
+
+function adaptToOne(val) {
+    if ( val < 0 ) {
+        return 0;
+    } else if (val > 1) {
+        return 1;
+    } else {
+        return val;
+    }
+}
 
 /* Rpd.nodetype('jb/config', {
     inlets: {
@@ -235,7 +232,7 @@ Rpd.nodetype('jb/noise', function() {
             'falloff': { type: 'util/number', 'default': 0.9 },
             'palette': { type: 'jb/palette', default: [ '#ffffff', '#000000', '#000000']},
             'border': { type: 'util/number', 'default': 0 },
-            'radius' : {type: 'jb/joint-radius', 'default': 0}
+            'radius': { type: 'util/number', 'default': 0, 'adapt': adaptToOne }
         },
         outlets: { 'pixels': { type: 'jb/pixels' } },
         process: function(inlets) {
@@ -441,7 +438,7 @@ Rpd.nodetype('jb/edges-joints', {
         'palette': { type: 'jb/palette', 'default': [ '#ffffff', '#ffffff', '#ffffff']},
         'jointSize': { type: 'util/number', 'default': 10 },
         'jointBorder': { type: 'util/number', 'default': 0 },
-        'jointRadius' : {type: 'jb/joint-radius', 'default': 0}
+        'jointRadius' : {type: 'util/number', 'default': 0, 'adapt': adaptToOne }
     },
     outlets: {
         'drawable': { type: 'jb/drawable' }

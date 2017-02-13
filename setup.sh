@@ -12,6 +12,12 @@ if [ -d ../rpd ]; then
     cd ../jb-rpd-splash
 fi
 
+# if [ -d ../rpd ]; then
+#     cd ../rpd
+#     gulp -r svg -s ableton-out -t util -o ../jb-rpd-splash --compilation whitespace --pretty
+#     cd ../jb-rpd-splash
+# fi
+
 if [ ! -f ./kefir.min.js ]; then
     wget https://rawgit.com/rpominov/kefir/gh-pages/dist/kefir.min.js --no-check-certificate
 fi
