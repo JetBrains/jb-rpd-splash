@@ -656,7 +656,9 @@ function createP5ToCallDrawable(node, trgWidth, trgHeight, getDrawable) {
     var srcHeight = window.innerHeight;
     var ctx;
     var setupCalled = false;
+    var redrawsRequestedBeforeSetup = false;
     return function(p) {
+        var prevRedraw = p.redraw;
         p.preload = function() {};
         p.setup = function() { var c = p.createCanvas(srcWidth, srcHeight);
                                c.addClass('p5-inner-canvas');
@@ -664,18 +666,21 @@ function createP5ToCallDrawable(node, trgWidth, trgHeight, getDrawable) {
                                                                      (trgHeight / srcHeight) + ')';
                                ctx = c.drawingContext;
                                p.noLoop();
-                               setupCalled = true; }
+                               setupCalled = true;
+                               if (redrawsRequestedBeforeSetup) {
+                                 //setTimeout(function() {
+                                    prevRedraw.call(p);
+                                 //}, 1);
+                               }
+                             }
         p.draw = function() {
             var drawable = getDrawable();
             if (!drawable) return;
             drawable.func(p, drawable.conf, ctx, { opacity: 1, blendMode: 'N' });
         };
-        var prevRedraw = p.redraw;
         p.redraw = function() {
             if (!setupCalled) {
-                setTimeout(function() {
-                    prevRedraw.call(p);
-                }, 1000);
+                redrawsRequestedBeforeSetup = true;
                 return;
             }
             prevRedraw.call(p);
