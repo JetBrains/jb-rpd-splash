@@ -1,10 +1,12 @@
 #!/bin/bash
 
-# cd ..
-
-# if [ ! -d ./rpd ]; then
-#    git clone git@github.com:shamansir/rpd.git
-# fi
+if [ ! -d ../rpd ]; then
+    cd ..
+    git clone https://github.com/shamansir/rpd.git
+    cd rpd
+    npm install
+    cd ../jb-rpd-splash
+fi
 
 if [ -d ../rpd ]; then
     cd ../rpd
