@@ -1,14 +1,11 @@
-rpd.css
-rpd.min.js
-kefir.min.js
-d3.v4.min.js
-d3-voronoi.*.min.js
 loaders.min.css
 sample.sketch.java
+d3-voronoi.v1.min.js
 canvas-to-blob.js
 *.example.js
 p5.js
 p5.*.js
 *.pyc
 .idea
+node_modules
 .DS_STORE

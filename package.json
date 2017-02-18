@@ -1,0 +1,26 @@
+{
+  "name": "jb-rpd-splash",
+  "version": "1.0.0",
+  "description": "An Art Generator for JetBrains which uses RPD library to build User Interface",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JetBrains/jb-rpd-splash.git"
+  },
+  "author": "Sergo 'skotin' Golovachev <sergo.golovachev@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JetBrains/jb-rpd-splash/issues"
+  },
+  "homepage": "https://github.com/JetBrains/jb-rpd-splash#readme",
+  "dependencies": {
+    "canvas-to-blob": "0.0.0",
+    "d3": "^4.5.0",
+    "kefir": "^3.7.1",
+    "p5": "^0.5.7",
+    "rpd": "^3.0.0-beta.1"
+  }
+}
