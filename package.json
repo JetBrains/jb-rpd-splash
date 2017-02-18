@@ -11,6 +11,10 @@
     "url": "git+https://github.com/JetBrains/jb-rpd-splash.git"
   },
   "author": "Sergo 'skotin' Golovachev <sergo.golovachev@gmail.com>",
+  "contributors": [
+    "Anton 'shaman.sir' Kotenko <shaman.sir@gmail.com>",
+    "Eugene Toporov <eugene.toporov@jetbrains.com>"
+  ],  
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/JetBrains/jb-rpd-splash/issues"
