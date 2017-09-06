@@ -1,5 +1,7 @@
 # jb-rpd-splash
 
+[![JetBrains team project](http://jb.gg/badges/team.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+
 Generating Wallpapers as Art since 2017
 
 Built with [RPD](http://shamansir.github.io/rpd) and [p5.js](https://p5js.org).
