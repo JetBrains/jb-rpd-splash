@@ -11,3 +11,10 @@ Feel free to touch and drag anything you want.
 ![Screenshot](./screenshot.png?raw=true)
 
 This project is licensed under [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/).
+
+## Running locally
+
+Just do `npm install`.
+Then `setup.sh`
+Then `run_server.sh`.
+And visit http://localhost:8000
