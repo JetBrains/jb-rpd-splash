@@ -1,5 +1,7 @@
-import SimpleHTTPServer
-class CORSHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+import http.server
+
+
+class CORSHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def send_head(self):
         """Common code for GET and HEAD commands.
 
@@ -14,7 +16,7 @@ class CORSHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         path = self.translate_path(self.path)
         f = None
         if os.path.isdir(path):
-            if not self.path.endswith('/'):
+            if not self.path.endswith("/"):
                 # redirect browser - doing basically what apache does
                 self.send_response(301)
                 self.send_header("Location", self.path + "/")
@@ -32,7 +34,7 @@ class CORSHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             # Always read in binary mode. Opening files in text mode may cause
             # newline translations, making the actual size of the content
             # transmitted *less* than the content-length!
-            f = open(path, 'rb')
+            f = open(path, "rb")
         except IOError:
             self.send_error(404, "File not found")
             return None
@@ -48,16 +50,15 @@ class CORSHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     import os
-    import SocketServer
+    import socketserver
 
     import sys
 
     PORT = (len(sys.argv) > 1 and int(sys.argv[1])) or 31338
 
     Handler = CORSHTTPRequestHandler
-    #Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
 
-    httpd = SocketServer.TCPServer(("", PORT), Handler)
+    httpd = socketserver.TCPServer(("", PORT), Handler)
 
-    print "serving at port", PORT
+    print("serving at port", PORT)
     httpd.serve_forever()
